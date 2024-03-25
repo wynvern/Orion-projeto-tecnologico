@@ -21,19 +21,22 @@ model User {
 }
 
 model Post {
-id            String    @id @default(cuid())
+   id            String    @id @default(cuid())
+   media String?
+   text String?
+   
 
    @@map("posts")
 }
 
 model Comement {
-id            String    @id @default(cuid())
+   id            String    @id @default(cuid())
 
    @@map("comments")
 }
 
 model Save {
-id            String    @id @default(cuid())
+   id            String    @id @default(cuid())
 
    @@map("saves")
 }
