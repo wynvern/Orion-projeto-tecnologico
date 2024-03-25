@@ -3,7 +3,7 @@ import "../styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-import App from "./components/app/App";
+import App from "../components/app/App";
 
 export default function RootLayout({
 	children,

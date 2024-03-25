@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Input } from "@nextui-org/react";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
 	function handleLogin(e: React.FormEvent<HTMLFormElement>) {
@@ -9,6 +10,10 @@ export default function Login() {
 		const formData = new FormData(e.currentTarget);
 
 		console.log(formData.get("email"));
+	}
+
+	function signInGoogle() {
+		signIn("google", { callbackUrl: "https://localhost:3000/" });
 	}
 
 	return (
@@ -25,7 +30,7 @@ export default function Login() {
 				</form>
 				<div className="flex flex-col gap-y-6">
 					<p className="text-center">Ou</p>
-					<Button>Entrar com o Google</Button>
+					<Button onClick={signInGoogle}>Entrar com o Google</Button>
 				</div>
 			</div>
 		</div>

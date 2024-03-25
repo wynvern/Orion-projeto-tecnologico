@@ -1,6 +1,7 @@
 "use client";
 
 import { NextUIProvider } from "@nextui-org/react";
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
 	children,
@@ -9,7 +10,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<NextUIProvider className="dark w-screen h-screen">
-			{children}
+			<SessionProvider>{children}</SessionProvider>
 		</NextUIProvider>
 	);
 }
