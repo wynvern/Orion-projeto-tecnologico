@@ -17,7 +17,7 @@ export default function SignUp() {
 	}
 
 	function signInGoogle() {
-		signIn("google", { callbackUrl: "https://localhost:3000/" });
+		signIn("google", { callbackUrl: `${process.env.BASE_URL}` });
 	}
 
 	async function signUpHandler(

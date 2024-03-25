@@ -11,15 +11,13 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const [sidebarVisible, setSidebarVisible] = useState(true);
+	const [sidebarVisible, setSidebarVisible] = useState(false);
 	const pathname = usePathname();
 	const notVisibleSidebarPages = ["/login", "/signup"];
 
 	useEffect(() => {
-		if (
-			notVisibleSidebarPages.includes(pathname)
-		)
-			setSidebarVisible(false);
+		if (notVisibleSidebarPages.includes(pathname)) setSidebarVisible(false);
+		else setSidebarVisible(true);
 	});
 
 	return (

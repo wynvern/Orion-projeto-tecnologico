@@ -15,6 +15,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			<div className="bg-zinc-600 rounded-large w-[1000px] h-[400px] flex">
 				<div>
 					<Image
+						draggable={false}
 						src="https://i.imgur.com/rZavvMA.png"
 						className="h-[400px] w-auto object-cover"
 					/>

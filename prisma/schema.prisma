@@ -17,6 +17,9 @@ model User {
    accounts      Account[]
    sessions      Session[]
 
+   bio   String
+
+
    @@map("users")
 }
 
@@ -37,6 +40,7 @@ model Comement {
 
 model Save {
    id            String    @id @default(cuid())
+   userId      String
 
    @@map("saves")
 }

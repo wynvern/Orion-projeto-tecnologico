@@ -19,7 +19,7 @@ export default function Login() {
 	}
 
 	function signInGoogle() {
-		signIn("google", { callbackUrl: "https://localhost:3000/" });
+		signIn("google", { callbackUrl: `${process.env.BASE_URL}` });
 	}
 
 	return (

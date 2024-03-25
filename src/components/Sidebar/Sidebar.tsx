@@ -12,7 +12,7 @@ export default function Sidebar() {
 			<div>
 				<Image src="/brand/logo.svg" className="h-8" />
 			</div>
-			<div className="gap-y-4 flex flex-col">
+			<div className="gap-y-12 flex flex-col">
 				<MagnifyingGlassIcon className="h-8" />
 				<BookmarkIcon className="h-8" />
 				<UserGroupIcon className="h-8" />
