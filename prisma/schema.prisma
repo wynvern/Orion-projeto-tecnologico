@@ -17,7 +17,7 @@ model User {
    accounts      Account[]
    sessions      Session[]
 
-   bio   String
+   bio   String?
 
 
    @@map("users")
