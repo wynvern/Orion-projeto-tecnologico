@@ -7,6 +7,43 @@ datasource db {
    url      = env("DATABASE_URL")
 }
 
+model User {
+   id            String    @id @default(cuid())
+   name          String?
+   email         String?   @unique
+   emailVerified DateTime? @map("email_verified")
+   image         String?
+   password      String?
+   accounts      Account[]
+   sessions      Session[]
+
+   @@map("users")
+}
+
+model Post {
+id            String    @id @default(cuid())
+
+   @@map("posts")
+}
+
+model Comement {
+id            String    @id @default(cuid())
+
+   @@map("comments")
+}
+
+model Save {
+id            String    @id @default(cuid())
+
+   @@map("saves")
+}
+
+model InsideGroups { // The groups that the user is present
+id            String    @id @default(cuid())
+
+   @@map("in_groups")
+}
+
 // Bullshit
 
 model Account {
@@ -37,18 +74,6 @@ model Session {
    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
    @@map("sessions")
-}
-
-model User {
-   id            String    @id @default(cuid())
-   name          String?
-   email         String?   @unique
-   emailVerified DateTime? @map("email_verified")
-   image         String?
-   accounts      Account[]
-   sessions      Session[]
-
-   @@map("users")
 }
 
 model VerificationToken {
