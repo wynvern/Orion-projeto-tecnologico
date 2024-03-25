@@ -1,5 +1,6 @@
 "use client";
 
+import exportURL from "@/lib/baseUrl";
 import { Button, Input, Link } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 
@@ -18,8 +19,9 @@ export default function Login() {
 		});
 	}
 
+	console.log(exportURL());
 	function signInGoogle() {
-		signIn("google", { callbackUrl: `${process.env.BASE_URL}` });
+		signIn("google", { callbackUrl: process.env.BASE_URL });
 	}
 
 	return (
