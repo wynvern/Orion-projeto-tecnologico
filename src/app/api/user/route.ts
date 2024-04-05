@@ -1,8 +1,6 @@
 import { db } from "@/lib/db";
 import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
-import * as fs from "fs/promises";
-import path from "path";
 
 export const POST = async (req: Request) => {
 	try {
@@ -19,8 +17,7 @@ export const POST = async (req: Request) => {
 			return NextResponse.json(
 				{
 					user: null,
-					message: "Email already in use.",
-					type: "email-in-use",
+					message: "email-in-use",
 				},
 				{ status: 409 }
 			);
@@ -36,8 +33,7 @@ export const POST = async (req: Request) => {
 			return NextResponse.json(
 				{
 					user: null,
-					message: "name already in use.",
-					type: "name-in-use",
+					message: "name-in-use",
 				},
 				{ status: 409 }
 			);

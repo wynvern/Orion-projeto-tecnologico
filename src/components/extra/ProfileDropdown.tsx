@@ -29,7 +29,11 @@ export default function ProfileDropdown() {
 					<div className="h-8 w-8">
 						<Image
 							alt="default"
-							src={`/brand/default-user.svg`}
+							src={
+								session.data != undefined
+									? session.data.user.image
+									: "/brand/default-user.svg"
+							}
 							classNames={{ img: "h-8 rounded-full" }}
 							removeWrapper={true}
 						></Image>

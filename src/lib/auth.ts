@@ -65,13 +65,17 @@ export const authOptions: NextAuthOptions = {
 		signOut: "/signout",
 	},
 	callbacks: {
-		async jwt({ token, user }) {
+		async jwt({ token, user, trigger, session }) {
 			if (user) {
 				// Add custom parameters to token
 				token.role = user.role as string;
 				token.fullName = user.fullName;
 				// Add username to the token
 				token.username = user.username;
+			}
+
+			if (trigger === "update") {
+				token.username = session.username;
 			}
 
 			return token;

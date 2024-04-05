@@ -2,8 +2,18 @@
 
 import { Button, Input, Link } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 export default function SignUp() {
+	const [passwordIsInvalid, setPasswordIsInvalid] = useState({
+		bool: false,
+		message: "",
+	});
+	const [emailIsInvalid, setEmailIsInvalid] = useState({
+		bool: false,
+		message: "",
+	});
+
 	async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
@@ -51,11 +61,13 @@ export default function SignUp() {
 					}
 				}, 1000);
 			} else {
-				const responsePretty = await response.json(); // Something?
-				console.log(responsePretty);
+				const data = await response.json(); // Something?
+				console.log(data);
+
+				setPasswordIsInvalid({ message: "erro tal", bool: true });
 			}
 		} catch (e: any) {
-			console.error("Error:", e.message);
+			console.error("Error:", e.message); //mudar
 		}
 	}
 
@@ -68,6 +80,11 @@ export default function SignUp() {
 						label="Nome de usuário"
 						type="text"
 						name="name"
+						isInvalid={passwordIsInvalid.bool}
+						placeholder={passwordIsInvalid.message}
+						onValueChange={(e) => {
+							setPasswordIsInvalid({ message: "", bool: false });
+						}}
 					></Input>
 					<Input label="Email" type="email" name="email"></Input>
 					<Input

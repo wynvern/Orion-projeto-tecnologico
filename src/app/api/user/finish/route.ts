@@ -1,14 +1,31 @@
 // twinny!
 
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
 	try {
+		const session = await getServerSession(authOptions);
+
+		if (!session) {
+			return NextResponse.json(
+				{
+					user: null,
+					message: "Not authorized",
+					type: "Missing authorization",
+				},
+				{ status: 401 }
+			);
+		}
+
 		const body = await req.json();
 		const { username } = body;
 
-		const existingUser = await db.user.findUnique({
+		console.log(username);
+
+		const existingUser = await db.user.findFirst({
 			where: {
 				username,
 			},
@@ -18,17 +35,21 @@ export const POST = async (req: Request) => {
 			return NextResponse.json(
 				{
 					user: null,
-					message: "Username already in use.",
-					type: "username-in-use",
+					message: "username-in-use",
 				},
 				{ status: 409 }
 			);
 		}
 
-		await db.user.update({ where: { email }, data: { username } });
+		console.log("novo nome: " + username);
+
+		await db.user.update({
+			where: { email: session.user.email ?? "" },
+			data: { username },
+		});
 
 		return NextResponse.json(
-			{ message: "User finished succsessfully" },
+			{ message: "User finished succsessfully", newName: username },
 			{ status: 201 }
 		);
 	} catch (e) {
