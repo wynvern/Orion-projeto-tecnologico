@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
 	const [sidebarVisible, setSidebarVisible] = useState(false);
 	const pathname = usePathname();
-	const notVisibleSidebarPages = ["/login", "/signup"];
+	const notVisibleSidebarPages = ["/login", "/signup", "/finish"];
 
 	useEffect(() => {
 		if (notVisibleSidebarPages.includes(pathname)) setSidebarVisible(false);

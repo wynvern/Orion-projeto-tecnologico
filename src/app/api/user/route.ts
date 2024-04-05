@@ -44,7 +44,7 @@ export const POST = async (req: Request) => {
 		}
 
 		const hashedPassword = await hash(password, 10);
-		const newUser = await db.user.create({
+		await db.user.create({
 			data: {
 				email,
 				name,
@@ -52,10 +52,8 @@ export const POST = async (req: Request) => {
 			},
 		});
 
-		const { password: newUserPassword, ...rest } = newUser;
-
 		return NextResponse.json(
-			{ user: rest, message: "User created succsessfully" },
+			{ message: "User created succsessfully" },
 			{ status: 201 }
 		);
 	} catch (e) {

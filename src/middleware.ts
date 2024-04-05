@@ -20,9 +20,13 @@ export default async function middleware(req: NextRequest) {
 		) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}
+		if (!session.username && !url.pathname.includes("/finish")) {
+			console.log("usuario não tem um nome de usuário");
+			return NextResponse.redirect(new URL("/finish", req.url));
+		}
 	}
 }
 
 export const config = {
-	matcher: ["/", "/login", "/signup", "/signout", "/u/:path*"],
+	matcher: ["/", "/login", "/signup", "/signout", "/u/:path*", "/finish"],
 };

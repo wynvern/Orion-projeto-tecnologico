@@ -5,6 +5,7 @@ import {
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { Image } from "@nextui-org/react";
+import ProfileDropdown from "../extra/ProfileDropdown";
 
 export default function Sidebar() {
 	return (
@@ -16,11 +17,7 @@ export default function Sidebar() {
 				<MagnifyingGlassIcon className="h-8" />
 				<BookmarkIcon className="h-8" />
 				<UserGroupIcon className="h-8" />
-				<Image
-					src="/brand/default-user.svg"
-					removeWrapper={true}
-					classNames={{ img: "h-8 w-8 !rounded-full" }}
-				></Image>
+				<ProfileDropdown />
 			</div>
 			<div>
 				<Cog6ToothIcon className="h-8" />

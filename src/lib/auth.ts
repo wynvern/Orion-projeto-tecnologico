@@ -67,21 +67,22 @@ export const authOptions: NextAuthOptions = {
 	callbacks: {
 		async jwt({ token, user }) {
 			if (user) {
-				/*
-				 * For adding custom parameters to user in session, we first need to add those parameters
-				 * in token which then will be available in the `session()` callback
-				 */
+				// Add custom parameters to token
 				token.role = user.role as string;
 				token.fullName = user.fullName;
+				// Add username to the token
+				token.username = user.username;
 			}
 
 			return token;
 		},
 		async session({ session, token }) {
 			if (session.user) {
-				// ** Add custom params to user in session which are added in `jwt()` callback via `token` parameter
+				// Transfer custom params from token to user in session
 				session.user.role = token.role;
 				session.user.fullName = token.fullName as string;
+				// Transfer username to the session
+				session.user.username = token.username as string;
 			}
 
 			return session;
