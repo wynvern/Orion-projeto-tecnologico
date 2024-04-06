@@ -12,7 +12,15 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pt-BR">
-			<body className={`${inter.className} w-screen h-screen`}>
+			<head>
+				<link
+					rel="shortcut icon"
+					href="/brand/logo.svg"
+					type="image/x-icon"
+				/>
+				<title>Orion</title>
+			</head>
+			<body className={`${inter.className} w-screen h-[calc(100dvh)]`}>
 				<App>{children}</App>
 			</body>
 		</html>

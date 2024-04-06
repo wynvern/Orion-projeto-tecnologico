@@ -23,6 +23,16 @@ export const POST = async (req: Request) => {
 			);
 		}
 
+		if (password.length < 8) {
+			return NextResponse.json(
+				{
+					user: null,
+					message: "weak-password",
+				},
+				{ status: 400 }
+			);
+		}
+
 		const existingname = await db.user.findFirst({
 			where: {
 				name: name,

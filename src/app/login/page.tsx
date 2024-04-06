@@ -77,8 +77,11 @@ export default function Login() {
 
 	return (
 		<div className="flex w-full h-full items-center justify-center">
-			<div className="flex flex-col gap-y-6 w-[400px]">
-				<h1>Login</h1>
+			<div className="flex flex-col gap-y-6 lg:w-[400px] md:w-[400px] sm:w-[300px]">
+				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
+					<Image src="/brand/logo.svg" className="h-16" />
+					<h1>Login</h1>
+				</div>
 				<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
 					<Input
 						placeholder="Email"
@@ -97,23 +100,32 @@ export default function Login() {
 							});
 						}}
 					></Input>
-					<Input
-						placeholder="Senha"
-						type="password"
-						name="password"
-						classNames={{ inputWrapper: "h-14" }}
-						startContent={
-							<KeyIcon className="h-6 text-neutral-500" />
-						}
-						isInvalid={inputPasswordVal.active}
-						errorMessage={inputPasswordVal.message}
-						onValueChange={() => {
-							setInputPasswordVal({
-								message: "",
-								active: false,
-							});
-						}}
-					></Input>
+					<div>
+						<Input
+							placeholder="Senha"
+							type="password"
+							name="password"
+							classNames={{ inputWrapper: "h-14" }}
+							startContent={
+								<KeyIcon className="h-6 text-neutral-500" />
+							}
+							isInvalid={inputPasswordVal.active}
+							errorMessage={inputPasswordVal.message}
+							onValueChange={() => {
+								setInputPasswordVal({
+									message: "",
+									active: false,
+								});
+							}}
+						></Input>
+
+						<div className="mt-4">
+							<p className="text-center">
+								Esqueceu sua senha?{" "}
+								<Link href="/forgot-password">Recuperar</Link>
+							</p>
+						</div>
+					</div>
 
 					<Button
 						type="submit"

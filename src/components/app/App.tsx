@@ -11,14 +11,19 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const pathname = usePathname();
-	const notVisibleSidebarPages = ["/login", "/signup", "/finish"];
+	const notVisibleSidebarPages = [
+		"/login",
+		"/signup",
+		"/finish",
+		"/forgot-password",
+	];
 
 	return (
-		<NextUIProvider className="dark w-screen h-screen">
+		<NextUIProvider className="dark w-full h-full">
 			<SessionProvider>
 				{!notVisibleSidebarPages.includes(pathname) && <Sidebar />}
 				<div
-					className={`w-screen h-screen ${
+					className={`w-full h-full ${
 						!notVisibleSidebarPages.includes(pathname) && "pl-20"
 					}`}
 				>
