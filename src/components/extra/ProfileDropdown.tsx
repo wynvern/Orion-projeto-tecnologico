@@ -15,10 +15,13 @@ import {
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import SignOut from "../modal/SignOut";
+import { useState } from "react";
 
 export default function ProfileDropdown() {
 	const router = useRouter();
 	const session = useSession();
+	const [signOutModal, setSignOutModal] = useState(false);
 
 	return (
 		<>
@@ -70,6 +73,9 @@ export default function ProfileDropdown() {
 						key="exit"
 						description="Desconecte-se de sua conta"
 						className="border-radius-sys text-danger"
+						onClick={() => {
+							setSignOutModal(true);
+						}}
 						startContent={
 							<ArrowLeftEndOnRectangleIcon className="h-8" />
 						}
@@ -78,6 +84,7 @@ export default function ProfileDropdown() {
 					</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
+			<SignOut isActive={signOutModal} setIsActive={setSignOutModal} />
 		</>
 	);
 }

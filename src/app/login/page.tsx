@@ -1,13 +1,18 @@
 "use client";
 
 import exportURL from "@/lib/baseUrl";
-import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline";
+import {
+	ArrowLeftEndOnRectangleIcon,
+	EnvelopeIcon,
+	KeyIcon,
+} from "@heroicons/react/24/outline";
 import { Button, Input, Link, Image } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);
+	const [loadingGoogle, setLoadingGoogle] = useState(false);
 	const [inputEmailVal, setInputEmailVal] = useState({
 		message: "",
 		active: false,
@@ -19,7 +24,7 @@ export default function Login() {
 
 	async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-
+		setLoading(true);
 		const formData = new FormData(e.currentTarget);
 
 		const formEmail: string = formData.get("email") as string;
@@ -54,8 +59,16 @@ export default function Login() {
 				message: "Senha incorreta.",
 				active: true,
 			});
-			setLoading(false);
 		}
+
+		if (signInResult.error == "email-not-found") {
+			setInputEmailVal({
+				message: "Email não encontrado.",
+				active: true,
+			});
+		}
+
+		setLoading(false);
 	}
 
 	function signInGoogle() {
@@ -67,11 +80,39 @@ export default function Login() {
 			<div className="flex flex-col gap-y-6 w-[400px]">
 				<h1>Login</h1>
 				<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
-					<Input label="Email" type="email" name="email"></Input>
 					<Input
-						label="Senha"
+						placeholder="Email"
+						type="email"
+						name="email"
+						classNames={{ inputWrapper: "h-14" }}
+						startContent={
+							<EnvelopeIcon className="h-6 text-neutral-500" />
+						}
+						isInvalid={inputEmailVal.active}
+						errorMessage={inputEmailVal.message}
+						onValueChange={() => {
+							setInputEmailVal({
+								message: "",
+								active: false,
+							});
+						}}
+					></Input>
+					<Input
+						placeholder="Senha"
 						type="password"
 						name="password"
+						classNames={{ inputWrapper: "h-14" }}
+						startContent={
+							<KeyIcon className="h-6 text-neutral-500" />
+						}
+						isInvalid={inputPasswordVal.active}
+						errorMessage={inputPasswordVal.message}
+						onValueChange={() => {
+							setInputPasswordVal({
+								message: "",
+								active: false,
+							});
+						}}
 					></Input>
 
 					<Button
@@ -92,13 +133,21 @@ export default function Login() {
 				<div className="flex flex-col gap-y-6">
 					<p className="text-center">Ou</p>
 					<Button
-						onClick={signInGoogle}
+						onClick={() => {
+							setLoadingGoogle(true);
+							signInGoogle();
+						}}
+						isLoading={loadingGoogle}
 						startContent={
-							<Image
-								width="20"
-								style={{ filter: "invert()" }}
-								src="/google-logo.svg"
-							/>
+							loadingGoogle ? (
+								""
+							) : (
+								<Image
+									width="20"
+									style={{ filter: "invert()" }}
+									src="/google-logo.svg"
+								/>
+							)
 						}
 					>
 						Entrar com o Google
