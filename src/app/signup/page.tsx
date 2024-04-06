@@ -49,21 +49,14 @@ export default function SignUp() {
 			});
 
 			if (response.ok) {
-				setTimeout(async () => {
-					const signInData = await signIn("credentials", {
-						email: email,
-						password: password,
-						redirect: false,
-					});
-
-					if (signInData?.error === null) {
-						console.log("ok");
-					}
-				}, 1000);
+				await signIn("credentials", {
+					// Timeout removed
+					email: email,
+					password: password,
+					redirect: false,
+				});
 			} else {
 				const data = await response.json(); // Something?
-				console.log(data);
-
 				setPasswordIsInvalid({ message: "erro tal", bool: true });
 			}
 		} catch (e: any) {

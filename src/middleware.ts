@@ -13,6 +13,9 @@ export default async function middleware(req: NextRequest) {
 			return NextResponse.redirect(new URL("/login", req.url));
 		}
 	} else {
+		if (session.username && url.pathname.includes("/finish")) {
+			return NextResponse.redirect(new URL("/", req.url));
+		}
 		if (
 			url.pathname.includes("/login") ||
 			url.pathname.includes("/signup")

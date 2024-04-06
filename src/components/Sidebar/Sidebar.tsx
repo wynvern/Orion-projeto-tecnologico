@@ -4,7 +4,7 @@ import {
 	MagnifyingGlassIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import { Image } from "@nextui-org/react";
+import { Image, Link } from "@nextui-org/react";
 import ProfileDropdown from "../extra/ProfileDropdown";
 
 export default function Sidebar() {
@@ -16,7 +16,9 @@ export default function Sidebar() {
 			<div className="gap-y-12 flex flex-col">
 				<MagnifyingGlassIcon className="h-8" />
 				<BookmarkIcon className="h-8" />
-				<UserGroupIcon className="h-8" />
+				<Link href="/groups" className="text-white">
+					<UserGroupIcon className="h-8" />
+				</Link>
 				<ProfileDropdown />
 			</div>
 			<div>

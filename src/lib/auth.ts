@@ -72,6 +72,7 @@ export const authOptions: NextAuthOptions = {
 				token.fullName = user.fullName;
 				// Add username to the token
 				token.username = user.username;
+				token.id = user.id;
 			}
 
 			if (trigger === "update") {
@@ -85,6 +86,7 @@ export const authOptions: NextAuthOptions = {
 				// Transfer custom params from token to user in session
 				session.user.role = token.role;
 				session.user.fullName = token.fullName as string;
+				session.user.id = token.id as string;
 				// Transfer username to the session
 				session.user.username = token.username as string;
 			}

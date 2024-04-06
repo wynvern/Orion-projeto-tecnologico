@@ -1,25 +1,63 @@
 "use client";
 
 import exportURL from "@/lib/baseUrl";
-import { Button, Input, Link } from "@nextui-org/react";
+import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline";
+import { Button, Input, Link, Image } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 export default function Login() {
+	const [loading, setLoading] = useState(false);
+	const [inputEmailVal, setInputEmailVal] = useState({
+		message: "",
+		active: false,
+	});
+	const [inputPasswordVal, setInputPasswordVal] = useState({
+		message: "",
+		active: false,
+	});
+
 	async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
 		const formData = new FormData(e.currentTarget);
 
-		console.log("doing login");
+		const formEmail: string = formData.get("email") as string;
+		const formPassword: string = formData.get("password") as string;
 
-		await signIn("credentials", {
+		if (formEmail === "") {
+			setInputEmailVal({
+				message: "Email não pode estar vazio.",
+				active: true,
+			});
+			setLoading(false);
+			return false;
+		}
+
+		if (formPassword === "") {
+			setInputPasswordVal({
+				message: "Senha não pode estar vazia.",
+				active: true,
+			});
+			setLoading(false);
+			return false;
+		}
+
+		const signInResult: any = await signIn("credentials", {
 			email: formData.get("email"),
 			password: formData.get("password"),
 			redirect: false,
 		});
+
+		if (signInResult.error == "password-not-match") {
+			setInputPasswordVal({
+				message: "Senha incorreta.",
+				active: true,
+			});
+			setLoading(false);
+		}
 	}
 
-	console.log(exportURL());
 	function signInGoogle() {
 		signIn("google", { callbackUrl: process.env.BASE_URL });
 	}
@@ -36,13 +74,35 @@ export default function Login() {
 						name="password"
 					></Input>
 
-					<Button type="submit" color="primary">
+					<Button
+						type="submit"
+						color="primary"
+						isLoading={loading}
+						startContent={
+							loading ? (
+								""
+							) : (
+								<ArrowLeftEndOnRectangleIcon className="h-6" />
+							)
+						}
+					>
 						Entrar
 					</Button>
 				</form>
 				<div className="flex flex-col gap-y-6">
 					<p className="text-center">Ou</p>
-					<Button onClick={signInGoogle}>Entrar com o Google</Button>
+					<Button
+						onClick={signInGoogle}
+						startContent={
+							<Image
+								width="20"
+								style={{ filter: "invert()" }}
+								src="/google-logo.svg"
+							/>
+						}
+					>
+						Entrar com o Google
+					</Button>
 				</div>
 				<div>
 					<p className="text-center">

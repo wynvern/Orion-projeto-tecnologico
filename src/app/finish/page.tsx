@@ -1,5 +1,6 @@
 "use client";
 
+import { UserIcon } from "@heroicons/react/24/solid";
 import { Button, Input } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -9,16 +10,29 @@ export default function Finish() {
 	const { update } = useSession();
 	const router = useRouter();
 	const [inputValidation, setInputValidation] = useState({
-		message: "Erro desconhecido.",
-		validated: false,
+		message: "",
+		active: false,
 	});
+	const [isLoading, setIsLoading] = useState(false);
 
 	async function handleFinish(e: React.FormEvent<HTMLFormElement>) {
+		setIsLoading(true);
 		e.preventDefault();
 
 		const formData = new FormData(e.currentTarget);
+		const formName: string = formData.get("name") as string;
+
+		if (formName === "" || formName.length < 3) {
+			setInputValidation({
+				message: "Nome de usuário não aceito.",
+				active: true,
+			});
+			setIsLoading(false);
+			return false;
+		}
 
 		handleFinishPost(formData.get("name") as string);
+		setIsLoading(false);
 	}
 
 	async function handleFinishPost(name: string) {
@@ -40,7 +54,13 @@ export default function Finish() {
 				router.push("/");
 			} else {
 				const data = await response.json(); // Something?
-				console.log(data.type);
+
+				if (data.message == "username-in-use") {
+					setInputValidation({
+						message: "Este nome de usuário já está em uso.",
+						active: true,
+					});
+				}
 			}
 		} catch (e: any) {
 			console.error("Error:", e.message);
@@ -51,22 +71,30 @@ export default function Finish() {
 		<div className="flex w-full h-full items-center justify-center">
 			<div className="flex flex-col gap-y-6 w-[400px]">
 				<h1>Conclua sua Conta</h1>
+				<p>Escolha um nome para o seu perfil.</p>
+				<br />
 				<form className="gap-y-6 flex flex-col" onSubmit={handleFinish}>
 					<Input
-						label="Nome de usuário"
+						placeholder="Nome de usuário"
 						type="text"
 						name="name"
-						isInvalid={inputValidation.validated}
+						isInvalid={inputValidation.active}
 						errorMessage={inputValidation.message}
+						classNames={{ inputWrapper: "h-14" }}
+						startContent={
+							<>
+								<UserIcon className="h-6 text-neutral-500" />
+							</>
+						}
 						onValueChange={(e) => {
 							setInputValidation({
-								validated: false,
+								active: false,
 								message: "",
 							});
 						}}
 					></Input>
 
-					<Button type="submit" color="primary">
+					<Button type="submit" color="primary" isLoading={isLoading}>
 						Confirmar
 					</Button>
 				</form>

@@ -1,14 +1,44 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { Image } from "@nextui-org/react";
 import {
 	EllipsisHorizontalIcon,
 	PencilIcon,
 } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
-export default function UserPage({ params }: { params: { username: string } }) {
-	const session = useSession();
+export default function GroupPage({ params }: { params: { name: string } }) {
+	const [group, setGroup] = useState({
+		groupname: "",
+		name: "",
+		image: "",
+		description: "",
+	});
+
+	async function fetchgroup() {
+		try {
+			const response = await fetch(
+				`/api/query/group?name=${params.name}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			if (response.ok) {
+				const data = await response.json();
+				setGroup(data.groups[0]);
+			}
+		} catch (e: any) {
+			console.error("Error:", e.message); //mudar
+		}
+	}
+
+	useEffect(() => {
+		fetchgroup();
+	}, []);
 
 	return (
 		<div className="w-full h-full flex items-center justify-center">
@@ -16,7 +46,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				<div>
 					<Image
 						draggable={false}
-						src="https://i.imgur.com/rZavvMA.png"
+						src={group.image ?? "/brand/default-group.svg"}
 						className="h-[400px] w-auto object-cover"
 					/>
 				</div>
@@ -25,9 +55,8 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						<div className="flex justify-between">
 							<div>
 								<div className="flex items-center gap-x-4">
-									<div className="bg-emerald-400 h-7 w-7 rounded-2xl mt-1"></div>
 									<div className="flex items-end gap-x-2">
-										<h1>username</h1>
+										<h1>{group.name}</h1>
 										<PencilIcon className="h-6"></PencilIcon>
 									</div>
 								</div>
@@ -36,16 +65,9 @@ export default function UserPage({ params }: { params: { username: string } }) {
 								<EllipsisHorizontalIcon className="h-10"></EllipsisHorizontalIcon>
 							</div>
 						</div>
-						<div className="ml-11 mt-2">
-							<p>@name</p>
-						</div>
 						<div>
 							<p className="max-w-[400px] mt-4">
-								Lorem, ipsum dolor sit amet consectetur
-								adipisicing elit. Architecto nam ipsam enim
-								obcaecati, repellat vero doloribus molestias
-								perspiciatis nesciunt reprehenderit ducimus
-								nobis aliquam impedit illum debitis.
+								{group.description}
 							</p>
 						</div>
 					</div>
@@ -54,10 +76,10 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							<b>Posts </b>0
 						</p>
 						<p>
-							<b>Salvos </b>0
+							<b>Participantes </b>0
 						</p>
 						<p>
-							<b>Grupos </b>0
+							<b>Visualizações </b>0
 						</p>
 					</div>
 				</div>

@@ -20,8 +20,6 @@ export default function ProfileDropdown() {
 	const router = useRouter();
 	const session = useSession();
 
-	console.log(session);
-
 	return (
 		<>
 			<Dropdown placement="right" className="dark">
@@ -30,9 +28,8 @@ export default function ProfileDropdown() {
 						<Image
 							alt="default"
 							src={
-								session.data != undefined
-									? session.data.user.image
-									: "/brand/default-user.svg"
+								session.data?.user.image ??
+								"/brand/default-user.svg"
 							}
 							classNames={{ img: "h-8 rounded-full" }}
 							removeWrapper={true}
@@ -55,7 +52,9 @@ export default function ProfileDropdown() {
 						description="Veja o seu perfil"
 						className="border-radius-sys"
 						startContent={<UserIcon className="h-8" />}
-						onClick={() => router.push("/u/")}
+						onClick={() =>
+							router.push(`/u/${session.data?.user.username}`)
+						}
 					>
 						Perfil
 					</DropdownItem>

@@ -1,18 +1,19 @@
-// twinny!
-
+import { removePasswordFields } from "@/lib/api";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export const POST = async (req: Request) => {
+export const GET = async (req: Request) => {
+	const url = new URL(req.url);
+
 	try {
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
 			return NextResponse.json(
 				{
-					user: null,
+					Group: null,
 					message: "Not authorized",
 					type: "Missing authorization",
 				},
@@ -20,36 +21,39 @@ export const POST = async (req: Request) => {
 			);
 		}
 
-		const body = await req.json();
-		const { username } = body;
+		const name = url.searchParams.get("name");
 
-		const existingUser = await db.user.findFirst({
-			where: {
-				username,
-			},
-		});
-
-		if (existingUser) {
+		if (!name) {
 			return NextResponse.json(
 				{
-					user: null,
-					message: "username-in-use",
+					message: "name-not-provided",
 				},
-				{ status: 409 }
+				{ status: 400 }
 			);
 		}
 
-		await db.user.update({
-			where: { email: session.user.email ?? "" },
-			data: { username },
+		const groupsFetched = await db.group.findMany({
+			where: {
+				name: { contains: name },
+			},
 		});
+		if (!groupsFetched) {
+			return NextResponse.json(
+				{
+					message: "Group-not-found",
+				},
+				{ status: 404 }
+			);
+		}
 
 		return NextResponse.json(
-			{ message: "User finished succsessfully", newName: username },
-			{ status: 201 }
+			{
+				groups: groupsFetched,
+				message: "Group retreived succsessfully",
+			},
+			{ status: 200 }
 		);
 	} catch (e) {
-		console.error(e);
 		return Response.json(
 			{ message: "Someting went wrong..." },
 			{ status: 500 }
