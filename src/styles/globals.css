@@ -19,3 +19,12 @@ h1 {
 	font-weight: 700;
 	line-height: 40px;
 }
+
+.hide-button-hover:hover .hidden-button {
+	visibility: visible;
+}
+
+.hidden-button {
+	visibility: hidden;
+	transition: visibility 300ms ease-in-out;
+}

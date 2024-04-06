@@ -2,7 +2,6 @@
 
 import {
 	ArrowLeftEndOnRectangleIcon,
-	Cog6ToothIcon,
 	InformationCircleIcon,
 	UserIcon,
 } from "@heroicons/react/24/outline";
@@ -29,7 +28,6 @@ export default function ProfileDropdown() {
 				<DropdownTrigger>
 					<div className="h-8 w-8">
 						<Image
-							alt="default"
 							src={
 								session.data?.user.image ??
 								"/brand/default-user.svg"
@@ -41,13 +39,12 @@ export default function ProfileDropdown() {
 				</DropdownTrigger>
 				<DropdownMenu aria-label="User Actions" variant="flat">
 					<DropdownItem
-						disableAnimation={true}
 						key="info_user"
 						className="h-14 gap-2 border-radius-sys pl-5"
 						textValue="aa"
 					>
 						<p className="font-bold">
-							<b>@username</b>
+							<b>@{session.data?.user.username}</b>
 						</p>
 					</DropdownItem>
 					<DropdownItem

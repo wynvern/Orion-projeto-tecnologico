@@ -1,4 +1,7 @@
-import { PlusIcon } from "@heroicons/react/24/outline";
+import {
+	ArrowLeftStartOnRectangleIcon,
+	PlusIcon,
+} from "@heroicons/react/24/outline";
 import {
 	Button,
 	Modal,
@@ -23,15 +26,11 @@ export default function SignOut({ isActive, setIsActive }: SignOutProps) {
 		signOut();
 	}
 
-	async function SignOut() {
-		console.log("criando post");
-	}
-
 	return (
 		<Modal
-			size="3xl"
+			size="md"
 			isOpen={isActive}
-			className="dark"
+			className="dark py-4"
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
@@ -42,18 +41,28 @@ export default function SignOut({ isActive, setIsActive }: SignOutProps) {
 						<ModalHeader className="flex flex-col gap-1 pt-1">
 							Sair
 						</ModalHeader>
-						<ModalBody className="py-6"></ModalBody>
+						<ModalBody className="py-2 ">
+							Ao sair, você perderá o acesso temporário. No
+							entanto, seus dados permanecerão seguros e você
+							poderá efetuar login novamente a qualquer momento.
+						</ModalBody>
 						<ModalFooter className="flex justify-between">
 							<Button
-								color="primary"
+								color="danger"
 								onClick={() => {
 									handleSignOut();
 								}}
 								style={{ lineHeight: "1.5" }}
 								isLoading={loading}
+								startContent={
+									loading ? (
+										""
+									) : (
+										<ArrowLeftStartOnRectangleIcon className="h-6" />
+									)
+								}
 							>
 								Sair
-								<PlusIcon className="h-1/2" />
 							</Button>
 						</ModalFooter>
 					</>

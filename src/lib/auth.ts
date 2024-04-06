@@ -73,10 +73,20 @@ export const authOptions: NextAuthOptions = {
 				// Add username to the token
 				token.username = user.username;
 				token.id = user.id;
+				token.image = user.image;
+				token.banner = user.banner;
 			}
 
 			if (trigger === "update") {
-				token.username = session.username;
+				if (session.username) {
+					token.username = session.username;
+				}
+				if (session.image) {
+					token.image = session.image;
+				}
+				if (session.banner) {
+					token.banner = session.banner;
+				}
 			}
 
 			return token;
@@ -89,6 +99,8 @@ export const authOptions: NextAuthOptions = {
 				session.user.id = token.id as string;
 				// Transfer username to the session
 				session.user.username = token.username as string;
+				session.user.image = token.image as string;
+				session.user.banner = token.banner as string;
 			}
 
 			return session;

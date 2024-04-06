@@ -82,7 +82,6 @@ export default function CreateGroup({
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data);
 			} else {
 				const data = await response.json();
 				if (data.message == "name-already-in-use") {
