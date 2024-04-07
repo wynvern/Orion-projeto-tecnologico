@@ -23,7 +23,7 @@ export default function RootLayout({
 			<SessionProvider>
 				{!notVisibleSidebarPages.includes(pathname) && <Sidebar />}
 				<div
-					className={`w-full h-full ${
+					className={`w-full h-full dark text-foreground bg-background ${
 						!notVisibleSidebarPages.includes(pathname) && "pl-20"
 					}`}
 				>

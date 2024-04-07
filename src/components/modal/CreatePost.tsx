@@ -27,7 +27,7 @@ export default function CreatePost({ isActive, setIsActive }: CreatePostProps) {
 		<Modal
 			size="3xl"
 			isOpen={isActive}
-			className="dark"
+			className="dark py-4"
 			onOpenChange={() => {
 				setIsActive(false);
 				setWordCount(0);

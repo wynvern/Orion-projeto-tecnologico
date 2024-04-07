@@ -1,7 +1,7 @@
 "use client";
 
-import { UserIcon } from "@heroicons/react/24/solid";
-import { Button, Input } from "@nextui-org/react";
+import { ArrowLongRightIcon, UserIcon } from "@heroicons/react/24/solid";
+import { Button, Input, Link, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -49,9 +49,12 @@ export default function Finish() {
 
 			if (response.ok) {
 				const data = await response.json();
-				update({ username: data.newName });
 
-				router.push("/");
+				update({ username: data.newName });
+				console.log(update);
+				const myTimeout = setTimeout(() => {
+					router.push("/");
+				}, 200);
 			} else {
 				const data = await response.json(); // Something?
 
@@ -69,9 +72,11 @@ export default function Finish() {
 
 	return (
 		<div className="flex w-full h-full items-center justify-center">
-			<div className="flex flex-col gap-y-6 w-[400px]">
-				<h1>Conclua sua Conta</h1>
-				<p>Escolha um nome para o seu perfil.</p>
+			<div className="flex flex-col w-[400px]">
+				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
+					<Image src="/brand/logo.svg" className="h-16" />
+					<h2>Escolha um nome para o seu perfil</h2>
+				</div>
 				<br />
 				<form className="gap-y-6 flex flex-col" onSubmit={handleFinish}>
 					<Input
@@ -96,6 +101,11 @@ export default function Finish() {
 
 					<Button type="submit" color="primary" isLoading={isLoading}>
 						Confirmar
+						{isLoading ? (
+							""
+						) : (
+							<ArrowLongRightIcon className="h-6" />
+						)}
 					</Button>
 				</form>
 			</div>

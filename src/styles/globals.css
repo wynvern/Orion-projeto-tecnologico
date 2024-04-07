@@ -20,6 +20,12 @@ h1 {
 	line-height: 40px;
 }
 
+h2 {
+	font-size: 2em;
+	font-weight: 700;
+	line-height: 40px;
+}
+
 .hide-button-hover:hover .hidden-button {
 	visibility: visible;
 }
