@@ -16,6 +16,7 @@ export default function RootLayout({
 		"/signup",
 		"/finish",
 		"/forgot-password",
+		"/new-password",
 	];
 
 	return (

@@ -4,7 +4,7 @@ import { ArrowLongRightIcon, UserIcon } from "@heroicons/react/24/solid";
 import { Button, Input, Link, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Finish() {
 	const { update } = useSession();
@@ -14,6 +14,13 @@ export default function Finish() {
 		active: false,
 	});
 	const [isLoading, setIsLoading] = useState(false);
+	const session = useSession();
+
+	useEffect(() => {
+		if (session.data?.user.username) {
+			router.push("/");
+		}
+	}, [session]);
 
 	async function handleFinish(e: React.FormEvent<HTMLFormElement>) {
 		setIsLoading(true);
@@ -49,12 +56,7 @@ export default function Finish() {
 
 			if (response.ok) {
 				const data = await response.json();
-
 				update({ username: data.newName });
-				console.log(update);
-				const myTimeout = setTimeout(() => {
-					router.push("/");
-				}, 200);
 			} else {
 				const data = await response.json(); // Something?
 

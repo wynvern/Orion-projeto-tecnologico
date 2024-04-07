@@ -1,23 +1,24 @@
 "use client";
 
-import exportURL from "@/lib/baseUrl";
 import {
-	ArrowLeftEndOnRectangleIcon,
+	CheckIcon,
 	EnvelopeIcon,
-	KeyIcon,
 	PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Input, Link, Image } from "@nextui-org/react";
+import { Button, Input, Image } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function Login() {
+export default function ForgotPassword() {
 	const [loading, setLoading] = useState(false);
 	const [inputEmailVal, setInputEmailVal] = useState({
 		message: "",
 		active: false,
 	});
-	async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+	const [emailSent, setEmailSent] = useState(false);
+
+	async function handleForgotPassword(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
 		const formData = new FormData(e.currentTarget);
@@ -32,11 +33,40 @@ export default function Login() {
 			return false;
 		}
 
-		const signInResult: any = await signIn("credentials", {
-			email: formData.get("email"),
-			password: formData.get("password"),
-			redirect: false,
-		});
+		try {
+			const response = await fetch("/api/auth/forgot-password", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email: formEmail,
+				}),
+			});
+
+			if (response.ok) {
+				setEmailSent(true);
+				setTimeout(() => {
+					setEmailSent(false);
+				}, 5000);
+
+				setInputEmailVal({
+					message: "",
+					active: false,
+				});
+			} else {
+				const data = await response.json();
+
+				if (data.message == "request-already-pending") {
+					setInputEmailVal({
+						message: "Um código já foi enviado para esse email.",
+						active: true,
+					});
+				}
+			}
+		} catch (e) {
+			console.error(e);
+		}
 
 		setLoading(false);
 	}
@@ -48,7 +78,10 @@ export default function Login() {
 					<Image src="/brand/logo.svg" className="h-16" />
 					<h1>Recuperar Conta</h1>
 				</div>
-				<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
+				<form
+					className="gap-y-6 flex flex-col"
+					onSubmit={handleForgotPassword}
+				>
 					<Input
 						placeholder="Email"
 						type="email"
@@ -69,10 +102,16 @@ export default function Login() {
 
 					<Button
 						type="submit"
-						color="primary"
+						color={emailSent ? "success" : "primary"}
 						isLoading={loading}
 						startContent={
-							loading ? "" : <PaperAirplaneIcon className="h-6" />
+							loading ? (
+								""
+							) : emailSent ? (
+								<CheckIcon className="h-6" />
+							) : (
+								<PaperAirplaneIcon className="h-6" />
+							)
 						}
 					>
 						Enviar

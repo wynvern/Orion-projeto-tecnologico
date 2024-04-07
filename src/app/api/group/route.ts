@@ -1,13 +1,12 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { hash } from "bcrypt";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
 	try {
 		const body = await req.json();
-		const { name, description } = body;
+		const { name, description, categories, logo, banner, groupName } = body;
 
 		const session = await getServerSession(authOptions);
 
@@ -20,7 +19,7 @@ export const POST = async (req: Request) => {
 			);
 		}
 
-		if (!name || !description) {
+		if (!name || !description || !categories) {
 			return NextResponse.json(
 				{
 					message: "missing-required-data",
@@ -45,11 +44,45 @@ export const POST = async (req: Request) => {
 		const ownerId = session.user.id;
 
 		const newGroup = await db.group.create({
-			data: { name, description, ownerId },
+			data: { name, description, ownerId, categories, groupName },
 		});
 
+		if (banner !== undefined || logo !== undefined) {
+			const dataToUpdate: any = {};
+			if (banner !== undefined) dataToUpdate.banner = banner;
+			if (logo !== undefined) dataToUpdate.logo = logo;
+
+			const groupProfilePictures = await db.groupProfilePics.upsert({
+				where: { groupId: newGroup.id },
+				update: dataToUpdate,
+				create: {
+					groupId: newGroup.id,
+					...(logo !== undefined && { logo }),
+					...(banner !== undefined && { banner }),
+				},
+			});
+		}
+
+		const bannerUrl = `${process.env.NEXTAUTH_URL}/api/group/banner/${newGroup.id}`;
+		const logoUrl = `${process.env.NEXTAUTH_URL}/api/group/logo/${newGroup.id}`;
+
+		const dataToUpdate: any = {};
+
+		if (banner !== undefined) {
+			dataToUpdate.banner = bannerUrl;
+		}
+		if (logo !== undefined) {
+			dataToUpdate.logo = logoUrl;
+		}
+		if (banner || logo) {
+			await db.group.update({
+				where: { id: newGroup.id },
+				data: dataToUpdate,
+			});
+		}
+
 		return NextResponse.json(
-			{ newGroup, message: "User created succsessfully" },
+			{ newGroup, message: "Group created succsessfully" },
 			{ status: 200 }
 		);
 	} catch (e) {

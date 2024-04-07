@@ -27,10 +27,10 @@ h2 {
 }
 
 .hide-button-hover:hover .hidden-button {
-	visibility: visible;
+	opacity: 1;
 }
 
 .hidden-button {
-	visibility: hidden;
-	transition: visibility 300ms ease-in-out;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
 }

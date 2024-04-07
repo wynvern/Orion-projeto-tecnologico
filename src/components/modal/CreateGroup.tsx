@@ -1,8 +1,11 @@
+import getFileBase64 from "@/util/getFile";
 import {
 	AtSymbolIcon,
+	CubeIcon,
 	PencilIcon,
 	PlusIcon,
 	TrashIcon,
+	UserGroupIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -18,6 +21,7 @@ import {
 	Autocomplete,
 	AutocompleteItem,
 } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface CreateGroupProps {
@@ -29,7 +33,6 @@ export default function CreateGroup({
 	isActive,
 	setIsActive,
 }: CreateGroupProps) {
-	const [wordCount, setWordCount] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [inputNameVal, setInputNameVal] = useState({
 		message: "",
@@ -39,15 +42,20 @@ export default function CreateGroup({
 		message: "",
 		active: false,
 	});
+	const [categoriesVal, setCategoriesVal] = useState({
+		message: "",
+		active: false,
+	});
+	const router = useRouter();
 
 	const [inputCategory, setInputCategory] = useState("");
-	const [categories, setCategories] = useState([]);
+	const [categories, setCategories]: any = useState([]);
 
 	function handleCategoryInput(e: string) {
 		const inputValue: string = e;
 		if (inputValue.includes(" ") && categories.length < 5) {
 			const trimmedValue = inputValue.trim();
-			if (trimmedValue.length > 0) {
+			if (trimmedValue.length > 0 && !categories.includes(trimmedValue)) {
 				setCategories([...categories, trimmedValue]);
 				setInputCategory("");
 			}
@@ -63,8 +71,15 @@ export default function CreateGroup({
 		const formData = new FormData(e.currentTarget);
 		const formDesc: string = formData.get("description") as string;
 		const formName: string = formData.get("name") as string;
+		const groupName: string = formData.get("groupname") as string; // TODO: have some validation for groupName
 
-		if (formName === "" || formName.length < 2 || formName.length > 20) {
+		if (
+			// TODO: Validate to not permit different characters
+			formName === "" ||
+			formName.length < 2 ||
+			formName.length > 20 ||
+			formName.includes(" ")
+		) {
 			setInputNameVal({
 				message: "Nome de grupo não aceito.",
 				active: true,
@@ -82,13 +97,29 @@ export default function CreateGroup({
 			return false;
 		}
 
+		if (categories.length < 1) {
+			setCategoriesVal({
+				message: "Escolha ao menos uma categoria.",
+				active: true,
+			});
+			setLoading(false);
+			return false;
+		}
+
 		CreateGroup(
 			formData.get("name") as string,
-			formData.get("description") as string
+			formData.get("description") as string,
+			categories,
+			groupName
 		);
 	}
 
-	async function CreateGroup(name: string, description: string) {
+	async function CreateGroup(
+		name: string,
+		description: string,
+		selectedCategories: any,
+		grouName: string
+	) {
 		try {
 			const response = await fetch("/api/group", {
 				method: "POST",
@@ -98,13 +129,20 @@ export default function CreateGroup({
 				body: JSON.stringify({
 					name,
 					description,
+					categories: selectedCategories,
+					logo: logo.base64,
+					banner: banner.base64,
+					grouName,
 				}),
 			});
 
 			if (response.ok) {
 				const data = await response.json();
+				router.push(`/g/${data.newGroup.name}`); // TODO: see if this works
 			} else {
 				const data = await response.json();
+				console.log(data);
+
 				if (data.message == "name-already-in-use") {
 					setInputNameVal({
 						message: "Nome de grupo já está em uso.",
@@ -119,71 +157,21 @@ export default function CreateGroup({
 		}
 	}
 
-	// Image Avatar Handling
+	const [logo, setLogo] = useState({ base64: "", preview: "" });
 
-	const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-	const [avatarFile, setAvatarFile] = useState<File | null>(null);
-	const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(
-		null
-	);
+	async function handleLogoUpload() {
+		const data = await getFileBase64(["png"]);
 
-	function triggerAvatarUpdate() {
-		if (fileInputRef) {
-			fileInputRef.click();
-		}
+		setLogo(data);
 	}
 
-	async function updateAvatar() {
-		if (!avatarFile) return;
-		// Upload the avatar itself to the POST
+	const [banner, setBanner] = useState({ base64: "", preview: "" });
+
+	async function handleBannerUpload() {
+		const data = await getFileBase64(["png"]);
+
+		setBanner(data);
 	}
-
-	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files.length > 0) {
-			const file = e.target.files[0];
-			setAvatarFile(file);
-			setAvatarPreview(URL.createObjectURL(file));
-		}
-	};
-
-	const convertToBase64 = (file: File): Promise<string> => {
-		return new Promise((resolve, reject) => {
-			const fileReader = new FileReader();
-			fileReader.readAsDataURL(file);
-			fileReader.onload = () => {
-				resolve((fileReader.result as string).split(",")[1]);
-			};
-			fileReader.onerror = (error) => {
-				reject(error);
-			};
-		});
-	};
-
-	// Banner Image Handling
-
-	const [bannerPreview, setBannerPreview] = useState<string | null>(null);
-	const [bannerFile, setBannerFile] = useState<File | null>(null);
-	const [bannerInputRef, setBannerInputRef] =
-		useState<HTMLInputElement | null>(null);
-
-	function triggerBannerUpdate() {
-		if (bannerInputRef) {
-			bannerInputRef.click();
-		}
-	}
-
-	async function updateBanner() {
-		if (!bannerFile) return;
-		// Upload image banner to POST
-	}
-
-	const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files.length > 0) {
-			const file = e.target.files[0];
-			setBannerFile(file);
-			setBannerPreview(URL.createObjectURL(file));
-		}
-	};
 
 	return (
 		<Modal
@@ -192,7 +180,6 @@ export default function CreateGroup({
 			className="dark py-4"
 			onOpenChange={() => {
 				setIsActive(false);
-				setWordCount(0);
 			}}
 		>
 			<ModalContent>
@@ -207,12 +194,15 @@ export default function CreateGroup({
 									<div className="h-40 w-40 absolute rounded-xl z-50 hide-button-hover">
 										<Image
 											className="h-40 w-40 absolute rounded-xl "
-											src={avatarPreview || ""}
+											src={
+												logo.preview ||
+												"/brand/default-group.svg"
+											}
 											removeWrapper={true}
 										></Image>
 										<div className="flex gap-x-2 w-full h-full items-center justify-center hidden-button">
 											<Button
-												onClick={triggerAvatarUpdate}
+												onClick={handleLogoUpload}
 												className="flex z-10"
 												isIconOnly={true}
 												color="primary"
@@ -227,15 +217,15 @@ export default function CreateGroup({
 											</Button>
 										</div>
 									</div>
-									<div className="w-full h-40 bg-default-100 rounded-xl  hide-button-hover">
+									<div className="w-full h-40 bg-default-100 rounded-xl hide-button-hover">
 										<Image
 											className="h-40 w-full absolute rounded-xl object-cover"
-											src={bannerPreview || ""}
+											src={banner.preview || ""}
 											removeWrapper={true}
 										></Image>
 										<div className="flex gap-x-2 w-full h-full items-center justify-center hidden-button">
 											<Button
-												onClick={triggerBannerUpdate}
+												onClick={handleBannerUpload}
 												className="flex z-10"
 												isIconOnly={true}
 												color="primary"
@@ -254,6 +244,7 @@ export default function CreateGroup({
 								<Input
 									type="text"
 									placeholder="Nome"
+									aria-label="nome"
 									name="name"
 									classNames={{ inputWrapper: "h-14" }}
 									startContent={
@@ -268,14 +259,33 @@ export default function CreateGroup({
 										});
 									}}
 								></Input>
-								<Autocomplete
-									label="Selecione categorias"
+								<Input
+									type="text"
+									placeholder="Título do Grupo"
+									aria-label="nome"
+									name="groupname"
+									classNames={{ inputWrapper: "h-14" }}
+									startContent={
+										<UserGroupIcon className="h-6 text-neutral-500" />
+									}
+								></Input>
+								<Autocomplete // TODO: Have same height as the other inputs
+									placeholder="Selecione categorias"
 									className="dark"
-									onInputChange={(e) => {
-										handleCategoryInput(e + " ");
+									errorMessage={categoriesVal.message}
+									isInvalid={categoriesVal.active}
+									startContent={
+										<CubeIcon className="h-6 text-neutral-500" />
+									}
+									onSelectionChange={(e) => {
+										setCategoriesVal({
+											message: "",
+											active: false,
+										});
+										if (e) handleCategoryInput(e + " ");
 									}}
 									classNames={{
-										base: "dark",
+										base: "dark ",
 										clearButton: "dark",
 										endContentWrapper: "dark",
 										listbox: "dark",
@@ -285,218 +295,236 @@ export default function CreateGroup({
 									}}
 								>
 									<AutocompleteItem
-										key={1}
+										key={"portugues"}
 										value={"portugues"}
 									>
 										Português
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={2}
+										key={"matematica"}
 										value={"matematica"}
 									>
 										Matemática
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={3}
+										key={"historia"}
 										value={"historia"}
 									>
 										História
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={4}
+										key={"geografia"}
 										value={"geografia"}
 									>
 										Geografia
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={5}
+										key={"ciencias"}
 										value={"ciencias"}
 									>
 										Ciências
 									</AutocompleteItem>
-									<AutocompleteItem key={6} value={"artes"}>
+									<AutocompleteItem
+										key={"artes"}
+										value={"artes"}
+									>
 										Artes
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={7}
+										key={"educacaofisica"}
 										value={"educacaofisica"}
 									>
 										Educação Física
 									</AutocompleteItem>
-									<AutocompleteItem key={8} value={"ingles"}>
+									<AutocompleteItem
+										key={"ingles"}
+										value={"ingles"}
+									>
 										Inglês
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={9}
+										key={"filosofia"}
 										value={"filosofia"}
 									>
 										Filosofia
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={10}
+										key={"sociologia"}
 										value={"sociologia"}
 									>
 										Sociologia
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={11}
+										key={"quimica"}
 										value={"quimica"}
 									>
 										Química
 									</AutocompleteItem>
-									<AutocompleteItem key={12} value={"fisica"}>
+									<AutocompleteItem
+										key={"fisica"}
+										value={"fisica"}
+									>
 										Física
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={13}
+										key={"biologia"}
 										value={"biologia"}
 									>
 										Biologia
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={14}
+										key={"informatica"}
 										value={"informatica"}
 									>
 										Informática
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={15}
+										key={"espanhol"}
 										value={"espanhol"}
 									>
 										Espanhol
 									</AutocompleteItem>
-									<AutocompleteItem key={16} value={"musica"}>
+									<AutocompleteItem
+										key={"musica"}
+										value={"musica"}
+									>
 										Música
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={17}
+										key={"literatura"}
 										value={"literatura"}
 									>
 										Literatura
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={18}
+										key={"redacao"}
 										value={"redacao"}
 									>
 										Redação
 									</AutocompleteItem>
-									<AutocompleteItem key={19} value={"outros"}>
+									<AutocompleteItem
+										key={"outros"}
+										value={"outros"}
+									>
 										Outros
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={20}
+										key={"informatica"}
 										value={"informatica"}
 									>
 										Informática
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={21}
+										key={"eletrotecnica"}
 										value={"eletrotecnica"}
 									>
 										Eletrotécnica
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={22}
+										key={"mecanica"}
 										value={"mecanica"}
 									>
 										Mecânica
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={23}
+										key={"eletricidade"}
 										value={"eletricidade"}
 									>
 										Eletricidade
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={24}
+										key={"eletronica"}
 										value={"eletronica"}
 									>
 										Eletrônica
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={25}
+										key={"automacao"}
 										value={"automacao"}
 									>
 										Automação
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={26}
+										key={"telecomunicacoes"}
 										value={"telecomunicacoes"}
 									>
 										Telecomunicações
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={27}
+										key={"construcaocivil"}
 										value={"construcaocivil"}
 									>
 										Construção Civil
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={28}
+										key={"desenhotecnico"}
 										value={"desenhotecnico"}
 									>
 										Desenho Técnico
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={29}
+										key={"multimidia"}
 										value={"multimidia"}
 									>
 										Multimídia
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={30}
+										key={"contabilidade"}
 										value={"contabilidade"}
 									>
 										Contabilidade
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={31}
+										key={"administracao"}
 										value={"administracao"}
 									>
 										Administração
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={32}
+										key={"logistica"}
 										value={"logistica"}
 									>
 										Logística
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={33}
+										key={"redescomputadores"}
 										value={"redescomputadores"}
 									>
 										Redes de Computadores
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={34}
+										key={"manutencaoinformatica"}
 										value={"manutencaoinformatica"}
 									>
 										Manutenção de Informática
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={35}
+										key={"desenvolvimento"}
 										value={"desenvolvimento"}
 									>
 										Desenvolvimento de Sistemas
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={36}
+										key={"agroindustria"}
 										value={"agroindustria"}
 									>
 										Agroindústria
 									</AutocompleteItem>
 									<AutocompleteItem
-										key={37}
+										key={"meioambiente"}
 										value={"meioambiente"}
 									>
 										Meio Ambiente
 									</AutocompleteItem>
-									<AutocompleteItem key={38} value={"outros"}>
+									<AutocompleteItem
+										key={"outros"}
+										value={"outros"}
+									>
 										Outros
 									</AutocompleteItem>
 								</Autocomplete>
-								<div className="flex flex-row gap-x-4">
-									{categories.map((i, index) => {
+								<div className="flex flex-row gap-x-4 w-full overflow-x-auto">
+									{categories.map((i: any, index: any) => {
 										return (
 											<>
 												<div
@@ -506,7 +534,7 @@ export default function CreateGroup({
 													<p className="text-sky-300	text-sm flex items-center gap-x-2 pl-2">
 														{i}
 														<button
-															className="bg-sky-800 rounded-full p-[3px]"
+															className="bg-primary brightness-50 rounded-full p-[3px]"
 															onClick={() => {
 																const newCategories =
 																	categories;
@@ -566,23 +594,6 @@ export default function CreateGroup({
 					</>
 				)}
 			</ModalContent>
-
-			<input
-				id="avatar-upload"
-				type="file"
-				accept="image/*"
-				className="hidden"
-				onChange={handleAvatarChange}
-				ref={(ref) => setFileInputRef(ref)}
-			/>
-			<input
-				id="avatar-upload"
-				type="file"
-				accept="image/*"
-				className="hidden"
-				onChange={handleBannerChange}
-				ref={(ref) => setBannerInputRef(ref)}
-			/>
 		</Modal>
 	);
 }

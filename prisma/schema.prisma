@@ -25,6 +25,7 @@ model User {
   sessions     Session[]
   ownedGroups  Group[]    @relation("GroupOwner")
   userProfilePictures UserProfilePictures?
+  viewed GroupView[]
 
   @@map("users")
 }
@@ -86,15 +87,45 @@ model InGroups {
 
 model Group {
   id          String    @id @default(cuid())
-  name        String
+  name        String @unique
+  groupName String?
   description String?
   members     InGroups[]
   posts       Post[]
   owner       User      @relation("GroupOwner", fields: [ownerId], references: [id])
   ownerId     String
+  categories  String[]     @default([])
+  banner String?
+  logo String?
+  groupProfilePics GroupProfilePics?
+  groupViews        GroupView[]
 
   @@map("groups")
 }
+
+model GroupView {
+  id                String    @id @default(cuid())
+  viewedAt          DateTime  @default(now())
+
+  // Define relation to Group model
+  group             Group     @relation(fields: [groupId], references: [id])
+  groupId           String
+
+  // Define relation to User model (optional, if you want to track which user viewed the group)
+  viewer            User?     @relation(fields: [viewerId], references: [id])
+  viewerId          String?
+}
+
+model GroupProfilePics {
+  id        String  @id @default(cuid())
+  groupId    String  @unique
+  group      Group    @relation(fields: [groupId], references: [id])
+  logo    String?
+  banner    String?
+
+  @@map("group_profile_pics")
+}
+
 
 // Bullshit
 
