@@ -93,7 +93,7 @@ export const PATCH = async (
 			create: { groupId: id, banner },
 		});
 
-		const bannerUrl = `${process.env.NEXTAUTH_URL}/api/group/banner/${id}`;
+		const bannerUrl = `${process.env.NEXTAUTH_URL}/api/group/${id}/banner`;
 
 		await db.group.update({
 			where: { id },

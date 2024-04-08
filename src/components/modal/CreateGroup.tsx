@@ -21,8 +21,14 @@ import {
 	Autocomplete,
 	AutocompleteItem,
 } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface Category {
+	label: string;
+	value: string;
+}
 
 interface CreateGroupProps {
 	isActive: boolean;
@@ -50,6 +56,24 @@ export default function CreateGroup({
 
 	const [inputCategory, setInputCategory] = useState("");
 	const [categories, setCategories]: any = useState([]);
+	const [categoriesServer, setCategoriesServer] = useState([]);
+
+	async function fetchCategories() {
+		try {
+			const response = await fetch("/api/categories");
+
+			if (response.ok) {
+				const data = await response.json();
+				setCategoriesServer(data);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	useEffect(() => {
+		fetchCategories();
+	}, []);
 
 	function handleCategoryInput(e: string) {
 		const inputValue: string = e;
@@ -173,6 +197,7 @@ export default function CreateGroup({
 		setBanner(data);
 	}
 
+	// TODO: Change icons accordingly
 	return (
 		<Modal
 			size="3xl"
@@ -294,234 +319,14 @@ export default function CreateGroup({
 										selectorButton: "dark",
 									}}
 								>
-									<AutocompleteItem
-										key={"portugues"}
-										value={"portugues"}
-									>
-										Português
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"matematica"}
-										value={"matematica"}
-									>
-										Matemática
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"historia"}
-										value={"historia"}
-									>
-										História
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"geografia"}
-										value={"geografia"}
-									>
-										Geografia
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"ciencias"}
-										value={"ciencias"}
-									>
-										Ciências
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"artes"}
-										value={"artes"}
-									>
-										Artes
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"educacaofisica"}
-										value={"educacaofisica"}
-									>
-										Educação Física
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"ingles"}
-										value={"ingles"}
-									>
-										Inglês
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"filosofia"}
-										value={"filosofia"}
-									>
-										Filosofia
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"sociologia"}
-										value={"sociologia"}
-									>
-										Sociologia
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"quimica"}
-										value={"quimica"}
-									>
-										Química
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"fisica"}
-										value={"fisica"}
-									>
-										Física
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"biologia"}
-										value={"biologia"}
-									>
-										Biologia
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"informatica"}
-										value={"informatica"}
-									>
-										Informática
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"espanhol"}
-										value={"espanhol"}
-									>
-										Espanhol
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"musica"}
-										value={"musica"}
-									>
-										Música
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"literatura"}
-										value={"literatura"}
-									>
-										Literatura
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"redacao"}
-										value={"redacao"}
-									>
-										Redação
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"outros"}
-										value={"outros"}
-									>
-										Outros
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"informatica"}
-										value={"informatica"}
-									>
-										Informática
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"eletrotecnica"}
-										value={"eletrotecnica"}
-									>
-										Eletrotécnica
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"mecanica"}
-										value={"mecanica"}
-									>
-										Mecânica
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"eletricidade"}
-										value={"eletricidade"}
-									>
-										Eletricidade
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"eletronica"}
-										value={"eletronica"}
-									>
-										Eletrônica
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"automacao"}
-										value={"automacao"}
-									>
-										Automação
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"telecomunicacoes"}
-										value={"telecomunicacoes"}
-									>
-										Telecomunicações
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"construcaocivil"}
-										value={"construcaocivil"}
-									>
-										Construção Civil
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"desenhotecnico"}
-										value={"desenhotecnico"}
-									>
-										Desenho Técnico
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"multimidia"}
-										value={"multimidia"}
-									>
-										Multimídia
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"contabilidade"}
-										value={"contabilidade"}
-									>
-										Contabilidade
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"administracao"}
-										value={"administracao"}
-									>
-										Administração
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"logistica"}
-										value={"logistica"}
-									>
-										Logística
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"redescomputadores"}
-										value={"redescomputadores"}
-									>
-										Redes de Computadores
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"manutencaoinformatica"}
-										value={"manutencaoinformatica"}
-									>
-										Manutenção de Informática
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"desenvolvimento"}
-										value={"desenvolvimento"}
-									>
-										Desenvolvimento de Sistemas
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"agroindustria"}
-										value={"agroindustria"}
-									>
-										Agroindústria
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"meioambiente"}
-										value={"meioambiente"}
-									>
-										Meio Ambiente
-									</AutocompleteItem>
-									<AutocompleteItem
-										key={"outros"}
-										value={"outros"}
-									>
-										Outros
-									</AutocompleteItem>
+									{categoriesServer.map((i: Category) => (
+										<AutocompleteItem
+											key={i.value}
+											value={i.value}
+										>
+											{i.label}
+										</AutocompleteItem>
+									))}
 								</Autocomplete>
 								<div className="flex flex-row gap-x-4 w-full overflow-x-auto">
 									{categories.map((i: any, index: any) => {
@@ -559,7 +364,10 @@ export default function CreateGroup({
 									type="text"
 									placeholder="Descrição"
 									name="description"
-									classNames={{ inputWrapper: "h-14" }}
+									classNames={{
+										innerWrapper: "py-2",
+										input: "py-1",
+									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />
 									}

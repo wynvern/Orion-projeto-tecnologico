@@ -1,0 +1,187 @@
+[
+	{
+		"label": "Português",
+		"value": "portugues",
+		"description": "Estudo da língua portuguesa, incluindo gramática, literatura, produção textual e análise literária."
+	},
+	{
+		"label": "Matemática",
+		"value": "matematica",
+		"description": "Disciplina que abrange álgebra, geometria, cálculo, estatística e outras áreas da matemática."
+	},
+	{
+		"label": "História",
+		"value": "historia",
+		"description": "Estudo dos eventos e processos históricos, abrangendo diferentes civilizações, períodos e regiões."
+	},
+	{
+		"label": "Geografia",
+		"value": "geografia",
+		"description": "Estudo dos aspectos físicos e humanos do planeta, incluindo geografia física, humana, regional e cartografia."
+	},
+	{
+		"label": "Ciências",
+		"value": "ciencias",
+		"description": "Disciplina que engloba diversas áreas científicas, como biologia, física, química e ciências da Terra."
+	},
+	{
+		"label": "Artes",
+		"value": "artes",
+		"description": "Exploração de várias formas de expressão artística, como artes visuais, música, dança e teatro."
+	},
+	{
+		"label": "Educação Física",
+		"value": "educacaofisica",
+		"description": "Disciplina que aborda atividades físicas, esportes, saúde e bem-estar."
+	},
+	{
+		"label": "Inglês",
+		"value": "ingles",
+		"description": "Estudo da língua inglesa, incluindo gramática, vocabulário, conversação e compreensão escrita e auditiva."
+	},
+	{
+		"label": "Filosofia",
+		"value": "filosofia",
+		"description": "Estudo dos conceitos fundamentais da existência humana, ética, lógica e pensamento crítico."
+	},
+	{
+		"label": "Sociologia",
+		"value": "sociologia",
+		"description": "Disciplina que estuda os padrões de comportamento e interação social dentro de grupos e sociedades."
+	},
+	{
+		"label": "Química",
+		"value": "quimica",
+		"description": "Estudo da composição, estrutura, propriedades e transformações da matéria."
+	},
+	{
+		"label": "Física",
+		"value": "fisica",
+		"description": "Ciência que estuda as leis e propriedades fundamentais da natureza, como mecânica, eletromagnetismo e termodinâmica."
+	},
+	{
+		"label": "Biologia",
+		"value": "biologia",
+		"description": "Disciplina que aborda o estudo dos seres vivos, suas estruturas, funções, crescimento e interações."
+	},
+	{
+		"label": "Informática",
+		"value": "informatica",
+		"description": "Área que envolve o estudo e aplicação da computação, programação, sistemas de informação e tecnologias digitais."
+	},
+	{
+		"label": "Espanhol",
+		"value": "espanhol",
+		"description": "Estudo da língua espanhola, incluindo gramática, vocabulário, conversação e compreensão escrita e auditiva."
+	},
+	{
+		"label": "Música",
+		"value": "musica",
+		"description": "Exploração de diversos aspectos da música, como teoria musical, instrumentos, composição e apreciação."
+	},
+	{
+		"label": "Literatura",
+		"value": "literatura",
+		"description": "Estudo de obras literárias, incluindo análise, interpretação e contextualização histórica e cultural."
+	},
+	{
+		"label": "Redação",
+		"value": "redacao",
+		"description": "Disciplina que aborda técnicas de escrita, estruturação de textos, coesão e coerência textual."
+	},
+	{
+		"label": "Outros",
+		"value": "outros",
+		"description": "Categoria abrangente para áreas de estudo não especificadas nas outras opções."
+	},
+	{
+		"label": "Informática",
+		"value": "informatica",
+		"description": "Área que envolve o estudo e aplicação da computação, programação, sistemas de informação e tecnologias digitais."
+	},
+	{
+		"label": "Eletrotécnica",
+		"value": "eletrotecnica",
+		"description": "Disciplina que aborda os princípios e aplicações da eletricidade, incluindo circuitos elétricos, máquinas elétricas e controle."
+	},
+	{
+		"label": "Mecânica",
+		"value": "mecanica",
+		"description": "Estudo dos princípios físicos e aplicações relacionados ao movimento e às forças em sistemas mecânicos."
+	},
+	{
+		"label": "Eletricidade",
+		"value": "eletricidade",
+		"description": "Disciplina que explora os conceitos fundamentais da eletricidade, como corrente elétrica, tensão e circuitos."
+	},
+	{
+		"label": "Eletrônica",
+		"value": "eletronica",
+		"description": "Área que abrange o estudo e aplicação de dispositivos e circuitos eletrônicos, como amplificadores, microcontroladores e sistemas digitais."
+	},
+	{
+		"label": "Automação",
+		"value": "automacao",
+		"description": "Disciplina que envolve o controle e monitoramento automático de processos industriais e sistemas integrados."
+	},
+	{
+		"label": "Telecomunicações",
+		"value": "telecomunicacoes",
+		"description": "Área que lida com a transmissão de informações através de redes de comunicação, incluindo telefonia, internet e sistemas de comunicação sem fio."
+	},
+	{
+		"label": "Construção Civil",
+		"value": "construcaocivil",
+		"description": "Disciplina que abrange o planejamento, projeto e execução de obras civis, como edifícios, pontes e infraestrutura."
+	},
+	{
+		"label": "Desenho Técnico",
+		"value": "desenhotecnico",
+		"description": "Área que envolve a criação e interpretação de desenhos técnicos, utilizados em engenharia, arquitetura e manufatura."
+	},
+	{
+		"label": "Multimídia",
+		"value": "multimidia",
+		"description": "Disciplina que combina diferentes formas de mídia, como texto, imagem, áudio e vídeo, para criar conteúdo interativo."
+	},
+	{
+		"label": "Contabilidade",
+		"value": "contabilidade",
+		"description": "Área que lida com o registro, análise e comunicação de informações financeiras e de negócios."
+	},
+	{
+		"label": "Administração",
+		"value": "administracao",
+		"description": "Disciplina que aborda os princípios e práticas de gestão de organizações, recursos humanos e operações."
+	},
+	{
+		"label": "Logística",
+		"value": "logistica",
+		"description": "Área que envolve o planejamento, implementação e controle do fluxo eficiente de produtos, serviços e informações."
+	},
+	{
+		"label": "Redes de Computadores",
+		"value": "redescomputadores",
+		"description": "Disciplina que estuda os conceitos e tecnologias relacionados à comunicação e compartilhamento de recursos entre computadores."
+	},
+	{
+		"label": "Manutenção de Informática",
+		"value": "manutencaoinformatica",
+		"description": "Área que abrange a instalação, configuração, solução de problemas e manutenção de hardware e software de computadores."
+	},
+	{
+		"label": "Desenvolvimento de Sistemas",
+		"value": "desenvolvimento",
+		"description": "Disciplina que envolve a análise, projeto, implementação e teste de sistemas de software para atender a requisitos específicos."
+	},
+	{
+		"label": "Agroindústria",
+		"value": "agroindustria",
+		"description": "Área que combina a produção agrícola com processos industriais de transformação e comercialização de produtos agropecuários."
+	},
+	{
+		"label": "Meio Ambiente",
+		"value": "meioambiente",
+		"description": "Disciplina que estuda os sistemas naturais, os impactos humanos e as soluções para a conservação ambiental e o desenvolvimento sustentável."
+	}
+]

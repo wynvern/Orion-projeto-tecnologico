@@ -63,8 +63,8 @@ export const POST = async (req: Request) => {
 			});
 		}
 
-		const bannerUrl = `${process.env.NEXTAUTH_URL}/api/group/banner/${newGroup.id}`;
-		const logoUrl = `${process.env.NEXTAUTH_URL}/api/group/logo/${newGroup.id}`;
+		const bannerUrl = `${process.env.NEXTAUTH_URL}/api/group/${newGroup.id}/banner`;
+		const logoUrl = `${process.env.NEXTAUTH_URL}/api/group/${newGroup.id}/logo`;
 
 		const dataToUpdate: any = {};
 

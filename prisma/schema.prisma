@@ -82,6 +82,7 @@ model InGroups {
   group   Group  @relation(fields: [groupId], references: [id])
   groupId String
 
+  @@unique([groupId, userId])
   @@map("in_groups")
 }
 
@@ -107,13 +108,13 @@ model GroupView {
   id                String    @id @default(cuid())
   viewedAt          DateTime  @default(now())
 
-  // Define relation to Group model
   group             Group     @relation(fields: [groupId], references: [id])
   groupId           String
+  viewer            User     @relation(fields: [viewerId], references: [id])
+  viewerId          String
 
-  // Define relation to User model (optional, if you want to track which user viewed the group)
-  viewer            User?     @relation(fields: [viewerId], references: [id])
-  viewerId          String?
+  @@unique([groupId, viewerId])
+  @@map("group_views")
 }
 
 model GroupProfilePics {
@@ -125,6 +126,8 @@ model GroupProfilePics {
 
   @@map("group_profile_pics")
 }
+
+
 
 
 // Bullshit

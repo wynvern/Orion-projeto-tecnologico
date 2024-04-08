@@ -23,11 +23,13 @@ import { useState } from "react";
 interface CustomizeProfileProps {
 	isActive: boolean;
 	setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+	profile: any;
 }
 
 export default function CustomizeProfile({
 	isActive,
 	setIsActive,
+	profile,
 }: CustomizeProfileProps) {
 	const [loading, setLoading] = useState(false);
 	const [inputNameVal, setInputNameVal] = useState({
@@ -47,6 +49,7 @@ export default function CustomizeProfile({
 		setLoading(true);
 		const formData = new FormData(e.currentTarget);
 		const formName: string = formData.get("name") as string;
+		const formBio: string = formData.get("bio") as string;
 
 		if (formName.length > 30) {
 			setInputNameVal({
@@ -57,12 +60,12 @@ export default function CustomizeProfile({
 			return false;
 		}
 
-		CustomizeProfile(formData.get("name") as string);
+		CustomizeProfile(formName, formBio);
 		updateAvatar();
 		updateBanner();
 	}
 
-	async function CustomizeProfile(name: string) {
+	async function CustomizeProfile(name: string, bio: string) {
 		try {
 			const response = await fetch("/api/user", {
 				method: "PATCH",
@@ -71,6 +74,7 @@ export default function CustomizeProfile({
 				},
 				body: JSON.stringify({
 					name,
+					bio: bio,
 				}),
 			});
 
@@ -84,6 +88,7 @@ export default function CustomizeProfile({
 		}
 	}
 
+	// TODO: TAG:Important use new function and remove all this repetitive code
 	// Image Avatar Handling
 
 	const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -274,12 +279,16 @@ export default function CustomizeProfile({
 											active: false,
 										});
 									}}
+									defaultValue={profile.name}
 								></Input>
 								<Textarea
 									type="text"
 									placeholder="Biografia"
 									name="bio"
-									classNames={{ inputWrapper: "h-14" }}
+									classNames={{
+										innerWrapper: "py-2",
+										input: "py-1",
+									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />
 									}
@@ -291,6 +300,7 @@ export default function CustomizeProfile({
 											active: false,
 										});
 									}}
+									defaultValue={profile.bio}
 								></Textarea>
 							</ModalBody>
 							<ModalFooter className="flex justify-between py-0">
@@ -308,8 +318,8 @@ export default function CustomizeProfile({
 									}
 								>
 									Salvar
-								</Button>
-							</ModalFooter>
+								</Button>{" "}
+							</ModalFooter>{" "}
 						</form>
 					</>
 				)}

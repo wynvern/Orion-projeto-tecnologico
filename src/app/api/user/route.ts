@@ -1,5 +1,7 @@
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { hash } from "bcrypt";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
@@ -55,6 +57,48 @@ export const POST = async (req: Request) => {
 				email,
 				name,
 				password: hashedPassword,
+			},
+		});
+
+		return NextResponse.json(
+			{ message: "User created succsessfully" },
+			{ status: 201 }
+		);
+	} catch (e) {
+		console.error(e);
+		return Response.json(
+			{ message: "Someting went wrong..." },
+			{ status: 500 }
+		);
+	}
+};
+
+export const PATCH = async (req: Request) => {
+	try {
+		const session = await getServerSession(authOptions);
+
+		if (!session) {
+			return NextResponse.json(
+				{ message: "Not authorized", type: "Missing authorization" },
+				{ status: 401 }
+			);
+		}
+
+		const body = await req.json();
+		const { name, bio } = body;
+
+		if (!name && !bio) {
+			return NextResponse.json(
+				{ message: "cannot-do-anything" },
+				{ status: 400 }
+			);
+		}
+
+		await db.user.update({
+			where: { id: session.user.id },
+			data: {
+				name,
+				bio,
 			},
 		});
 

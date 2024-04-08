@@ -101,7 +101,7 @@ export const PATCH = async (req: Request) => {
 			return Response.json({ message: "invalid-code" }, { status: 400 });
 		}
 
-		const { email } = codeData;
+		const email = codeData[1].email;
 		const hashedPassword = await hash(newPassword, 10);
 		await db.user.update({
 			where: { email },

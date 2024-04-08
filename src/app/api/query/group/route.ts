@@ -22,22 +22,69 @@ export const GET = async (req: Request) => {
 		}
 
 		const name = url.searchParams.get("name");
+		const recents = url.searchParams.get("recents");
 
-		if (!name) {
+		if (recents) {
+			const recentGroups = await db.groupView.findMany({
+				where: { viewerId: session.user.id },
+				orderBy: { viewedAt: "desc" },
+				include: { group: true },
+			});
+
+			const groups = recentGroups.map((recentGroup) => recentGroup.group);
+
+			const groupsWithViews = await Promise.all(
+				groups.map(async (group) => {
+					const uniqueViewsCount = await db.groupView.count({
+						where: { groupId: group.id },
+					});
+					return { ...group, views: uniqueViewsCount }; // Add the views field to each group
+				})
+			);
+
+			const groupsWithParticipants = await Promise.all(
+				groupsWithViews.map(async (group) => {
+					const uniqueViewsCount = await db.inGroups.count({
+						where: { groupId: group.id },
+					});
+					return { ...group, participants: uniqueViewsCount }; // Add the participants field to each group
+				})
+			);
+
 			return NextResponse.json(
 				{
-					message: "name-not-provided",
+					groups: groupsWithParticipants,
+					message: "recent groups retreived succsessfully",
 				},
-				{ status: 400 }
+				{ status: 200 }
 			);
 		}
 
-		const groupsFetched = await db.group.findMany({
-			where: {
-				name: { contains: name },
-			},
-		});
-		if (!groupsFetched) {
+		const whereSearch: any = {};
+
+		if (name) whereSearch["where"] = { name };
+
+		const groups = await db.group.findMany(whereSearch);
+
+		const groupsWithViews = await Promise.all(
+			groups.map(async (group) => {
+				const uniqueViewsCount = await db.groupView.count({
+					where: { groupId: group.id },
+				});
+				return { ...group, views: uniqueViewsCount }; // Add the views field to each group
+			})
+		);
+
+		const groupsWithParticipants = await Promise.all(
+			groupsWithViews.map(async (group) => {
+				const uniqueViewsCount = await db.inGroups.count({
+					where: { groupId: group.id },
+				});
+				return { ...group, participants: uniqueViewsCount }; // Add the participants field to each group
+			})
+		);
+
+		if (!groupsWithParticipants) {
 			return NextResponse.json(
 				{
 					message: "Group-not-found",
@@ -48,7 +95,7 @@ export const GET = async (req: Request) => {
 
 		return NextResponse.json(
 			{
-				groups: groupsFetched,
+				groups: groupsWithParticipants,
 				message: "Group retreived succsessfully",
 			},
 			{ status: 200 }
