@@ -93,24 +93,31 @@ export const PATCH = async (req: Request) => {
 		console.log("code:", code); // Log the code value
 
 		// Find the code data using Object.entries()
-		const codeData = Object.entries(activeCodes).find(
-			([key, value]) => value.code === code
+		const codeEntry = Object.entries(activeCodes).find(
+			([_, value]) => value.code === code
 		);
 
-		if (!codeData) {
+		if (!codeEntry) {
 			return Response.json({ message: "invalid-code" }, { status: 400 });
 		}
 
-		const email = codeData[1].email;
+		const { email, expiry } = codeEntry[1];
+		const currentTime = new Date().getTime();
+
+		if (expiry < currentTime) {
+			return Response.json({ message: "code-expired" }, { status: 400 });
+		}
+
 		const hashedPassword = await hash(newPassword, 10);
 		await db.user.update({
 			where: { email },
 			data: { password: hashedPassword },
 		});
 
-		delete activeCodes[email];
-
-		return Response.json({ message: "request-created" }, { status: 200 });
+		return Response.json(
+			{ message: "request-successful" },
+			{ status: 200 }
+		);
 	} catch (e) {
 		console.error(e);
 		return Response.json(

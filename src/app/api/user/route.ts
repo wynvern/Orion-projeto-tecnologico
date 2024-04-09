@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export const POST = async (req: Request) => {
 	try {
 		const body = await req.json();
-		const { email, name, password } = body;
+		const { email, password } = body;
 
 		const existingEmail = await db.user.findUnique({
 			where: {
@@ -35,27 +35,10 @@ export const POST = async (req: Request) => {
 			);
 		}
 
-		const existingname = await db.user.findFirst({
-			where: {
-				name: name,
-			},
-		});
-
-		if (existingname) {
-			return NextResponse.json(
-				{
-					user: null,
-					message: "name-in-use",
-				},
-				{ status: 409 }
-			);
-		}
-
 		const hashedPassword = await hash(password, 10);
 		await db.user.create({
 			data: {
 				email,
-				name,
 				password: hashedPassword,
 			},
 		});

@@ -20,12 +20,14 @@ export default function UserCard({ user }: { user: any }) {
 	}
 
 	useEffect(() => {
-		if (imagesLoaded == 2) onLoad(); // 2 is the amount of components in wait for load
+		if (imagesLoaded == 0) onLoad(); // 2 is the amount of components in wait for load
 	}, [imagesLoaded]);
 
 	function onLoad() {
 		setLoading(false);
 	}
+
+	console.log(user);
 
 	return (
 		<div className="w-full h-full flex items-center justify-center">
@@ -54,7 +56,11 @@ export default function UserCard({ user }: { user: any }) {
 					<Image
 						className="absolute w-[700px] h-[400px] rounded-large right-0"
 						src={user.banner}
-						style={{ objectFit: "cover", opacity: "0.5" }}
+						style={{
+							objectFit: "cover",
+							opacity: "0.5",
+							visibility: user.banner ? "visible" : "hidden",
+						}}
 						removeWrapper={true}
 						onLoad={handleComponentLoaded}
 					></Image>
@@ -62,7 +68,7 @@ export default function UserCard({ user }: { user: any }) {
 						<Image
 							draggable={false}
 							src={user.image ?? "/brand/default-user.svg"}
-							className="h-[400px] w-[400px] object-cover"
+							className="h-[400px] w-[400px] object-cover z-50"
 							onLoad={handleComponentLoaded}
 						/>
 					</div>
@@ -82,13 +88,13 @@ export default function UserCard({ user }: { user: any }) {
 												}}
 											>
 												<div className="flex items-end gap-x-2">
-													<h1>{user.name}</h1>
+													<h1>@{user.username}</h1>
 													<PencilIcon className="h-6"></PencilIcon>
 												</div>
 											</Link>
 										) : (
 											<div className="flex items-end gap-x-2">
-												<h1>{user.name}</h1>
+												<h1>@{user.username}</h1>
 											</div>
 										)}
 									</div>
@@ -98,7 +104,7 @@ export default function UserCard({ user }: { user: any }) {
 								</div>
 							</div>
 							<div className="ml-11 mt-2">
-								<p>@{user.username}</p>
+								<p>{user.name}</p>
 							</div>
 							<div>
 								<p className="max-w-[400px] mt-4">{user.bio}</p>

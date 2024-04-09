@@ -215,7 +215,7 @@ export default function CustomizeProfile({
 											src={
 												avatarPreview ||
 												session.data?.user.image ||
-												""
+												"/brand/default-user.svg"
 											}
 											removeWrapper={true}
 										></Image>

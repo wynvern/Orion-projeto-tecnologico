@@ -1,13 +1,6 @@
 "use client";
 
-import { Image, Link } from "@nextui-org/react";
-import {
-	EllipsisHorizontalIcon,
-	PencilIcon,
-} from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import CustomizeProfile from "@/components/modal/CustomizeProfile";
-import { useSession } from "next-auth/react";
 import UserCard from "@/components/Cards/UserCard";
 
 export default function UserPage({ params }: { params: { username: string } }) {
@@ -34,11 +27,12 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			if (response.ok) {
 				const data = await response.json();
 				const fetchedUser = data.users[0];
+				const updatedImage =
+					fetchedUser.image && fetchedUser.image.includes("=s96-c")
+						? fetchedUser.image.replace("=s96-c", "=s1000-c")
+						: fetchedUser.image;
 
-				const updatedImage = fetchedUser.image.replace(
-					"=s96-c",
-					"=s1000-c"
-				);
+				console.log(fetchUser);
 				setUser({ ...fetchedUser, image: updatedImage });
 			}
 		} catch (e: any) {

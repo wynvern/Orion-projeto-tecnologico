@@ -91,7 +91,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 					""
 				)}
 				<div className="loader-container fixed">
-					<Spinner />
+					<Spinner size="lg" />
 				</div>
 			</div>
 			<div className="fixed z-50 bottom-0 right-0 pr-12 pb-12">

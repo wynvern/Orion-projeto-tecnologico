@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckIcon } from "@heroicons/react/24/outline";
 import { ArrowLongRightIcon, UserIcon } from "@heroicons/react/24/solid";
 import { Button, Input, Link, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
@@ -15,6 +16,12 @@ export default function Finish() {
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const session = useSession();
+	const [success, setSuccess] = useState(false);
+
+	function isValidString(str: string) {
+		const regex = /^[a-z._]+$/;
+		return regex.test(str);
+	}
 
 	useEffect(() => {
 		if (session.data?.user.username) {
@@ -31,7 +38,36 @@ export default function Finish() {
 
 		if (formName === "" || formName.length < 3) {
 			setInputValidation({
-				message: "Nome de usuário não aceito.",
+				message: "O nome de usuário é obrigatório.",
+				active: true,
+			});
+			setIsLoading(false);
+			return false;
+		}
+
+		if (formName.length < 3) {
+			setInputValidation({
+				message: "O nome de usuário precisa ter 3 caracteres ou mais.",
+				active: true,
+			});
+			setIsLoading(false);
+			return false;
+		}
+
+		if (formName.length > 20) {
+			setInputValidation({
+				message:
+					"O nome de usuário pode ter somente até 20 caracteres.",
+				active: true,
+			});
+			setIsLoading(false);
+			return false;
+		}
+
+		if (!isValidString(formName)) {
+			setInputValidation({
+				message:
+					"O nome de usuário pode ter somente letras pontos e underscore.",
 				active: true,
 			});
 			setIsLoading(false);
@@ -56,9 +92,10 @@ export default function Finish() {
 
 			if (response.ok) {
 				const data = await response.json();
+				setSuccess(true);
 				update({ username: data.newName });
 			} else {
-				const data = await response.json(); // Something?
+				const data = await response.json();
 
 				if (data.message == "username-in-use") {
 					setInputValidation({
@@ -76,8 +113,10 @@ export default function Finish() {
 		<div className="flex w-full h-full items-center justify-center">
 			<div className="flex flex-col w-[400px]">
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
-					<Image src="/brand/logo.svg" className="h-16" />
-					<h2>Escolha um nome para o seu perfil</h2>
+					<Image src="/brand/logo.svg" className="h-16 w-16" />
+					<h2 className="w-[280px]">
+						Escolha um nome para o seu perfil
+					</h2>
 				</div>
 				<br />
 				<form className="gap-y-6 flex flex-col" onSubmit={handleFinish}>
@@ -101,10 +140,16 @@ export default function Finish() {
 						}}
 					></Input>
 
-					<Button type="submit" color="primary" isLoading={isLoading}>
+					<Button
+						type="submit"
+						color={success ? "success" : "primary"}
+						isLoading={isLoading}
+					>
 						Confirmar
 						{isLoading ? (
 							""
+						) : success ? (
+							<CheckIcon className="h-6" />
 						) : (
 							<ArrowLongRightIcon className="h-6" />
 						)}

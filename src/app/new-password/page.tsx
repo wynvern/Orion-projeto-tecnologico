@@ -79,11 +79,6 @@ export default function UpdatePassword() {
 				setTimeout(() => {
 					setEmailSent(false);
 				}, 5000);
-
-				setInputPasswordval({
-					message: "",
-					active: false,
-				});
 			} else {
 				const data = await response.json();
 

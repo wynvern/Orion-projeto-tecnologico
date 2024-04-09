@@ -7,64 +7,81 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Input, Link, Image } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignUp() {
-	const [emailIsInvalid, setEmailIsInvalid] = useState({
-		bool: false,
-		message: "",
-	});
-	const [passwordIsInvalid, setPasswordIsInvalid] = useState({
-		bool: false,
-		message: "",
-	});
 	const [loadingGoogle, setLoadingGoogle] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [inputError, setInputError] = useState({
+		email: "",
+		password: "",
+	});
+	const [viewPassword, setViewPassword] = useState(false);
+	const router = useRouter();
+
+	function validateInputs(email: string, password: string) {
+		let valid = true;
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+		// Check if email is empty
+		if (!email) {
+			setInputError({
+				...inputError,
+				email: "O email não pode estar vazio.",
+			});
+			valid = false;
+		}
+		// Check if email is valid
+		else if (!emailRegex.test(email)) {
+			setInputError({ ...inputError, email: "Email inválido." });
+			valid = false;
+		}
+
+		// Check if password is empty
+		if (!password) {
+			setInputError({
+				...inputError,
+				password: "A senha não pode estar vazia.",
+			});
+			valid = false;
+		}
+		// Check if password length is less than 8
+		else if (password.length < 8) {
+			setInputError({
+				...inputError,
+				password: "A senha deve ter no mínimo 8 caracteres.",
+			});
+			valid = false;
+		}
+
+		return valid;
+	}
 
 	async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
 
 		const formData = new FormData(e.currentTarget);
-		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
+		const email = formData.get("email") as string;
 
-		// Reset validation states
-		setEmailIsInvalid({ bool: false, message: "" });
-		setPasswordIsInvalid({ bool: false, message: "" });
-
-		// Basic frontend validation
-		if (!email.trim()) {
-			setEmailIsInvalid({ bool: true, message: "Email é obrigatório." });
+		if (!validateInputs(email, password)) {
 			setLoading(false);
-			return;
-		}
-
-		if (!password.trim()) {
-			setPasswordIsInvalid({
-				bool: true,
-				message: "Senha é obrigatória.",
-			});
-			setLoading(false);
-			return;
+			return false;
 		}
 
 		signUpHandler(
-			formData.get("name") as string,
 			formData.get("password") as string,
 			formData.get("email") as string
 		);
 	}
 
 	function signInGoogle() {
-		signIn("google", { callbackUrl: `${process.env.BASE_URL}` });
+		signIn("google", { callbackUrl: `${process.env.NEXTAUTH_URL}` });
 	}
 
-	async function signUpHandler(
-		name: string,
-		password: string,
-		email: string
-	) {
+	async function signUpHandler(password: string, email: string) {
 		try {
 			const response = await fetch("/api/user", {
 				method: "POST",
@@ -72,7 +89,6 @@ export default function SignUp() {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					name,
 					email,
 					password,
 				}),
@@ -80,31 +96,23 @@ export default function SignUp() {
 
 			if (response.ok) {
 				await signIn("credentials", {
-					// Timeout removed
 					email: email,
 					password: password,
 					redirect: false,
 				});
+				router.push("/finish");
 			} else {
-				const data = await response.json(); // Something?
-				console.log(data);
+				const data = await response.json();
 
 				if (data.message == "email-in-use") {
-					setEmailIsInvalid({
-						bool: true,
-						message: "Email já está em uso.",
-					});
-				}
-
-				if (data.message == "weak-password") {
-					setPasswordIsInvalid({
-						bool: true,
-						message: "Senha deve conter 8 caracteres ou mais.",
+					setInputError({
+						...inputError,
+						email: "Este email já está em uso.",
 					});
 				}
 			}
 		} catch (e: any) {
-			console.error("Error:", e.message); //mudar
+			console.error("Error:", e.message);
 		} finally {
 			setLoading(false);
 		}
@@ -120,36 +128,30 @@ export default function SignUp() {
 				<form className="gap-y-6 flex flex-col" onSubmit={handleSignUp}>
 					<Input
 						placeholder="Email"
-						type="email"
+						type="text"
 						name="email"
-						isInvalid={emailIsInvalid.bool}
-						errorMessage={emailIsInvalid.message}
+						isInvalid={Boolean(inputError.email)}
+						errorMessage={inputError.email}
 						classNames={{ inputWrapper: "h-14" }}
 						startContent={
 							<EnvelopeIcon className="h-6 text-neutral-500" />
 						}
 						onValueChange={() => {
-							setEmailIsInvalid({
-								message: "",
-								bool: false,
-							});
+							setInputError({ ...inputError, email: "" });
 						}}
 					></Input>
 					<Input
 						placeholder="Senha"
 						type="password"
 						name="password"
-						isInvalid={passwordIsInvalid.bool}
-						errorMessage={passwordIsInvalid.message}
+						isInvalid={Boolean(inputError.password)}
+						errorMessage={inputError.password}
 						classNames={{ inputWrapper: "h-14" }}
 						startContent={
 							<KeyIcon className="h-6 text-neutral-500" />
 						}
 						onValueChange={() => {
-							setPasswordIsInvalid({
-								message: "",
-								bool: false,
-							});
+							setInputError({ ...inputError, password: "" });
 						}}
 					></Input>
 
