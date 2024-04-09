@@ -29,6 +29,7 @@ export default function Login() {
 
 		const formEmail: string = formData.get("email") as string;
 		const formPassword: string = formData.get("password") as string;
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 		if (formEmail === "") {
 			setInputEmailVal({
@@ -42,6 +43,15 @@ export default function Login() {
 		if (formPassword === "") {
 			setInputPasswordVal({
 				message: "Senha não pode estar vazia.",
+				active: true,
+			});
+			setLoading(false);
+			return false;
+		}
+
+		if (!emailRegex.test(formEmail)) {
+			setInputEmailVal({
+				message: "Email digitado é inválido.",
 				active: true,
 			});
 			setLoading(false);
@@ -85,7 +95,7 @@ export default function Login() {
 				<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
 					<Input
 						placeholder="Email"
-						type="email"
+						type="text"
 						name="email"
 						classNames={{ inputWrapper: "h-14" }}
 						startContent={

@@ -78,7 +78,7 @@ export default function SignUp() {
 	}
 
 	function signInGoogle() {
-		signIn("google", { callbackUrl: `${process.env.NEXTAUTH_URL}` });
+		signIn("google", { callbackUrl: process.env.BASE_URL });
 	}
 
 	async function signUpHandler(password: string, email: string) {
