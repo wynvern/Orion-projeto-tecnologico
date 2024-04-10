@@ -23,6 +23,7 @@ export default function PostCard({ post }: { post: any }) {
 						<Image
 							src={post.author.image}
 							className="h-8 w-8 rounded-full"
+							alt="avatar-user"
 						></Image>
 						<div className="flex gap-x-1">
 							<p>
@@ -41,7 +42,10 @@ export default function PostCard({ post }: { post: any }) {
 						</div>
 					</div>
 				</div>
-				<Link className="pl-10 relative flex flex-col items-start text-white">
+				<Link
+					className="pl-10 relative flex flex-col items-start text-white"
+					href={`/p/${post.id}`}
+				>
 					<h2 className="mt-4">
 						<b>{post.title}</b>
 					</h2>
@@ -57,6 +61,7 @@ export default function PostCard({ post }: { post: any }) {
 					<Image
 						src={post.media[0]}
 						className="h-40 w-40 object-cover"
+						alt="post-image"
 					></Image>
 					<div className="absolute bottom-2 right-2 opacity-80 z-50 bg-default-100 rounded-full w-8 h-8 flex items-center justify-center">
 						{post.media.length}

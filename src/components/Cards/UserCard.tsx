@@ -78,6 +78,7 @@ export default function UserCard({ user }: { user: any }) {
 						}}
 						removeWrapper={true}
 						onLoad={handleComponentLoaded}
+						alt="user-banner"
 					></Image>
 					<div>
 						<Image
@@ -85,6 +86,7 @@ export default function UserCard({ user }: { user: any }) {
 							src={user.image ?? "/brand/default-user.svg"}
 							className="h-[400px] w-[400px] object-cover z-50"
 							onLoad={handleComponentLoaded}
+							alt="avatar-user"
 						/>
 					</div>
 					<div className="flex-grow p-10 flex flex-col z-10 justify-between">

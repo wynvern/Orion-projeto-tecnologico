@@ -176,6 +176,7 @@ export default function CustomizeGroup({
 											}
 											removeWrapper={true}
 											className="h-40 w-40 object-cover z-50 absolute rounded-xl"
+											alt="logo-group"
 										/>
 										<div className="flex gap-x-2 w-full h-full items-center justify-center">
 											<Button
@@ -192,6 +193,7 @@ export default function CustomizeGroup({
 											className="h-40 w-full absolute rounded-xl pl-[9rem] object-cover"
 											src={banner.preview || group.banner}
 											removeWrapper={true}
+											alt="banner-group"
 										></Image>
 										<div className="flex gap-x-2 w-full h-full pl-40 items-center justify-center">
 											<Button

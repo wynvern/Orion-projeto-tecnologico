@@ -208,12 +208,12 @@ export default function CreateGroup({
 	}
 
 	async function handleLogoUpload() {
-		const data = await getFileBase64(["png"]);
+		const data = await getFileBase64(["png", "jpg", "jpeg", "webp", "svg"]);
 		setLogo(data);
 	}
 
 	async function handleBannerUpload() {
-		const data = await getFileBase64(["png"]);
+		const data = await getFileBase64(["png", "jpg", "jpeg", "webp", "svg"]);
 		setBanner(data);
 	}
 
@@ -246,6 +246,7 @@ export default function CreateGroup({
 											}
 											removeWrapper={true}
 											className="h-40 w-40 object-cover z-50 absolute rounded-xl"
+											alt="logo-group"
 										/>
 										<div className="flex gap-x-2 w-full h-full items-center justify-center">
 											<Button
@@ -262,6 +263,7 @@ export default function CreateGroup({
 											className="h-40 w-full absolute rounded-xl pl-[9rem] object-cover"
 											src={banner.preview || ""}
 											removeWrapper={true}
+											alt="banner-group"
 										></Image>
 										<div className="flex gap-x-2 w-full h-full pl-40 items-center justify-center">
 											<Button

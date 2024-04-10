@@ -209,6 +209,7 @@ export default function CreatePost({
 																		item.preview
 																	}
 																	className="h-16 w-16 object-cover"
+																	alt="item-post"
 																/>
 															</div>
 															<div>

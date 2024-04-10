@@ -44,6 +44,7 @@ export default function GroupCard({
 				style={{ objectFit: "cover", opacity: "0.5" }}
 				removeWrapper={true}
 				onLoad={handleComponentLoaded}
+				alt="banner-group"
 			></Image>
 			<div>
 				<Image
@@ -51,6 +52,7 @@ export default function GroupCard({
 					src={group.logo ?? "/brand/default-group.svg"}
 					className="h-[400px] w-[400px] object-cover"
 					onLoad={handleComponentLoaded}
+					alt="banner-group"
 				/>
 			</div>
 			<div className="flex-grow p-10 flex flex-col justify-between z-10">

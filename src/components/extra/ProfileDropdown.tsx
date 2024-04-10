@@ -35,6 +35,7 @@ export default function ProfileDropdown() {
 							}
 							classNames={{ img: "h-8 rounded-full" }}
 							removeWrapper={true}
+							alt="avatar-user"
 						></Image>
 					</div>
 				</DropdownTrigger>

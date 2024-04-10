@@ -20,7 +20,7 @@ export default function Sidebar() {
 		<div className="fixed h-screen w-20 items-center justify-between flex flex-col py-6">
 			<div>
 				<Link href="/">
-					<Image src="/brand/logo.svg" className="h-8" />
+					<Image src="/brand/logo.svg" className="h-8" alt="logo" />
 				</Link>
 			</div>
 			<div className="gap-y-12 flex flex-col">

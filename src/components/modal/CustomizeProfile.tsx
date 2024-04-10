@@ -47,6 +47,7 @@ export default function CustomizeProfile({
 	const [banner, setBanner] = useState({ base64: "", preview: "" });
 	const [avatar, setAvatar] = useState({ base64: "", preview: "" });
 	const [success, setSuccess] = useState(false);
+	const router = useRouter();
 
 	async function handleCustomizeProfile(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -71,6 +72,9 @@ export default function CustomizeProfile({
 		setLoading(false);
 		setSuccess(true);
 		setTimeout(() => setSuccess(false), 3000);
+		router.replace(
+			`/u/${session.data?.user.username}?date=${new Date().getTime()}`
+		);
 	}
 
 	async function CustomizeProfile(name: string, bio: string) {
@@ -174,6 +178,7 @@ export default function CustomizeProfile({
 											}
 											removeWrapper={true}
 											className="h-40 w-40 object-cover z-50 absolute rounded-xl"
+											alt="avatar-user"
 										/>
 										<div className="flex gap-x-2 w-full h-full items-center justify-center">
 											<Button
@@ -193,6 +198,7 @@ export default function CustomizeProfile({
 												session.data?.user.banner
 											}
 											removeWrapper={true}
+											alt="banner-user"
 										></Image>
 										<div className="flex gap-x-2 w-full h-full pl-40 items-center justify-center">
 											<Button
