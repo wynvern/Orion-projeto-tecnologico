@@ -103,7 +103,7 @@ export default function ReportUser({
 
 			if (response.ok) {
 				setSuccess(true);
-				setTimeout(() => setSuccess(false), 5000);
+				setTimeout(() => setSuccess(false), 3000);
 			} else {
 				const data = await response.json();
 
@@ -156,7 +156,7 @@ export default function ReportUser({
 									placeholder="Descrição da denúncia"
 									name="content"
 									classNames={{
-										innerWrapper: "py-2",
+										innerWrapper: "py-2 min-h-20",
 									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />

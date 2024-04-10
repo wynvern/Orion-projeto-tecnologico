@@ -19,7 +19,9 @@ export default function Sidebar() {
 	return (
 		<div className="fixed h-screen w-20 items-center justify-between flex flex-col py-6">
 			<div>
-				<Image src="/brand/logo.svg" className="h-8" />
+				<Link href="/">
+					<Image src="/brand/logo.svg" className="h-8" />
+				</Link>
 			</div>
 			<div className="gap-y-12 flex flex-col">
 				<MagnifyingGlassIcon className="h-8" />

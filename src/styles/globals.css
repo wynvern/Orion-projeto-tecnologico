@@ -48,3 +48,11 @@ h3 {
 .transition-dropdown {
 	transition: 150ms all ease-in-out;
 }
+
+img {
+	user-select: none;
+}
+
+::-webkit-scrollbar-track {
+	background-color: black;
+}

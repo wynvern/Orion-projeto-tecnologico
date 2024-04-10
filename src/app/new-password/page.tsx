@@ -78,7 +78,7 @@ export default function UpdatePassword() {
 				setEmailSent(true);
 				setTimeout(() => {
 					setEmailSent(false);
-				}, 5000);
+				}, 3000);
 			} else {
 				const data = await response.json();
 

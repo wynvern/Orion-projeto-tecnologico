@@ -66,7 +66,7 @@ export default function Groups() {
 						mais combinam com seus interesses de estudo.
 					</p>
 					<ScrollShadow
-						className="flex flex-row items-center overflow-x-hidden mt-14"
+						className="flex flex-row items-center mt-14"
 						orientation="horizontal"
 					>
 						<div>
@@ -77,7 +77,7 @@ export default function Groups() {
 								key={-1}
 								className="bg-primary rounded-large shadow-custom"
 							>
-								<div className="w-[300px] h-[350px] p-6 flex justify-between flex-col">
+								<div className="w-[300px] h-[300px] p-6 flex justify-between flex-col">
 									<div>
 										<h3>Crie o seu próprio</h3>
 										<p className="pt-4">
@@ -103,9 +103,9 @@ export default function Groups() {
 							{categoriesServer.map((i: Category, _) => (
 								<div
 									key={_}
-									className="bg-default-100 w-[300px] h-[350px] rounded-large"
+									className="bg-default-100 w-[300px] h-[300px] rounded-large"
 								>
-									<div className=" w-[300px] h-[350px] p-6 flex flex-col justify-between">
+									<div className=" w-[300px] h-[300px] p-6 flex flex-col justify-between">
 										<div>
 											<h3>{i.label}</h3>
 											<p className="pt-4">
@@ -129,7 +129,7 @@ export default function Groups() {
 					</p>
 					<ScrollShadow
 						orientation="horizontal"
-						className="flex mt-14 overflow-x-hidden "
+						className="flex mt-14 "
 					>
 						<div>
 							<div className="w-40"></div>

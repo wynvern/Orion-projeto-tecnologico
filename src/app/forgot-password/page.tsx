@@ -48,7 +48,7 @@ export default function ForgotPassword() {
 				setEmailSent(true);
 				setTimeout(() => {
 					setEmailSent(false);
-				}, 5000);
+				}, 3000);
 
 				setInputEmailVal({
 					message: "",

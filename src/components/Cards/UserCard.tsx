@@ -32,9 +32,10 @@ export default function UserCard({ user }: { user: any }) {
 	}
 
 	useEffect(() => {
-		const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0);
-		console.log(count);
-		if (imagesLoaded == count) onLoad(); // amount of images to load before showing
+		if (user.id) {
+			const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0);
+			if (imagesLoaded == count) onLoad(); // amount of images to load before showing
+		}
 	}, [imagesLoaded, user.banner, user.image]);
 
 	function onLoad() {

@@ -3,8 +3,8 @@ import {
 	AtSymbolIcon,
 	CubeIcon,
 	PencilIcon,
+	PhotoIcon,
 	PlusIcon,
-	TrashIcon,
 	UserGroupIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -21,7 +21,6 @@ import {
 	Autocomplete,
 	AutocompleteItem,
 } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -40,23 +39,19 @@ export default function CreateGroup({
 	setIsActive,
 }: CreateGroupProps) {
 	const [loading, setLoading] = useState(false);
-	const [inputNameVal, setInputNameVal] = useState({
-		message: "",
-		active: false,
-	});
-	const [inputDescriptionVal, setInputDescriptionVal] = useState({
-		message: "",
-		active: false,
-	});
-	const [categoriesVal, setCategoriesVal] = useState({
-		message: "",
-		active: false,
-	});
 	const router = useRouter();
+	const [inputErrors, setInputErrors] = useState({
+		name: "",
+		groupName: "",
+		categories: "",
+		description: "",
+	});
 
 	const [inputCategory, setInputCategory] = useState("");
 	const [categories, setCategories]: any = useState([]);
 	const [categoriesServer, setCategoriesServer] = useState([]);
+	const [logo, setLogo] = useState({ base64: "", preview: "" });
+	const [banner, setBanner] = useState({ base64: "", preview: "" });
 
 	async function fetchCategories() {
 		try {
@@ -75,6 +70,11 @@ export default function CreateGroup({
 		fetchCategories();
 	}, []);
 
+	function isGroupnameValid(str: string) {
+		const regex = /^[a-z._]+$/;
+		return regex.test(str);
+	}
+
 	function handleCategoryInput(e: string) {
 		const inputValue: string = e;
 		if (inputValue.includes(" ") && categories.length < 5) {
@@ -85,6 +85,20 @@ export default function CreateGroup({
 			}
 		} else {
 			setInputCategory(inputValue);
+		}
+		if (categories.length == 5) {
+			setInputErrors({
+				...inputErrors,
+				categories: "Somente até 5 categorias podem ser escolhidas.",
+			});
+			setTimeout(
+				() =>
+					setInputErrors({
+						...inputErrors,
+						categories: "",
+					}),
+				3000
+			);
 		}
 	}
 
@@ -97,52 +111,63 @@ export default function CreateGroup({
 		const formName: string = formData.get("name") as string;
 		const groupName: string = formData.get("groupname") as string; // TODO: have some validation for groupName
 
+		if (formName.length == 0) {
+			setInputErrors({
+				...inputErrors,
+				name: "O nome do grupo é obrigatório.",
+			});
+			setLoading(false);
+			return false;
+		}
+
 		if (
-			// TODO: Validate to not permit different characters
-			formName === "" ||
+			!isGroupnameValid(formName) ||
 			formName.length < 2 ||
-			formName.length > 20 ||
-			formName.includes(" ")
+			formName.length > 20
 		) {
-			setInputNameVal({
-				message: "Nome de grupo não aceito.",
-				active: true,
+			setInputErrors({
+				...inputErrors,
+				name: "O nome do grupo é inválido.",
+			});
+			setLoading(false);
+			return false;
+		}
+
+		if (groupName.length == 0) {
+			setInputErrors({
+				...inputErrors,
+				groupName: "O título do grupo é obrigatório.",
 			});
 			setLoading(false);
 			return false;
 		}
 
 		if (formDesc.length > 200 || formDesc.length < 1) {
-			setInputDescriptionVal({
-				message: "Descrição de grupo inválida.",
-				active: true,
+			setInputErrors({
+				...inputErrors,
+				description: "A descrição do grupo é inválida.",
 			});
 			setLoading(false);
 			return false;
 		}
 
 		if (categories.length < 1) {
-			setCategoriesVal({
-				message: "Escolha ao menos uma categoria.",
-				active: true,
+			setInputErrors({
+				...inputErrors,
+				categories: "Selecione ao menos uma categoria.",
 			});
 			setLoading(false);
 			return false;
 		}
 
-		CreateGroup(
-			formData.get("name") as string,
-			formData.get("description") as string,
-			categories,
-			groupName
-		);
+		CreateGroup(formName, formDesc, categories, groupName);
 	}
 
 	async function CreateGroup(
 		name: string,
 		description: string,
 		selectedCategories: any,
-		grouName: string
+		groupName: string
 	) {
 		try {
 			const response = await fetch("/api/group", {
@@ -156,7 +181,7 @@ export default function CreateGroup({
 					categories: selectedCategories,
 					logo: logo.base64,
 					banner: banner.base64,
-					grouName,
+					groupName,
 				}),
 			});
 
@@ -168,9 +193,9 @@ export default function CreateGroup({
 				console.log(data);
 
 				if (data.message == "name-already-in-use") {
-					setInputNameVal({
-						message: "Nome de grupo já está em uso.",
-						active: true,
+					setInputErrors({
+						...inputErrors,
+						name: "O nome do grupo escolhido está em uso.",
 					});
 				}
 			}
@@ -181,19 +206,13 @@ export default function CreateGroup({
 		}
 	}
 
-	const [logo, setLogo] = useState({ base64: "", preview: "" });
-
 	async function handleLogoUpload() {
 		const data = await getFileBase64(["png"]);
-
 		setLogo(data);
 	}
 
-	const [banner, setBanner] = useState({ base64: "", preview: "" });
-
 	async function handleBannerUpload() {
 		const data = await getFileBase64(["png"]);
-
 		setBanner(data);
 	}
 
@@ -217,52 +236,39 @@ export default function CreateGroup({
 						<form onSubmit={handleCreateGroup}>
 							<ModalBody className="py-2 pb-6">
 								<div className="w-full relative">
-									<div className="h-40 w-40 absolute rounded-xl z-50 hide-button-hover">
+									<div className="h-40 w-40 absolute rounded-xl z-50">
 										<Image
-											className="h-40 w-40 absolute rounded-xl "
+											draggable={false}
 											src={
 												logo.preview ||
 												"/brand/default-group.svg"
 											}
 											removeWrapper={true}
-										></Image>
-										<div className="flex gap-x-2 w-full h-full items-center justify-center hidden-button">
+											className="h-40 w-40 object-cover z-50 absolute rounded-xl"
+										/>
+										<div className="flex gap-x-2 w-full h-full items-center justify-center">
 											<Button
 												onClick={handleLogoUpload}
-												className="flex z-10"
-												isIconOnly={true}
-												color="primary"
-											>
-												<PlusIcon className="h-6" />
-											</Button>
-											<Button
-												className="flex z-10"
+												className="flex z-50 opacity-70"
 												isIconOnly={true}
 											>
-												<TrashIcon className="h-6" />
+												<PhotoIcon className="h-6" />
 											</Button>
 										</div>
 									</div>
-									<div className="w-full h-40 bg-default-100 rounded-xl hide-button-hover">
+									<div className="w-full h-40 bg-default-100 rounded-xl">
 										<Image
-											className="h-40 w-full absolute rounded-xl object-cover"
+											className="h-40 w-full absolute rounded-xl pl-[9rem] object-cover"
 											src={banner.preview || ""}
 											removeWrapper={true}
 										></Image>
-										<div className="flex gap-x-2 w-full h-full items-center justify-center hidden-button">
+										<div className="flex gap-x-2 w-full h-full pl-40 items-center justify-center">
 											<Button
 												onClick={handleBannerUpload}
-												className="flex z-10"
-												isIconOnly={true}
-												color="primary"
-											>
-												<PlusIcon className="h-6" />
-											</Button>
-											<Button
-												className="flex z-10"
+												className="flex z-10 opacity-70"
 												isIconOnly={true}
 											>
-												<TrashIcon className="h-6" />
+												<PhotoIcon className="h-6" />
 											</Button>
 										</div>
 									</div>
@@ -276,12 +282,12 @@ export default function CreateGroup({
 									startContent={
 										<AtSymbolIcon className="h-6 text-neutral-500" />
 									}
-									isInvalid={inputNameVal.active}
-									errorMessage={inputNameVal.message}
+									isInvalid={Boolean(inputErrors.name)}
+									errorMessage={inputErrors.name}
 									onValueChange={() => {
-										setInputNameVal({
-											message: "",
-											active: false,
+										setInputErrors({
+											...inputErrors,
+											name: "",
 										});
 									}}
 								></Input>
@@ -294,19 +300,27 @@ export default function CreateGroup({
 									startContent={
 										<UserGroupIcon className="h-6 text-neutral-500" />
 									}
+									isInvalid={Boolean(inputErrors.groupName)}
+									errorMessage={inputErrors.groupName}
+									onValueChange={() => {
+										setInputErrors({
+											...inputErrors,
+											groupName: "",
+										});
+									}}
 								></Input>
-								<Autocomplete // TODO: Have same height as the other inputs
+								<Autocomplete // TODO: When cleared it shows error in name
 									placeholder="Selecione categorias"
 									className="dark"
-									errorMessage={categoriesVal.message}
-									isInvalid={categoriesVal.active}
 									startContent={
 										<CubeIcon className="h-6 text-neutral-500" />
 									}
+									isInvalid={Boolean(inputErrors.categories)}
+									errorMessage={inputErrors.categories}
 									onSelectionChange={(e) => {
-										setCategoriesVal({
-											message: "",
-											active: false,
+										setInputErrors({
+											...inputErrors,
+											categories: "",
 										});
 										if (e) handleCategoryInput(e + " ");
 									}}
@@ -329,7 +343,15 @@ export default function CreateGroup({
 										</AutocompleteItem>
 									))}
 								</Autocomplete>
-								<div className="flex flex-row gap-x-4 w-full overflow-x-auto">
+								<div
+									className="flex-row gap-x-4 w-full overflow-x-auto"
+									style={{
+										display:
+											categories.length < 1
+												? "none"
+												: "flex",
+									}}
+								>
 									{categories.map((i: any, index: any) => {
 										return (
 											<>
@@ -366,18 +388,20 @@ export default function CreateGroup({
 									placeholder="Descrição"
 									name="description"
 									classNames={{
-										innerWrapper: "py-2",
-										input: "py-1",
+										input: "py-[2px]",
+										inputWrapper: "",
+										base: "",
+										innerWrapper: "py-2 min-h-20",
 									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />
 									}
-									isInvalid={inputDescriptionVal.active}
-									errorMessage={inputDescriptionVal.message}
+									isInvalid={Boolean(inputErrors.description)}
+									errorMessage={inputErrors.description}
 									onValueChange={() => {
-										setInputDescriptionVal({
-											message: "",
-											active: false,
+										setInputErrors({
+											...inputErrors,
+											description: "",
 										});
 									}}
 								></Textarea>

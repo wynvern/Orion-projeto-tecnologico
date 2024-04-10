@@ -1,5 +1,6 @@
 import getFileBase64 from "@/util/getFile";
 import {
+	CheckIcon,
 	PencilIcon,
 	PencilSquareIcon,
 	PhotoIcon,
@@ -15,8 +16,10 @@ import {
 	ModalHeader,
 	Image,
 	Textarea,
+	Tooltip,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface CustomizeProfileProps {
@@ -43,6 +46,7 @@ export default function CustomizeProfile({
 	const { update } = useSession();
 	const [banner, setBanner] = useState({ base64: "", preview: "" });
 	const [avatar, setAvatar] = useState({ base64: "", preview: "" });
+	const [success, setSuccess] = useState(false);
 
 	async function handleCustomizeProfile(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -65,6 +69,8 @@ export default function CustomizeProfile({
 		await updateAvatar();
 		await updateBanner();
 		setLoading(false);
+		setSuccess(true);
+		setTimeout(() => setSuccess(false), 3000);
 	}
 
 	async function CustomizeProfile(name: string, bio: string) {
@@ -158,7 +164,7 @@ export default function CustomizeProfile({
 						<form onSubmit={handleCustomizeProfile}>
 							<ModalBody className="py-2 pb-6">
 								<div className="w-full relative">
-									<div className="h-40 w-40 absolute rounded-xl z-50">
+									<div className="h-60 w-40 absolute rounded-xl z-50">
 										<Image
 											draggable={false}
 											src={
@@ -170,13 +176,21 @@ export default function CustomizeProfile({
 											className="h-40 w-40 object-cover z-50 absolute rounded-xl"
 										/>
 										<div className="flex gap-x-2 w-full h-full items-center justify-center">
-											<Button
-												onClick={triggerAvatarUpdate}
-												className="flex z-50 opacity-70"
-												isIconOnly={true}
+											<Tooltip
+												content="Atualizar foto de perfil"
+												className="dark"
+												closeDelay={200}
 											>
-												<PhotoIcon className="h-6" />
-											</Button>
+												<Button
+													onClick={
+														triggerAvatarUpdate
+													}
+													className="flex z-50 opacity-70"
+													isIconOnly={true}
+												>
+													<PhotoIcon className="h-6" />
+												</Button>
+											</Tooltip>
 										</div>
 									</div>
 									<div className="w-full h-40 bg-default-100 rounded-xl">
@@ -189,13 +203,21 @@ export default function CustomizeProfile({
 											removeWrapper={true}
 										></Image>
 										<div className="flex gap-x-2 w-full h-full pl-40 items-center justify-center">
-											<Button
-												onClick={triggerBannerUpdate}
-												className="flex z-10 opacity-70"
-												isIconOnly={true}
+											<Tooltip
+												content="Atualizar banner"
+												className="dark"
+												closeDelay={200}
 											>
-												<PhotoIcon className="h-6" />
-											</Button>
+												<Button
+													onClick={
+														triggerBannerUpdate
+													}
+													className="flex z-10 opacity-70"
+													isIconOnly={true}
+												>
+													<PhotoIcon className="h-6" />
+												</Button>
+											</Tooltip>
 										</div>
 									</div>
 								</div>
@@ -222,9 +244,7 @@ export default function CustomizeProfile({
 									placeholder="Biografia"
 									name="bio"
 									classNames={{
-										base: "h-20",
-										innerWrapper: "py-2",
-										input: "h-20",
+										innerWrapper: "py-2 min-h-20",
 									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />
@@ -242,13 +262,15 @@ export default function CustomizeProfile({
 							</ModalBody>
 							<ModalFooter className="flex justify-between py-0">
 								<Button
-									color="primary"
+									color={success ? "success" : "primary"}
 									type="submit"
 									style={{ lineHeight: "1.5" }}
 									isLoading={loading}
 									startContent={
 										loading ? (
 											""
+										) : success ? (
+											<CheckIcon className="h-6" />
 										) : (
 											<PencilSquareIcon className="h-6" />
 										)
