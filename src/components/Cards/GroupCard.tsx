@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { UserGroupIcon } from "@heroicons/react/24/solid";
 import EnterGroupButton from "../group/EnterGroupButton";
+import CustomizeGroup from "../modal/CustomizeGroup";
 
 export default function GroupCard({
 	group,
@@ -20,6 +21,7 @@ export default function GroupCard({
 }) {
 	const session = useSession();
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0);
+	const [customizeGroup, setCustomizeGroup] = useState(false);
 
 	function handleComponentLoaded() {
 		setImagesLoaded((prev) => prev + 1);
@@ -47,7 +49,7 @@ export default function GroupCard({
 				<Image
 					draggable={false}
 					src={group.logo ?? "/brand/default-group.svg"}
-					className="h-[400px] w-auto object-cover"
+					className="h-[400px] w-[400px] object-cover"
 					onLoad={handleComponentLoaded}
 				/>
 			</div>
@@ -58,10 +60,15 @@ export default function GroupCard({
 							<div className="flex items-center gap-x-4">
 								<div className="flex items-end">
 									{session.data?.user.id == group.ownerId ? (
-										<Link className="text-white flex items-end  gap-x-2">
+										<Link
+											className="text-white flex items-end  gap-x-2"
+											onClick={() =>
+												setCustomizeGroup(true)
+											}
+										>
 											<div className="flex items-center gap-x-2">
 												<UserGroupIcon className="h-10" />
-												<h1>{group.name}</h1>
+												<h1>{group.groupName}</h1>
 											</div>
 											<PencilIcon className="h-6"></PencilIcon>
 										</Link>
@@ -111,6 +118,12 @@ export default function GroupCard({
 					</div>
 				</div>
 			</div>
+
+			<CustomizeGroup
+				isActive={customizeGroup}
+				setIsActive={setCustomizeGroup}
+				group={group}
+			/>
 		</div>
 	);
 }

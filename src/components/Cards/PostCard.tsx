@@ -35,7 +35,10 @@ export default function PostCard({ post }: { post: any }) {
 						</div>
 					</Link>
 					<div>
-						<BookmarkIcon className="h-8" />
+						<div className="flex items-center gap-x-4">
+							<b>0</b>
+							<BookmarkIcon className="h-8" />
+						</div>
 					</div>
 				</div>
 				<Link className="pl-10 relative flex flex-col items-start text-white">
@@ -51,8 +54,11 @@ export default function PostCard({ post }: { post: any }) {
 			{/* Image */}
 			{post.media[0] ? (
 				<div className="ml-10 w-40 relative shrink-0">
-					<Image src={post.media[0]} className="h-40 w-40"></Image>
-					<div className="absolute bottom-2 right-2 z-50 bg-default-100 rounded-full w-8 h-8 flex items-center justify-center">
+					<Image
+						src={post.media[0]}
+						className="h-40 w-40 object-cover"
+					></Image>
+					<div className="absolute bottom-2 right-2 opacity-80 z-50 bg-default-100 rounded-full w-8 h-8 flex items-center justify-center">
 						{post.media.length}
 					</div>
 				</div>

@@ -75,10 +75,9 @@ img {
 }
 
 .under-box-shadow {
-	background: linear-gradient(
-		0deg,
-		rgba(0, 0, 0, 1) 15%,
-		rgba(0, 0, 0, 0) 70%
-	);
 	display: inline-block;
+}
+
+.wider-autocomplete [data-slot="input-wrapper"] {
+	height: 3.5rem;
 }

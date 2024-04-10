@@ -3,6 +3,7 @@
 import GroupCard from "@/components/Cards/GroupCard";
 import PostCard from "@/components/Cards/PostCard";
 import CreatePost from "@/components/modal/CreatePost";
+import CustomizeGroup from "@/components/modal/CustomizeGroup";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -117,8 +118,8 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 					</div>
 				</div>
 				<div className="flex flex-col gap-y-12 mt-20">
-					{posts.map((i: any) => (
-						<PostCard post={i} />
+					{posts.map((i: any, _: number) => (
+						<PostCard key={_} post={i} />
 					))}
 				</div>
 			</div>

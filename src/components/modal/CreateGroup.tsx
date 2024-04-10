@@ -20,6 +20,7 @@ import {
 	Textarea,
 	Autocomplete,
 	AutocompleteItem,
+	Tooltip,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -311,7 +312,7 @@ export default function CreateGroup({
 								></Input>
 								<Autocomplete // TODO: When cleared it shows error in name
 									placeholder="Selecione categorias"
-									className="dark"
+									className="dark wider-autocomplete"
 									startContent={
 										<CubeIcon className="h-6 text-neutral-500" />
 									}

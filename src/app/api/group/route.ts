@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { processAnyImage, processSquareImage } from "@/util/processSquareImage";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -49,8 +50,14 @@ export const POST = async (req: Request) => {
 
 		if (banner !== undefined || logo !== undefined) {
 			const dataToUpdate: any = {};
-			if (banner !== undefined) dataToUpdate.banner = banner;
-			if (logo !== undefined) dataToUpdate.logo = logo;
+			if (banner !== undefined) {
+				const imageBase64 = Buffer.from(banner, "base64");
+				dataToUpdate.banner = await processAnyImage(imageBase64);
+			}
+			if (logo !== undefined) {
+				const imageBase64 = Buffer.from(logo, "base64");
+				dataToUpdate.logo = await processSquareImage(imageBase64);
+			}
 
 			const groupProfilePictures = await db.groupProfilePics.upsert({
 				where: { groupId: newGroup.id },

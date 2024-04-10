@@ -19,42 +19,41 @@ import {
 	Tooltip,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface CustomizeProfileProps {
+interface CustomizeGroupProps {
 	isActive: boolean;
 	setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
-	profile: any;
+	group: any;
 }
 
-export default function CustomizeProfile({
+export default function CustomizeGroup({
 	isActive,
 	setIsActive,
-	profile,
-}: CustomizeProfileProps) {
+	group,
+}: CustomizeGroupProps) {
 	const [loading, setLoading] = useState(false);
 	const [inputNameVal, setInputNameVal] = useState({
 		message: "",
 		active: false,
 	});
-	const [inputBioVal, setInputBioVal] = useState({
+	const [inputdescriptionVal, setInputdescriptionVal] = useState({
 		message: "",
 		active: false,
 	});
 	const session = useSession();
 	const { update } = useSession();
 	const [banner, setBanner] = useState({ base64: "", preview: "" });
-	const [avatar, setAvatar] = useState({ base64: "", preview: "" });
+	const [logo, setlogo] = useState({ base64: "", preview: "" });
 	const [success, setSuccess] = useState(false);
 
-	async function handleCustomizeProfile(e: React.FormEvent<HTMLFormElement>) {
+	async function handleCustomizeGroup(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
 		setLoading(true);
 		const formData = new FormData(e.currentTarget);
 		const formName: string = formData.get("name") as string;
-		const formBio: string = formData.get("bio") as string;
+		const formdescription: string = formData.get("description") as string;
 
 		if (formName.length > 30) {
 			setInputNameVal({
@@ -65,51 +64,54 @@ export default function CustomizeProfile({
 			return false;
 		}
 
-		await CustomizeProfile(formName, formBio);
-		await updateAvatar();
+		await CustomizeGroup(formName, formdescription);
+		await updatelogo();
 		await updateBanner();
 		setLoading(false);
 		setSuccess(true);
 		setTimeout(() => setSuccess(false), 3000);
 	}
 
-	async function CustomizeProfile(name: string, bio: string) {
+	async function CustomizeGroup(name: string, description: string) {
 		try {
-			const response = await fetch("/api/user", {
+			const response = await fetch(`/api/group/${group.id}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					name,
-					bio: bio,
+					groupName: name,
+					description: description,
 				}),
 			});
 
 			if (response.ok) {
 				const data = await response.json();
 				// TODO: Make a success and reload page
+			} else {
+				const data = await response.json();
+				console.log(data);
 			}
 		} catch (e) {
 			console.error(e);
 		}
 	}
 
-	async function triggerAvatarUpdate() {
+	async function triggerlogoUpdate() {
 		const file = await getFileBase64(["png", "jpg", "jpeg", "webp", "svg"]);
-		if (file) setAvatar(file);
+		if (file) setlogo(file);
 	}
 
-	async function updateAvatar() {
-		if (!avatar.base64) return;
+	async function updatelogo() {
+		if (!logo.base64) return;
 
 		try {
-			const response = await fetch("/api/user/avatar", {
+			const response = await fetch(`/api/group/${group.id}/logo`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ avatar: avatar.base64 }),
+				body: JSON.stringify({ logo: logo.base64 }),
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -129,7 +131,7 @@ export default function CustomizeProfile({
 		if (!banner.base64) return;
 
 		try {
-			const response = await fetch("/api/user/banner", {
+			const response = await fetch(`/api/group/${group.id}/banner`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
@@ -159,17 +161,17 @@ export default function CustomizeProfile({
 				{(onClose) => (
 					<>
 						<ModalHeader className="flex flex-col gap-1 pt-1">
-							Personalizar Perfil
+							Personalizar Grupo
 						</ModalHeader>
-						<form onSubmit={handleCustomizeProfile}>
+						<form onSubmit={handleCustomizeGroup}>
 							<ModalBody className="py-2 pb-6">
 								<div className="w-full relative">
 									<div className="h-40 w-40 absolute rounded-xl z-50">
 										<Image
 											draggable={false}
 											src={
-												avatar.preview ||
-												session.data?.user.image ||
+												logo.preview ||
+												group.logo ||
 												"/brand/default-user.svg"
 											}
 											removeWrapper={true}
@@ -177,7 +179,7 @@ export default function CustomizeProfile({
 										/>
 										<div className="flex gap-x-2 w-full h-full items-center justify-center">
 											<Button
-												onClick={triggerAvatarUpdate}
+												onClick={triggerlogoUpdate}
 												className="flex z-50 opacity-70"
 												isIconOnly={true}
 											>
@@ -188,10 +190,7 @@ export default function CustomizeProfile({
 									<div className="w-full h-40 bg-default-100 rounded-xl">
 										<Image
 											className="h-40 w-full absolute rounded-xl pl-[9rem] object-cover"
-											src={
-												banner.preview ||
-												session.data?.user.banner
-											}
+											src={banner.preview || group.banner}
 											removeWrapper={true}
 										></Image>
 										<div className="flex gap-x-2 w-full h-full pl-40 items-center justify-center">
@@ -221,27 +220,27 @@ export default function CustomizeProfile({
 											active: false,
 										});
 									}}
-									defaultValue={profile.name}
+									defaultValue={group.groupName}
 								></Input>
 								<Textarea
 									type="text"
-									placeholder="Biografia"
-									name="bio"
+									placeholder="Descrição do Grupo"
+									name="description"
 									classNames={{
 										innerWrapper: "py-2 min-h-20",
 									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />
 									}
-									isInvalid={inputBioVal.active}
-									errorMessage={inputBioVal.message}
+									isInvalid={inputdescriptionVal.active}
+									errorMessage={inputdescriptionVal.message}
 									onValueChange={() => {
-										setInputBioVal({
+										setInputdescriptionVal({
 											message: "",
 											active: false,
 										});
 									}}
-									defaultValue={profile.bio}
+									defaultValue={group.description}
 								></Textarea>
 							</ModalBody>
 							<ModalFooter className="flex justify-between py-0">
@@ -260,7 +259,7 @@ export default function CustomizeProfile({
 										)
 									}
 								>
-									Salvar
+									Atualizar
 								</Button>
 							</ModalFooter>
 						</form>

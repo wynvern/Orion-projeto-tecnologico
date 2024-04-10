@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { db } from "@/lib/db";
+import { processAnyImage, processSquareImage } from "@/util/processSquareImage";
 
 export const GET = async (
 	req: Request,
@@ -87,10 +88,13 @@ export const PATCH = async (
 			);
 		}
 
-		const userProfilePictures = await db.groupProfilePics.upsert({
+		const base64Image = Buffer.from(logo, "base64");
+		const optimalLogo = await processSquareImage(base64Image);
+
+		await db.groupProfilePics.upsert({
 			where: { groupId: id },
-			update: { logo },
-			create: { groupId: id, logo },
+			update: { logo: optimalLogo },
+			create: { groupId: id, logo: optimalLogo },
 		});
 
 		const logoUrl = `${process.env.NEXTAUTH_URL}/api/group/${id}/logo`;

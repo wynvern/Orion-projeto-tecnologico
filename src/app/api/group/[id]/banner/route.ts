@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { db } from "@/lib/db";
+import { processAnyImage } from "@/util/processSquareImage";
 
 export const GET = async (
 	req: Request,
@@ -76,21 +77,24 @@ export const PATCH = async (
 			);
 		}
 
-		const groupOwnsGroup = await db.group.findFirst({
+		const base64Image = Buffer.from(banner, "base64");
+		const optmialBanner = await processAnyImage(base64Image);
+
+		const userOwnGroup = await db.group.findFirst({
 			where: { ownerId: userId, id },
 		});
 
-		if (!groupOwnsGroup) {
+		if (!userOwnGroup) {
 			return NextResponse.json(
 				{ message: "Not authorized", type: "Missing authorization" },
 				{ status: 401 }
 			);
 		}
 
-		const groupProfilePictures = await db.groupProfilePics.upsert({
+		await db.groupProfilePics.upsert({
 			where: { groupId: id },
-			update: { banner },
-			create: { groupId: id, banner },
+			update: { banner: optmialBanner },
+			create: { groupId: id, banner: optmialBanner },
 		});
 
 		const bannerUrl = `${process.env.NEXTAUTH_URL}/api/group/${id}/banner`;
