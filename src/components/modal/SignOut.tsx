@@ -34,6 +34,7 @@ export default function SignOut({ isActive, setIsActive }: SignOutProps) {
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
+			backdrop="blur"
 		>
 			<ModalContent>
 				{(onClose) => (

@@ -1,9 +1,8 @@
+import getFileBase64 from "@/util/getFile";
 import {
-	AtSymbolIcon,
 	PencilIcon,
 	PencilSquareIcon,
-	PlusIcon,
-	TrashIcon,
+	PhotoIcon,
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -42,6 +41,8 @@ export default function CustomizeProfile({
 	});
 	const session = useSession();
 	const { update } = useSession();
+	const [banner, setBanner] = useState({ base64: "", preview: "" });
+	const [avatar, setAvatar] = useState({ base64: "", preview: "" });
 
 	async function handleCustomizeProfile(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -60,9 +61,10 @@ export default function CustomizeProfile({
 			return false;
 		}
 
-		CustomizeProfile(formName, formBio);
-		updateAvatar();
-		updateBanner();
+		await CustomizeProfile(formName, formBio);
+		await updateAvatar();
+		await updateBanner();
+		setLoading(false);
 	}
 
 	async function CustomizeProfile(name: string, bio: string) {
@@ -80,40 +82,28 @@ export default function CustomizeProfile({
 
 			if (response.ok) {
 				const data = await response.json();
+				// TODO: Make a success and reload page
 			}
 		} catch (e) {
 			console.error(e);
-		} finally {
-			setLoading(false);
 		}
 	}
 
-	// TODO: TAG:Important use new function and remove all this repetitive code
-	// Image Avatar Handling
-
-	const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-	const [avatarFile, setAvatarFile] = useState<File | null>(null);
-	const [fileInputRef, setFileInputRef] = useState<HTMLInputElement | null>(
-		null
-	);
-
-	function triggerAvatarUpdate() {
-		if (fileInputRef) {
-			fileInputRef.click();
-		}
+	async function triggerAvatarUpdate() {
+		const file = await getFileBase64(["png", "jpg", "jpeg", "webp", "svg"]);
+		if (file) setAvatar(file);
 	}
 
 	async function updateAvatar() {
-		if (!avatarFile) return;
-		setLoading(true);
-		const base64 = await convertToBase64(avatarFile);
+		if (!avatar.base64) return;
+
 		try {
 			const response = await fetch("/api/user/avatar", {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ avatar: base64 }),
+				body: JSON.stringify({ avatar: avatar.base64 }),
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -121,56 +111,24 @@ export default function CustomizeProfile({
 			}
 		} catch (e) {
 			console.error(e);
-		} finally {
-			setLoading(false);
 		}
 	}
 
-	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files.length > 0) {
-			const file = e.target.files[0];
-			setAvatarFile(file);
-			setAvatarPreview(URL.createObjectURL(file));
-		}
-	};
-
-	const convertToBase64 = (file: File): Promise<string> => {
-		return new Promise((resolve, reject) => {
-			const fileReader = new FileReader();
-			fileReader.readAsDataURL(file);
-			fileReader.onload = () => {
-				resolve((fileReader.result as string).split(",")[1]);
-			};
-			fileReader.onerror = (error) => {
-				reject(error);
-			};
-		});
-	};
-
-	// Banner Image Handling
-
-	const [bannerPreview, setBannerPreview] = useState<string | null>(null);
-	const [bannerFile, setBannerFile] = useState<File | null>(null);
-	const [bannerInputRef, setBannerInputRef] =
-		useState<HTMLInputElement | null>(null);
-
-	function triggerBannerUpdate() {
-		if (bannerInputRef) {
-			bannerInputRef.click();
-		}
+	async function triggerBannerUpdate() {
+		const file = await getFileBase64(["png", "jpg", "jpeg", "webp", "svg"]);
+		if (file) setBanner(file);
 	}
 
 	async function updateBanner() {
-		if (!bannerFile) return;
-		setLoading(true);
-		const base64 = await convertToBase64(bannerFile);
+		if (!banner.base64) return;
+
 		try {
 			const response = await fetch("/api/user/banner", {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ banner: base64 }),
+				body: JSON.stringify({ banner: banner.base64 }),
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -178,18 +136,8 @@ export default function CustomizeProfile({
 			}
 		} catch (e) {
 			console.error(e);
-		} finally {
-			setLoading(false);
 		}
 	}
-
-	const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files.length > 0) {
-			const file = e.target.files[0];
-			setBannerFile(file);
-			setBannerPreview(URL.createObjectURL(file));
-		}
-	};
 
 	return (
 		<Modal
@@ -199,6 +147,7 @@ export default function CustomizeProfile({
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
+			backdrop="blur"
 		>
 			<ModalContent>
 				{(onClose) => (
@@ -209,56 +158,43 @@ export default function CustomizeProfile({
 						<form onSubmit={handleCustomizeProfile}>
 							<ModalBody className="py-2 pb-6">
 								<div className="w-full relative">
-									<div className="h-40 w-40 absolute rounded-xl z-50 hide-button-hover">
+									<div className="h-40 w-40 absolute rounded-xl z-50">
 										<Image
-											className="h-40 w-40 absolute rounded-xl "
+											draggable={false}
 											src={
-												avatarPreview ||
+												avatar.preview ||
 												session.data?.user.image ||
 												"/brand/default-user.svg"
 											}
 											removeWrapper={true}
-										></Image>
-										<div className="flex gap-x-2 w-full h-full items-center justify-center hidden-button">
+											className="h-40 w-40 object-cover z-50 absolute rounded-xl"
+										/>
+										<div className="flex gap-x-2 w-full h-full items-center justify-center">
 											<Button
 												onClick={triggerAvatarUpdate}
-												className="flex z-10"
-												isIconOnly={true}
-												color="primary"
-											>
-												<PlusIcon className="h-6" />
-											</Button>
-											<Button
-												className="flex z-10"
+												className="flex z-50 opacity-70"
 												isIconOnly={true}
 											>
-												<TrashIcon className="h-6" />
+												<PhotoIcon className="h-6" />
 											</Button>
 										</div>
 									</div>
-									<div className="w-full h-40 bg-default-100 rounded-xl  hide-button-hover">
+									<div className="w-full h-40 bg-default-100 rounded-xl">
 										<Image
-											className="h-40 w-full absolute rounded-xl object-cover"
+											className="h-40 w-full absolute rounded-xl pl-[9rem] object-cover"
 											src={
-												bannerPreview ||
+												banner.preview ||
 												session.data?.user.banner
 											}
 											removeWrapper={true}
 										></Image>
-										<div className="flex gap-x-2 w-full h-full items-center justify-center hidden-button">
+										<div className="flex gap-x-2 w-full h-full pl-40 items-center justify-center">
 											<Button
 												onClick={triggerBannerUpdate}
-												className="flex z-10"
-												isIconOnly={true}
-												color="primary"
-											>
-												<PlusIcon className="h-6" />
-											</Button>
-											<Button
-												className="flex z-10"
+												className="flex z-10 opacity-70"
 												isIconOnly={true}
 											>
-												<TrashIcon className="h-6" />
+												<PhotoIcon className="h-6" />
 											</Button>
 										</div>
 									</div>
@@ -286,8 +222,9 @@ export default function CustomizeProfile({
 									placeholder="Biografia"
 									name="bio"
 									classNames={{
+										base: "h-20",
 										innerWrapper: "py-2",
-										input: "py-1",
+										input: "h-20",
 									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />
@@ -318,29 +255,12 @@ export default function CustomizeProfile({
 									}
 								>
 									Salvar
-								</Button>{" "}
-							</ModalFooter>{" "}
+								</Button>
+							</ModalFooter>
 						</form>
 					</>
 				)}
 			</ModalContent>
-
-			<input
-				id="avatar-upload"
-				type="file"
-				accept="image/*"
-				className="hidden"
-				onChange={handleAvatarChange}
-				ref={(ref) => setFileInputRef(ref)}
-			/>
-			<input
-				id="avatar-upload"
-				type="file"
-				accept="image/*"
-				className="hidden"
-				onChange={handleBannerChange}
-				ref={(ref) => setBannerInputRef(ref)}
-			/>
 		</Modal>
 	);
 }

@@ -8,127 +8,141 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  name         String?
-  username     String?   @unique
-  bio          String?
-  email        String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image        String?
-  banner String?
-  password     String?
-  posts        Post[]
-  comments     Comment[]
-  bookmarks    Bookmark[]
-  groups       InGroups[]
-  accounts     Account[]
-  sessions     Session[]
-  ownedGroups  Group[]    @relation("GroupOwner")
-  userProfilePictures UserProfilePictures?
-  viewed GroupView[]
+   id                  String               @id @default(cuid())
+   name                String?
+   username            String?              @unique
+   bio                 String?
+   email               String?              @unique
+   emailVerified       DateTime?            @map("email_verified")
+   image               String?
+   banner              String?
+   password            String?
+   posts               Post[]
+   comments            Comment[]
+   bookmarks           Bookmark[]
+   groups              InGroups[]
+   accounts            Account[]
+   sessions            Session[]
+   ownedGroups         Group[]              @relation("GroupOwner")
+   userProfilePictures UserProfilePictures?
+   viewed              GroupView[]
 
-  @@map("users")
+   createdReports  Report[] @relation("ReportCreator")
+   receivedReports Report[] @relation("ReportedUser")
+
+   @@map("users")
+}
+
+model Report {
+   id             Int      @id @default(autoincrement())
+   title          String
+   content        String?
+   creatorId      String
+   reportedUserId String
+   creator        User     @relation("ReportCreator", fields: [creatorId], references: [id])
+   reportedUser   User     @relation("ReportedUser", fields: [reportedUserId], references: [id])
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+
+   @@map("report")
 }
 
 model UserProfilePictures {
-  id        String  @id @default(cuid())
-  userId    String  @unique
-  user      User    @relation(fields: [userId], references: [id])
-  avatar    String?
-  banner    String?
+   id     String  @id @default(cuid())
+   userId String  @unique
+   user   User    @relation(fields: [userId], references: [id])
+   avatar String?
+   banner String?
 
-  @@map("user_profile_pics")
+   @@map("user_profile_pics")
 }
 
 model Post {
-  id        String    @id @default(cuid())
-  media     String?
-  text      String?
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  String
-  comments  Comment[]
-  bookmarks Bookmark[]
-  group     Group     @relation(fields: [groupId], references: [id])
-  groupId   String
+   id        String     @id @default(cuid())
+   media     String?
+   text      String?
+   author    User       @relation(fields: [authorId], references: [id])
+   authorId  String
+   comments  Comment[]
+   bookmarks Bookmark[]
+   group     Group      @relation(fields: [groupId], references: [id])
+   groupId   String
 
-  @@map("posts")
+   @@map("posts")
 }
 
 model Comment {
-  id        String @id @default(cuid())
-  text      String
-  author    User   @relation(fields: [authorId], references: [id])
-  authorId  String
-  post      Post   @relation(fields: [postId], references: [id])
-  postId    String
+   id       String @id @default(cuid())
+   text     String
+   author   User   @relation(fields: [authorId], references: [id])
+   authorId String
+   post     Post   @relation(fields: [postId], references: [id])
+   postId   String
 
-  @@map("comments")
+   @@map("comments")
 }
 
 model Bookmark {
-  id      String @id @default(cuid())
-  user    User   @relation(fields: [userId], references: [id])
-  userId  String
-  post    Post   @relation(fields: [postId], references: [id])
-  postId  String
+   id     String @id @default(cuid())
+   user   User   @relation(fields: [userId], references: [id])
+   userId String
+   post   Post   @relation(fields: [postId], references: [id])
+   postId String
 
-  @@map("bookmarks")
+   @@map("bookmarks")
 }
 
 model InGroups {
-  id      String @id @default(cuid())
-  user    User   @relation(fields: [userId], references: [id])
-  userId  String
-  group   Group  @relation(fields: [groupId], references: [id])
-  groupId String
+   id      String @id @default(cuid())
+   user    User   @relation(fields: [userId], references: [id])
+   userId  String
+   group   Group  @relation(fields: [groupId], references: [id])
+   groupId String
 
-  @@unique([groupId, userId])
-  @@map("in_groups")
+   @@unique([groupId, userId])
+   @@map("in_groups")
 }
 
 model Group {
-  id          String    @id @default(cuid())
-  name        String @unique
-  groupName String?
-  description String?
-  members     InGroups[]
-  posts       Post[]
-  owner       User      @relation("GroupOwner", fields: [ownerId], references: [id])
-  ownerId     String
-  categories  String[]     @default([])
-  banner String?
-  logo String?
-  groupProfilePics GroupProfilePics?
-  groupViews        GroupView[]
+   id               String            @id @default(cuid())
+   name             String            @unique
+   groupName        String?
+   description      String?
+   members          InGroups[]
+   posts            Post[]
+   owner            User              @relation("GroupOwner", fields: [ownerId], references: [id])
+   ownerId          String
+   categories       String[]          @default([])
+   banner           String?
+   logo             String?
+   groupProfilePics GroupProfilePics?
+   groupViews       GroupView[]
 
-  @@map("groups")
+   @@map("groups")
 }
 
 model GroupView {
-  id                String    @id @default(cuid())
-  viewedAt          DateTime  @default(now())
+   id       String   @id @default(cuid())
+   viewedAt DateTime @default(now())
 
-  group             Group     @relation(fields: [groupId], references: [id])
-  groupId           String
-  viewer            User     @relation(fields: [viewerId], references: [id])
-  viewerId          String
+   group    Group  @relation(fields: [groupId], references: [id])
+   groupId  String
+   viewer   User   @relation(fields: [viewerId], references: [id])
+   viewerId String
 
-  @@unique([groupId, viewerId])
-  @@map("group_views")
+   @@unique([groupId, viewerId])
+   @@map("group_views")
 }
 
 model GroupProfilePics {
-  id        String  @id @default(cuid())
-  groupId    String  @unique
-  group      Group    @relation(fields: [groupId], references: [id])
-  logo    String?
-  banner    String?
+   id      String  @id @default(cuid())
+   groupId String  @unique
+   group   Group   @relation(fields: [groupId], references: [id])
+   logo    String?
+   banner  String?
 
-  @@map("group_profile_pics")
+   @@map("group_profile_pics")
 }
-
-
-
 
 // Bullshit
 

@@ -77,6 +77,7 @@ export default function CreatePost({
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
+			backdrop="blur"
 		>
 			<ModalContent>
 				{(onClose) => (

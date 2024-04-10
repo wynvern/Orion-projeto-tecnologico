@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { db } from "@/lib/db";
+import { processSquareImage } from "@/util/processSquareImage";
 
 export const PATCH = async (req: Request) => {
 	try {
@@ -23,10 +24,13 @@ export const PATCH = async (req: Request) => {
 			);
 		}
 
-		const userProfilePictures = await db.userProfilePictures.upsert({
+		const imageData = Buffer.from(avatar, "base64");
+		const processedImage = await processSquareImage(imageData);
+
+		await db.userProfilePictures.upsert({
 			where: { userId },
-			update: { avatar },
-			create: { userId, avatar },
+			update: { avatar: processedImage },
+			create: { userId, avatar: processedImage },
 		});
 
 		const avatarUrl = `${process.env.NEXTAUTH_URL}/api/user/avatar/${userId}`;

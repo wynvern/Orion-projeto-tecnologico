@@ -206,6 +206,7 @@ export default function CreateGroup({
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
+			backdrop="blur"
 		>
 			<ModalContent>
 				{(onClose) => (

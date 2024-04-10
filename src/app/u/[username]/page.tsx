@@ -31,8 +31,6 @@ export default function UserPage({ params }: { params: { username: string } }) {
 					fetchedUser.image && fetchedUser.image.includes("=s96-c")
 						? fetchedUser.image.replace("=s96-c", "=s1000-c")
 						: fetchedUser.image;
-
-				console.log(fetchUser);
 				setUser({ ...fetchedUser, image: updatedImage });
 			}
 		} catch (e: any) {

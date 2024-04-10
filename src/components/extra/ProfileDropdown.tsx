@@ -22,11 +22,12 @@ export default function ProfileDropdown() {
 	const session = useSession();
 	const [signOutModal, setSignOutModal] = useState(false);
 
+	// TODO: Fix the error message that shows on terminal that comes from here, but don't know what is causing it, plus error with keyframes
 	return (
 		<>
 			<Dropdown placement="right" className="dark">
 				<DropdownTrigger>
-					<div className="h-8 w-8">
+					<div className="h-8 w-8 transition-dropdown">
 						<Image
 							src={
 								session.data?.user.image ??
@@ -40,8 +41,7 @@ export default function ProfileDropdown() {
 				<DropdownMenu aria-label="User Actions" variant="flat">
 					<DropdownItem
 						key="info_user"
-						className="h-14 gap-2 border-radius-sys pl-5"
-						textValue="aa"
+						className="h-10 gap-2 border-radius-sys pl-3"
 					>
 						<p className="font-bold">
 							<b>@{session.data?.user.username}</b>

@@ -1,33 +1,45 @@
 "use client";
 
-import { Image, Link, Spinner } from "@nextui-org/react";
+import {
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	DropdownTrigger,
+	Image,
+	Link,
+	Spinner,
+	user,
+} from "@nextui-org/react";
 import {
 	EllipsisHorizontalIcon,
+	NoSymbolIcon,
 	PencilIcon,
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import CustomizeProfile from "../modal/CustomizeProfile";
+import ReportUser from "../modal/ReportUser";
 
 export default function UserCard({ user }: { user: any }) {
 	const session = useSession();
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0);
 	const [customizeProfileModal, setCustomizeProfileModal] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [reportModal, setReportModal] = useState(false);
 
 	function handleComponentLoaded() {
 		setImagesLoaded((prev) => prev + 1);
 	}
 
 	useEffect(() => {
-		if (imagesLoaded == 0) onLoad(); // 2 is the amount of components in wait for load
-	}, [imagesLoaded]);
+		const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0);
+		console.log(count);
+		if (imagesLoaded == count) onLoad(); // amount of images to load before showing
+	}, [imagesLoaded, user.banner, user.image]);
 
 	function onLoad() {
 		setLoading(false);
 	}
-
-	console.log(user);
 
 	return (
 		<div className="w-full h-full flex items-center justify-center">
@@ -100,7 +112,37 @@ export default function UserCard({ user }: { user: any }) {
 									</div>
 								</div>
 								<div>
-									<EllipsisHorizontalIcon className="h-10"></EllipsisHorizontalIcon>
+									<Dropdown
+										placement="bottom"
+										className="dark"
+									>
+										<DropdownTrigger>
+											<EllipsisHorizontalIcon className="h-10 transition-dropdown"></EllipsisHorizontalIcon>
+										</DropdownTrigger>
+										<DropdownMenu
+											aria-label="User Actions"
+											variant="flat"
+										>
+											{session.data?.user.id ===
+											user.id ? (
+												<DropdownItem title="Nenhuma ação" />
+											) : (
+												<DropdownItem
+													key="exit"
+													description="Reportar o usuário."
+													className="border-radius-sys text-danger"
+													onClick={() => {
+														setReportModal(true);
+													}}
+													startContent={
+														<NoSymbolIcon className="h-8" />
+													}
+												>
+													Reportar @{user.username}
+												</DropdownItem>
+											)}
+										</DropdownMenu>
+									</Dropdown>
 								</div>
 							</div>
 							<div className="ml-11 mt-2">
@@ -127,6 +169,11 @@ export default function UserCard({ user }: { user: any }) {
 				""
 			)}
 
+			<ReportUser
+				isActive={reportModal}
+				setIsActive={setReportModal}
+				profile={user}
+			/>
 			<CustomizeProfile
 				isActive={customizeProfileModal}
 				setIsActive={setCustomizeProfileModal}

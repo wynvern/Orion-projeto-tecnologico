@@ -23,7 +23,6 @@ export default async function middleware(req: NextRequest) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}
 		if (!session.username && !url.pathname.includes("/finish")) {
-			console.log("user has been redirected to /finish");
 			return NextResponse.redirect(new URL("/finish", req.url));
 		}
 	}
