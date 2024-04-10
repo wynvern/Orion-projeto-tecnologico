@@ -4,7 +4,7 @@ import GroupCard from "@/components/Cards/GroupCard";
 import CreateGroup from "@/components/modal/CreateGroup";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
-import { Button, ScrollShadow, Spacer } from "@nextui-org/react";
+import { Button, ScrollShadow } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
 interface Category {
@@ -17,7 +17,7 @@ export default function Groups() {
 	const [groupModal, setGroupModal] = useState(false);
 
 	const [categoriesServer, setCategoriesServer] = useState([]);
-	const [groups, setGroups] = useState([]);
+	const [groups, setGroups]: any[] = useState([]);
 
 	async function fetchCategories() {
 		try {
@@ -135,7 +135,7 @@ export default function Groups() {
 							<div className="w-40"></div>
 						</div>
 						<div className="gap-x-6 flex">
-							{groups.map((i, _) => (
+							{groups.map((i: any, _: number) => (
 								<div key={_}>
 									<GroupCard group={i} />
 								</div>

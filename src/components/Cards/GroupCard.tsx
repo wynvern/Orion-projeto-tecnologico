@@ -33,7 +33,7 @@ export default function GroupCard({
 	return (
 		<div
 			className={`rounded-large  w-[1000px] h-[400px] flex object-contain relative ${
-				group.banner ? "" : "bg-zinc-600"
+				group.banner ? "" : "bg-default-100"
 			}`}
 		>
 			<Image

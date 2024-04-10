@@ -1,6 +1,7 @@
 "use client";
 
 import GroupCard from "@/components/Cards/GroupCard";
+import PostCard from "@/components/Cards/PostCard";
 import CreatePost from "@/components/modal/CreatePost";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button, Spinner } from "@nextui-org/react";
@@ -16,6 +17,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		id: "",
 	});
 	const [createPostModal, setCreatePostModal] = useState(false);
+	const [posts, setPosts]: any[] = useState([]);
 
 	async function viewGroup() {
 		if (group.id) {
@@ -62,6 +64,24 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		viewGroup();
 	}, [group]);
 
+	useEffect(() => {
+		fetchPosts();
+	}, [group.id]);
+
+	async function fetchPosts() {
+		try {
+			const response = await fetch(`/api/group/${group.id}/post`);
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log(data);
+				setPosts(data.posts);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
 	const [loaded, setLoaded] = useState(false);
 
 	// TODO: Button to scroll to the top of the page on top of create button
@@ -75,25 +95,34 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 
 				.content-container {
 					opacity: ${loaded ? 1 : 0};
-					transition: opacity 0.2s ease-in-out;
+					transform: scale(${loaded ? "1" : "0.9"});
+					transition: all 0.2s ease-in-out;
 				}
 			`}</style>
 
-			<div className="w-full h-full flex items-center justify-center">
-				{group.id ? (
-					<div className="content-container">
-						<GroupCard
-							group={group}
-							onLoad={() => setLoaded(true)}
-						/>
+			<div className="w-full h-full flex items-center flex-col overflow-y-scroll">
+				<div className="flex items-center justify-center h-[400px] w-[1000px] mt-[calc(50vh-200px)]">
+					{group.id ? (
+						<div className="content-container">
+							<GroupCard
+								group={group}
+								onLoad={() => setLoaded(true)}
+							/>
+						</div>
+					) : (
+						""
+					)}
+					<div className="loader-container fixed">
+						<Spinner size="lg" />
 					</div>
-				) : (
-					""
-				)}
-				<div className="loader-container fixed">
-					<Spinner size="lg" />
+				</div>
+				<div className="flex flex-col gap-y-12 mt-20">
+					{posts.map((i: any) => (
+						<PostCard post={i} />
+					))}
 				</div>
 			</div>
+
 			<div className="fixed z-50 bottom-0 right-0 pr-12 pb-12">
 				<Button
 					size="lg"

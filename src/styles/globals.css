@@ -53,6 +53,32 @@ img {
 	user-select: none;
 }
 
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+/* Track */
 ::-webkit-scrollbar-track {
-	background-color: black;
+	background: var(--bg-color);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #222222;
+	border-radius: 100px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+.under-box-shadow {
+	background: linear-gradient(
+		0deg,
+		rgba(0, 0, 0, 1) 15%,
+		rgba(0, 0, 0, 0) 70%
+	);
+	display: inline-block;
 }

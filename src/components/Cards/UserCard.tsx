@@ -47,12 +47,14 @@ export default function UserCard({ user }: { user: any }) {
 			<style jsx>{`
 				.loader-container {
 					opacity: ${loading ? 1 : 0};
+
 					transition: opacity 0.2s ease-in-out;
 				}
 
 				.content-container {
 					opacity: ${loading ? 0 : 1};
-					transition: opacity 0.2s ease-in-out;
+					transform: scale(${loading ? "0.9" : "1"});
+					transition: all 0.2s ease-in-out;
 				}
 			`}</style>
 
@@ -63,7 +65,7 @@ export default function UserCard({ user }: { user: any }) {
 			{user.id ? (
 				<div
 					className={`rounded-large  w-[1000px] h-[400px] flex object-contain relative content-container ${
-						user.banner ? "" : "bg-zinc-600"
+						user.banner ? "" : "bg-default-100"
 					}`}
 				>
 					<Image

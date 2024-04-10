@@ -79,6 +79,7 @@ model PostMedia {
    post   Post   @relation(fields: [postId], references: [id])
    postId String
    image  String
+   index  Int
 
    @@map("post_media")
 }

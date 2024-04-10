@@ -74,7 +74,7 @@ export const POST = async (
 				const prettifiedImage = await processAnyImage(imageBuffer);
 
 				await db.postMedia.create({
-					data: { postId: post.id, image: prettifiedImage },
+					data: { postId: post.id, image: prettifiedImage, index: i },
 				});
 			}
 
@@ -88,6 +88,46 @@ export const POST = async (
 			{ message: "User created succsessfully" },
 			{ status: 201 }
 		);
+	} catch (e) {
+		console.error(e);
+		return Response.json(
+			{ message: "Someting went wrong..." },
+			{ status: 500 }
+		);
+	}
+};
+
+export const GET = async (
+	req: Request,
+	{ params }: { params: { id: string } }
+) => {
+	try {
+		const session = await getServerSession(authOptions);
+
+		if (!session) {
+			return NextResponse.json(
+				{ message: "Not authorized", type: "Missing authorization" },
+				{ status: 401 }
+			);
+		}
+
+		const groupId = params.id;
+		const group = await db.group.findUnique({ where: { id: groupId } });
+
+		if (!group) {
+			return NextResponse.json(
+				{ message: "group-does-not-exist" },
+				{ status: 404 }
+			);
+		}
+
+		const posts = await db.post.findMany({
+			where: { groupId },
+			include: { author: true },
+			orderBy: { createdAt: "desc" },
+		});
+
+		return NextResponse.json({ posts: posts }, { status: 201 });
 	} catch (e) {
 		console.error(e);
 		return Response.json(
