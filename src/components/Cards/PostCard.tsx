@@ -46,10 +46,10 @@ export default function PostCard({ post }: { post: any }) {
 					className="pl-10 relative flex flex-col items-start text-white"
 					href={`/p/${post.id}`}
 				>
-					<h2 className="mt-4">
+					<h2 className="mt-4 break-all	">
 						<b>{post.title}</b>
 					</h2>
-					<p className="mt-2 relative">
+					<p className="mt-2 relative break-all	">
 						{truncateString(post.content, 250)}
 					</p>
 					<div className="under-box-shadow w-full h-[150px] absolute top-0"></div>
