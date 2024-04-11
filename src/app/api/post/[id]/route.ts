@@ -29,7 +29,7 @@ export const GET = async (
 
 		const post = await db.post.findUnique({
 			where: { id: postId },
-			include: { author: true },
+			include: { author: true, comments: { include: { author: true } } },
 		});
 
 		if (!post) {

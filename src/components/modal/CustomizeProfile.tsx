@@ -26,12 +26,14 @@ interface CustomizeProfileProps {
 	isActive: boolean;
 	setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 	profile: any;
+	onUpdate: () => void;
 }
 
 export default function CustomizeProfile({
 	isActive,
 	setIsActive,
 	profile,
+	onUpdate,
 }: CustomizeProfileProps) {
 	const [loading, setLoading] = useState(false);
 	const [inputNameVal, setInputNameVal] = useState({
@@ -72,9 +74,8 @@ export default function CustomizeProfile({
 		setLoading(false);
 		setSuccess(true);
 		setTimeout(() => setSuccess(false), 3000);
-		router.replace(
-			`/u/${session.data?.user.username}?date=${new Date().getTime()}`
-		);
+		setTimeout(() => setIsActive(false), 1000);
+		onUpdate();
 	}
 
 	async function CustomizeProfile(name: string, bio: string) {
@@ -185,6 +186,7 @@ export default function CustomizeProfile({
 												onClick={triggerAvatarUpdate}
 												className="flex z-50 opacity-70"
 												isIconOnly={true}
+												isDisabled={loading}
 											>
 												<PhotoIcon className="h-6" />
 											</Button>
@@ -205,6 +207,7 @@ export default function CustomizeProfile({
 												onClick={triggerBannerUpdate}
 												className="flex z-10 opacity-70"
 												isIconOnly={true}
+												isDisabled={loading}
 											>
 												<PhotoIcon className="h-6" />
 											</Button>
@@ -228,6 +231,7 @@ export default function CustomizeProfile({
 										});
 									}}
 									defaultValue={profile.name}
+									isDisabled={loading}
 								></Input>
 								<Textarea
 									type="text"
@@ -248,6 +252,7 @@ export default function CustomizeProfile({
 										});
 									}}
 									defaultValue={profile.bio}
+									isDisabled={loading}
 								></Textarea>
 							</ModalBody>
 							<ModalFooter className="flex justify-between py-0">
@@ -256,6 +261,7 @@ export default function CustomizeProfile({
 									type="submit"
 									style={{ lineHeight: "1.5" }}
 									isLoading={loading}
+									isDisabled={loading}
 									startContent={
 										loading ? (
 											""

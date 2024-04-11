@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import UserCard from "@/components/Cards/UserCard";
+import { Modal, ModalBody } from "@nextui-org/react";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState({
@@ -31,7 +32,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 					fetchedUser.image && fetchedUser.image.includes("=s96-c")
 						? fetchedUser.image.replace("=s96-c", "=s1000-c")
 						: fetchedUser.image;
-				setUser({ ...fetchedUser, image: updatedImage });
+				setUser({
+					...fetchedUser,
+					image: updatedImage + `?timestamp=${new Date().getTime()}`,
+					banner:
+						fetchedUser.banner +
+						`?timestamp=${new Date().getTime()}`,
+				});
 			}
 		} catch (e: any) {
 			console.error("Error:", e.message); //mudar
@@ -44,7 +51,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	return (
 		<div className="w-full h-full flex items-center justify-center">
-			<UserCard user={user} />
+			<UserCard user={user} onUpdate={fetchUser} />
 		</div>
 	);
 }

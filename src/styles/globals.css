@@ -81,3 +81,7 @@ img {
 .wider-autocomplete [data-slot="input-wrapper"] {
 	height: 3.5rem;
 }
+
+a {
+	cursor: pointer;
+}

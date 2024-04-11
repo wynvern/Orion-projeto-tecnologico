@@ -13,7 +13,7 @@ import {
 	Image,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import SignOut from "../modal/SignOut";
 import { useState } from "react";
 
@@ -21,6 +21,8 @@ export default function ProfileDropdown() {
 	const router = useRouter();
 	const session = useSession();
 	const [signOutModal, setSignOutModal] = useState(false);
+	const pathname = usePathname();
+	console.log(pathname);
 
 	// TODO: Fix the error message that shows on terminal that comes from here, but don't know what is causing it, plus error with keyframes
 	return (
@@ -36,6 +38,13 @@ export default function ProfileDropdown() {
 							classNames={{ img: "h-8 rounded-full" }}
 							removeWrapper={true}
 							alt="avatar-user"
+							className={`${
+								pathname.includes(
+									`/u/${session.data?.user.username}`
+								)
+									? "border-2 border-white"
+									: ""
+							}`}
 						></Image>
 					</div>
 				</DropdownTrigger>

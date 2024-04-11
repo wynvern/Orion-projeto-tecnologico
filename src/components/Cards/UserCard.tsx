@@ -20,7 +20,13 @@ import { useEffect, useState } from "react";
 import CustomizeProfile from "../modal/CustomizeProfile";
 import ReportUser from "../modal/ReportUser";
 
-export default function UserCard({ user }: { user: any }) {
+export default function UserCard({
+	user,
+	onUpdate,
+}: {
+	user: any;
+	onUpdate: () => void;
+}) {
 	const session = useSession();
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0);
 	const [customizeProfileModal, setCustomizeProfileModal] = useState(false);
@@ -180,6 +186,7 @@ export default function UserCard({ user }: { user: any }) {
 				profile={user}
 			/>
 			<CustomizeProfile
+				onUpdate={() => onUpdate()}
 				isActive={customizeProfileModal}
 				setIsActive={setCustomizeProfileModal}
 				profile={user}
