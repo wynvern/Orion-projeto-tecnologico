@@ -166,8 +166,8 @@ export default function Post({ params }: { params: { id: string } }) {
 							</form>
 						</div>
 						<ScrollShadow className="gap-y-6 pl-14 mt-6 flex flex-col overflow-y-scroll flex-grow">
-							{post.comments.map((i: number) => (
-								<CommentCard comment={i} />
+							{post.comments.map((i: number, _: number) => (
+								<CommentCard key={_} comment={i} />
 							))}
 						</ScrollShadow>
 					</div>

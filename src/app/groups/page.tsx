@@ -137,7 +137,12 @@ export default function Groups() {
 						<div className="gap-x-6 flex">
 							{groups.map((i: any, _: number) => (
 								<div key={_}>
-									<GroupCard group={i} />
+									<GroupCard
+										update={() =>
+											console.log("not implemented")
+										}
+										group={i}
+									/>
 								</div>
 							))}
 						</div>

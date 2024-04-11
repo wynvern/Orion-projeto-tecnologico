@@ -219,19 +219,22 @@ export default function CreatePost({
 			<ModalContent>
 				{(onClose) => (
 					<>
-						<ModalHeader className="gap-x-4 gap-1 pt-1">
-							<p>Criar Post em</p>
-							<Chip
-								startContent={
-									<Image
-										src={group.logo}
-										removeWrapper={true}
-										className="h-6 w-6 object-cover mr-1"
-									/>
-								}
-							>
-								@{group.name}
-							</Chip>
+						<ModalHeader className="gap-x-4 flex gap-1 pt-1">
+							<div className="flex gap-x-2">
+								<p>Criar Post em</p>
+								<Chip
+									className="pl-[2px] flex justify-center"
+									startContent={
+										<Image
+											src={group.logo}
+											removeWrapper={true}
+											className="h-6 w-6 object-cover mr-[2px]"
+										/>
+									}
+								>
+									@{group.name}
+								</Chip>
+							</div>
 						</ModalHeader>
 						<form onSubmit={createPost}>
 							<ModalBody className="py-2 pb-4 min-h-[400px]">

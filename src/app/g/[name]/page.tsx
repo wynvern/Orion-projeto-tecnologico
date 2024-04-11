@@ -107,6 +107,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 						<div className="content-container">
 							<GroupCard
 								group={group}
+								update={() => fetchGroup()}
 								onLoad={() => setLoaded(true)}
 							/>
 						</div>

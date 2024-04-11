@@ -15,9 +15,11 @@ import CustomizeGroup from "../modal/CustomizeGroup";
 export default function GroupCard({
 	group,
 	onLoad,
+	update,
 }: {
 	group: any;
 	onLoad?: () => void;
+	update: () => void;
 }) {
 	const session = useSession();
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0);
@@ -125,6 +127,7 @@ export default function GroupCard({
 				isActive={customizeGroup}
 				setIsActive={setCustomizeGroup}
 				group={group}
+				updateGroup={update}
 			/>
 		</div>
 	);

@@ -25,12 +25,14 @@ interface CustomizeGroupProps {
 	isActive: boolean;
 	setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 	group: any;
+	updateGroup: () => void;
 }
 
 export default function CustomizeGroup({
 	isActive,
 	setIsActive,
 	group,
+	updateGroup,
 }: CustomizeGroupProps) {
 	const [loading, setLoading] = useState(false);
 	const [inputNameVal, setInputNameVal] = useState({
@@ -70,6 +72,10 @@ export default function CustomizeGroup({
 		setLoading(false);
 		setSuccess(true);
 		setTimeout(() => setSuccess(false), 3000);
+		setTimeout(() => {
+			updateGroup();
+			setIsActive(false);
+		}, 1000);
 	}
 
 	async function CustomizeGroup(name: string, description: string) {
@@ -183,6 +189,7 @@ export default function CustomizeGroup({
 												onClick={triggerlogoUpdate}
 												className="flex z-50 opacity-70"
 												isIconOnly={true}
+												isDisabled={loading}
 											>
 												<PhotoIcon className="h-6" />
 											</Button>
@@ -200,6 +207,7 @@ export default function CustomizeGroup({
 												onClick={triggerBannerUpdate}
 												className="flex z-10 opacity-70"
 												isIconOnly={true}
+												isDisabled={loading}
 											>
 												<PhotoIcon className="h-6" />
 											</Button>
@@ -210,6 +218,7 @@ export default function CustomizeGroup({
 									type="text"
 									placeholder="Nome Completo"
 									name="name"
+									isDisabled={loading}
 									classNames={{ inputWrapper: "h-14" }}
 									startContent={
 										<UserIcon className="h-6 text-neutral-500" />
@@ -228,6 +237,7 @@ export default function CustomizeGroup({
 									type="text"
 									placeholder="Descrição do Grupo"
 									name="description"
+									isDisabled={loading}
 									classNames={{
 										innerWrapper: "py-2 min-h-20",
 									}}
@@ -251,6 +261,7 @@ export default function CustomizeGroup({
 									type="submit"
 									style={{ lineHeight: "1.5" }}
 									isLoading={loading}
+									isDisabled={loading}
 									startContent={
 										loading ? (
 											""
