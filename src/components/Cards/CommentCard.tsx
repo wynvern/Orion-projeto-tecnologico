@@ -48,7 +48,7 @@ export default function CommentCard({ comment }: { comment: any }) {
 					className="pl-10 relative flex flex-col items-start text-white"
 					href={`/p/${comment.id}`}
 				>
-					<p className="mt-2 relative">
+					<p className="mt-2 relative break-all	">
 						{truncateString(comment.text, 250)}
 					</p>
 					<div className="under-box-shadow w-full  absolute top-0"></div>

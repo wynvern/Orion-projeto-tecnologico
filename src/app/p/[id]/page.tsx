@@ -78,6 +78,7 @@ export default function Post({ params }: { params: { id: string } }) {
 		}
 	}
 
+	// TODO: Use arrow keys to navigate image
 	return (
 		<div className="w-full h-full">
 			{post.id ? (
@@ -126,10 +127,12 @@ export default function Post({ params }: { params: { id: string } }) {
 							</div>
 						</div>
 						<div className="pl-14 relative flex flex-col items-start text-white">
-							<h2 className="mt-4">
+							<h2 className="mt-4 break-all	">
 								<b>{post.title}</b>
 							</h2>
-							<p className="mt-2 relative">{post.content}</p>
+							<p className="mt-2 relative break-all	">
+								{post.content}
+							</p>
 							<div className="under-box-shadow w-full h-[150px] absolute top-0"></div>
 						</div>
 						<div className="pl-14 pt-6">
@@ -142,6 +145,7 @@ export default function Post({ params }: { params: { id: string } }) {
 									placeholder="Comentar"
 									variant="bordered"
 									name="text"
+									maxLength={200}
 									classNames={{
 										inputWrapper: "h-14 border-none",
 									}}

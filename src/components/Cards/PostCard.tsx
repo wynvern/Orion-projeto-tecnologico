@@ -68,7 +68,7 @@ export default function PostCard({ post }: { post: any }) {
 					</div>
 				</div>
 			) : (
-				<div className="w-40 ml-10 shrink-0"></div>
+				""
 			)}
 		</div>
 	);

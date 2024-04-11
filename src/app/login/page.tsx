@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Input, Link, Image } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Login() {
@@ -17,6 +18,7 @@ export default function Login() {
 		message: "",
 		active: false,
 	});
+	const router = useRouter();
 	const [inputPasswordVal, setInputPasswordVal] = useState({
 		message: "",
 		active: false,
@@ -79,6 +81,7 @@ export default function Login() {
 		}
 
 		setLoading(false);
+		router.push("/finish");
 	}
 
 	function signInGoogle() {
