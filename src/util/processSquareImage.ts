@@ -9,7 +9,7 @@ export const processSquareImage = async (
 
 		if (metadata.width && metadata.height) {
 			const processedImage = await sharp(buffer)
-				.png({ quality: 40 }) // Convert to PNG format
+				.png({ quality: 40, compressionLevel: 5 }) // Convert to PNG format
 				.withMetadata() // Keep image metadata (e.g., orientation)
 				.resize({
 					width: 500,
@@ -36,7 +36,7 @@ export const processAnyImage = async (buffer: Buffer): Promise<string> => {
 
 		if (metadata.width && metadata.height) {
 			const processedImage = await sharp(buffer)
-				.png({ quality: 40 }) // Convert to PNG format
+				.png({ quality: 40, compressionLevel: 8 }) // Convert to PNG format
 				.withMetadata() // Keep image metadata (e.g., orientation)
 				.toBuffer();
 

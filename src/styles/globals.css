@@ -60,7 +60,7 @@ img {
 
 /* Track */
 ::-webkit-scrollbar-track {
-	background: var(--bg-color);
+	background: transparent;
 }
 
 /* Handle */
