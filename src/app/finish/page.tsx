@@ -18,6 +18,8 @@ export default function Finish() {
 	const session = useSession();
 	const [success, setSuccess] = useState(false);
 
+	console.log(session);
+
 	function isValidString(str: string) {
 		const regex = /^[a-z._]+$/;
 		return regex.test(str);

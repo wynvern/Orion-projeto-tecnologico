@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { db } from "./db";
@@ -51,12 +51,7 @@ export const authOptions: NextAuthOptions = {
 					throw new Error("password-not-match");
 				}
 
-				return {
-					id: existingUser.id,
-					name: existingUser.name,
-					email: existingUser.email,
-					emailVerified: existingUser.emailVerified,
-				};
+				return existingUser as User;
 			},
 		}),
 	],
@@ -71,7 +66,7 @@ export const authOptions: NextAuthOptions = {
 				token.role = user.role as string;
 				token.fullName = user.fullName;
 				// Add username to the token
-				token.username = user.username;
+				token.username = user.username as string;
 				token.id = user.id;
 				token.image = user.image;
 				token.banner = user.banner;
@@ -97,8 +92,10 @@ export const authOptions: NextAuthOptions = {
 				session.user.role = token.role;
 				session.user.fullName = token.fullName as string;
 				session.user.id = token.id as string;
+
 				// Transfer username to the session
 				session.user.username = token.username as string;
+
 				session.user.image = token.image as string;
 				session.user.banner = token.banner as string;
 			}
