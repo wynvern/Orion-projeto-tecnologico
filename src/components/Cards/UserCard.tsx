@@ -7,6 +7,7 @@ import {
 	DropdownTrigger,
 	Image,
 	Link,
+	Skeleton,
 	Spinner,
 	user,
 } from "@nextui-org/react";
@@ -39,6 +40,7 @@ export default function UserCard({
 
 	useEffect(() => {
 		if (user.id) {
+			console.log(user.image);
 			const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0);
 			if (imagesLoaded == count) onLoad(); // amount of images to load before showing
 		}
@@ -87,13 +89,16 @@ export default function UserCard({
 						alt="user-banner"
 					></Image>
 					<div>
-						<Image
-							draggable={false}
-							src={user.image ?? "/brand/default-user.svg"}
-							className="h-[400px] w-[400px] object-cover z-50"
-							onLoad={handleComponentLoaded}
-							alt="avatar-user"
-						/>
+						<Skeleton className="rounded-large
+                  ">
+							<Image
+								draggable={false}
+								src={user.image ?? "/brand/default-user.svg"}
+								className="h-[400px] w-[400px] object-cover z-50"
+								onLoad={handleComponentLoaded}
+								alt="avatar-user"
+							/>
+						</Skeleton>
 					</div>
 					<div className="flex-grow p-10 flex flex-col z-10 justify-between">
 						<div>
@@ -102,19 +107,23 @@ export default function UserCard({
 									<div className="flex items-center gap-x-4">
 										<div className="bg-emerald-400 h-7 w-7 rounded-2xl z-20 mt-1"></div>
 										{session.data?.user.id == user.id ? (
-											<Link
-												className="text-white"
-												onClick={() => {
-													setCustomizeProfileModal(
-														!customizeProfileModal
-													);
-												}}
-											>
-												<div className="flex items-end gap-x-2">
-													<h1>@{user.username}</h1>
-													<PencilIcon className="h-6"></PencilIcon>
-												</div>
-											</Link>
+											<Skeleton className="rounded-large">
+												<Link
+													className="text-white"
+													onClick={() => {
+														setCustomizeProfileModal(
+															!customizeProfileModal
+														);
+													}}
+												>
+													<div className="flex items-end gap-x-2">
+														<h1>
+															@{user.username}
+														</h1>
+														<PencilIcon className="h-6"></PencilIcon>
+													</div>
+												</Link>
+											</Skeleton>
 										) : (
 											<div className="flex items-end gap-x-2">
 												<h1>@{user.username}</h1>
