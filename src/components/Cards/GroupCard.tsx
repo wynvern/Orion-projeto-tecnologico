@@ -102,9 +102,7 @@ export default function GroupCard({
 												>
 													<div className="flex items-center gap-x-2">
 														<UserGroupIcon className="h-10" />
-														<h1>
-															{group.groupName}
-														</h1>
+														<h1>{group.name}</h1>
 													</div>
 													<PencilIcon className="h-6"></PencilIcon>
 												</Link>
@@ -127,8 +125,8 @@ export default function GroupCard({
 									</Link>
 								</div>
 							</div>
-							<div className="mt-2 max-w-60">
-								<p className="max-w-60">@{group.name}</p>
+							<div className=" max-w-60 ml-12">
+								<h3 className="max-w-60">{group.groupName}</h3>
 							</div>
 							<div>
 								<p className="break-all mt-4">

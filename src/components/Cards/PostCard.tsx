@@ -2,6 +2,7 @@ import { prettyDateTime } from "@/util/prettyDateTime";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { Image, Link } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import BookmarkPost from "../post/BookmarkPost";
 
 export default function PostCard({ post }: { post: any }) {
 	function truncateString(input: string, maxLength: number): string {
@@ -43,8 +44,10 @@ export default function PostCard({ post }: { post: any }) {
 					</Link>
 					<div>
 						<div className="flex items-center gap-x-4">
-							<b>0</b>
-							<BookmarkIcon className="h-8" />
+							<BookmarkPost
+								post={post}
+								onLoad={() => console.log("not implemented")}
+							/>
 						</div>
 					</div>
 				</div>

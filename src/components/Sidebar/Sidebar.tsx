@@ -24,7 +24,9 @@ export default function Sidebar() {
 				</Link>
 			</div>
 			<div className="gap-y-12 flex flex-col">
-				<MagnifyingGlassIcon className="h-8" />
+				<Link className="text-white" href="/search">
+					<MagnifyingGlassIcon className="h-8" />
+				</Link>
 				<Link href="/bookmarks" className="text-white">
 					{url == "/bookmarks" ? (
 						<SolidBookmarkIcon className="h-8" />

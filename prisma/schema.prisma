@@ -103,6 +103,7 @@ model Bookmark {
    post   Post   @relation(fields: [postId], references: [id])
    postId String
 
+   @@unique([postId, userId])
    @@map("bookmarks")
 }
 

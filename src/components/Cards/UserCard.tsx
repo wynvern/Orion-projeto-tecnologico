@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import CustomizeProfile from "../modal/CustomizeProfile";
 import ReportUser from "../modal/ReportUser";
+import UserIcon from "@heroicons/react/24/solid/UserIcon";
 
 export default function UserCard({
 	user,
@@ -100,8 +101,10 @@ export default function UserCard({
 						<div>
 							<div className="flex justify-between">
 								<div>
-									<div className="flex items-center gap-x-4">
-										<div className="bg-emerald-400 h-7 w-7 rounded-2xl z-20 mt-1"></div>
+									<div className="flex items-center gap-x-2">
+										<div className="">
+											<UserIcon className="h-10 w-10" />
+										</div>
 										{session.data?.user.id == user.id ? (
 											<Link
 												className="text-white"
@@ -112,13 +115,13 @@ export default function UserCard({
 												}}
 											>
 												<div className="flex items-end gap-x-2">
-													<h1>@{user.username}</h1>
+													<h1>{user.username}</h1>
 													<PencilIcon className="h-6"></PencilIcon>
 												</div>
 											</Link>
 										) : (
 											<div className="flex items-end gap-x-2">
-												<h1>@{user.username}</h1>
+												<h1>{user.username}</h1>
 											</div>
 										)}
 									</div>
@@ -157,8 +160,8 @@ export default function UserCard({
 									</Dropdown>
 								</div>
 							</div>
-							<div className="ml-11 mt-2">
-								<p>{user.name}</p>
+							<div className="ml-12 mt-2">
+								<h3>{user.name}</h3>
 							</div>
 							<div>
 								<p className="max-w-[400px] mt-4">{user.bio}</p>

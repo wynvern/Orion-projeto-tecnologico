@@ -43,7 +43,7 @@ export default function EnterGroupButton({
 		>
 			<Button
 				isIconOnly={true}
-				className="p-2"
+				className="h-14 w-14"
 				size="lg"
 				color={isIn ? "default" : "primary"}
 				onClick={handleButtonClick}

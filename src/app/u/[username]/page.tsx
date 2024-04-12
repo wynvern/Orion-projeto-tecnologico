@@ -5,7 +5,7 @@ import UserCard from "@/components/Cards/UserCard";
 import PostCard from "@/components/Cards/PostCard";
 import { CircularProgress, Link, Tab, Tabs } from "@nextui-org/react";
 import request from "@/util/api";
-import GroupCard from "@/components/Cards/GroupCard";
+import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState({
@@ -58,17 +58,8 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchPosts() {
 		if (user.id) {
-			try {
-				const response = await fetch(`/api/user/${user.id}/post`);
-
-				if (response.ok) {
-					const data = await response.json();
-					console.log(data);
-					setPosts(data.posts);
-				}
-			} catch (e) {
-				console.error(e);
-			}
+			const data = await request(`/api/user/${user.id}/post`);
+			setPosts(data.posts);
 		}
 	}
 
@@ -111,13 +102,11 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						<Tab title={<h3>Salvos</h3>}>HELO</Tab>
 						<Tab title={<h3>Grupos</h3>}>
 							<div>
-								{userGroups.map((i: any) => (
-									<GroupCard
+								{userGroups.map((i: any, _: number) => (
+									<LightGroupCard
+										key={_}
 										group={i.group}
-										update={() =>
-											console.log("not implemented")
-										}
-									></GroupCard>
+									></LightGroupCard>
 								))}
 							</div>
 						</Tab>
