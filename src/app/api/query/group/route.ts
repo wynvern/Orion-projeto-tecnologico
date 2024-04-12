@@ -60,42 +60,27 @@ export const GET = async (req: Request) => {
 			);
 		}
 
-		const whereSearch: any = {};
-
-		if (name) whereSearch["where"] = { name };
-
-		const groups = await db.group.findMany(whereSearch);
-
-		const groupsWithViews = await Promise.all(
-			groups.map(async (group) => {
-				const uniqueViewsCount = await db.groupView.count({
-					where: { groupId: group.id },
-				});
-				return { ...group, views: uniqueViewsCount }; // Add the views field to each group
-			})
-		);
-
-		const groupsWithParticipants = await Promise.all(
-			groupsWithViews.map(async (group) => {
-				const uniqueViewsCount = await db.inGroups.count({
-					where: { groupId: group.id },
-				});
-				return { ...group, participants: uniqueViewsCount }; // Add the participants field to each group
-			})
-		);
-
-		if (!groupsWithParticipants) {
-			return NextResponse.json(
-				{
-					message: "Group-not-found",
+		const groups = await db.group.findFirst({
+			where: { name: name as string },
+			select: {
+				name: true,
+				groupName: true,
+				banner: true,
+				_count: {
+					select: {
+						groupViews: {
+							where: { group: { name: name as string } },
+						},
+						members: { where: { group: { name: name as string } } },
+						posts: { where: { group: { name: name as string } } },
+					},
 				},
-				{ status: 404 }
-			);
-		}
+			},
+		});
 
 		return NextResponse.json(
 			{
-				groups: groupsWithParticipants,
+				groups,
 				message: "Group retreived succsessfully",
 			},
 			{ status: 200 }

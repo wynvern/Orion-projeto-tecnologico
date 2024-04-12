@@ -29,14 +29,14 @@ export const GET = async (req: Request) => {
 			);
 		}
 
-		const groups = await db.group.findMany({
-			where: { name: { contains: search, mode: "insensitive" } },
-			take: 10,
+		const users = await db.user.findMany({
+			where: { username: { contains: search, mode: "insensitive" } },
 			skip,
+			take: 10,
 		});
 
 		return NextResponse.json(
-			{ groups, message: "groups retreived succsessfully" },
+			{ users, message: "users retreived succsessfully" },
 			{ status: 200 }
 		);
 	} catch (e) {

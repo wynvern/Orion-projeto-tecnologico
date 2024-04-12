@@ -7,6 +7,7 @@ export const GET = async (req: Request) => {
 	try {
 		const url = new URL(req.url);
 		const search = url.searchParams.get("search");
+		const skip = Number(url.searchParams.get("skip"));
 
 		const session = await getServerSession(authOptions);
 
@@ -29,8 +30,10 @@ export const GET = async (req: Request) => {
 		}
 
 		const posts = await db.post.findMany({
-			where: { title: { contains: search } },
+			where: { title: { contains: search, mode: "insensitive" } },
 			include: { author: true },
+			skip,
+			take: 10,
 		});
 
 		return NextResponse.json(

@@ -169,13 +169,16 @@ export default function UserCard({
 						</div>
 						<div className="flex gap-x-4">
 							<p>
-								<b>Posts </b>0
+								<b>Posts </b>
+								{user._count.posts}
 							</p>
 							<p>
-								<b>Salvos </b>0
+								<b>Salvos </b>
+								{user._count.bookmarks}
 							</p>
 							<p>
-								<b>Grupos </b>0
+								<b>Grupos </b>
+								{user._count.groups}
 							</p>
 						</div>
 					</div>

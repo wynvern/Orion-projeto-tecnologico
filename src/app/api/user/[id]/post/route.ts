@@ -9,6 +9,8 @@ export const GET = async (
 ) => {
 	try {
 		const session = await getServerSession(authOptions);
+		const url = new URL(req.url);
+		const skip = Number(url.searchParams.get("skip"));
 
 		if (!session) {
 			return NextResponse.json(
@@ -31,6 +33,8 @@ export const GET = async (
 			where: { authorId: userId },
 			include: { author: true },
 			orderBy: { createdAt: "desc" },
+			skip,
+			take: 10,
 		});
 
 		return NextResponse.json({ posts: posts }, { status: 201 });

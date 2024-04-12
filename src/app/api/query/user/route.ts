@@ -34,11 +34,29 @@ export const GET = async (req: Request) => {
 			);
 		}
 
-		const userFetched = await db.user.findMany({
+		var userFetched: any = await db.user.findFirst({
 			where: {
 				username: { contains: username },
 			},
+			select: {
+				id: true,
+				name: true,
+				banner: true,
+				username: true,
+				bio: true,
+				image: true,
+				_count: {
+					select: {
+						posts: { where: { author: { username } } },
+						bookmarks: { where: { user: { username } } },
+						groups: { where: { user: { username } } },
+					},
+				},
+			},
 		});
+
+		console.log(userFetched);
+
 		if (!userFetched) {
 			return NextResponse.json(
 				{
@@ -49,11 +67,10 @@ export const GET = async (req: Request) => {
 				{ status: 404 }
 			);
 		}
-		const excludedPasswords = removePasswordFields(userFetched);
 
 		return NextResponse.json(
 			{
-				users: excludedPasswords,
+				user: userFetched,
 				message: "User retreived succsessfully",
 			},
 			{ status: 200 }
