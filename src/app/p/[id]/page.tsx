@@ -84,9 +84,9 @@ export default function Post({ params }: { params: { id: string } }) {
 				<div className="flex w-full h-full">
 					{/* Part for the post stuff */}
 					<div
-						className={`h-full ${
+						className={`h-full flex flex-col ${
 							post.media.length < 1
-								? "w-full p-20"
+								? "w-full pt-20 px-20"
 								: "w-1/2  pl-14 pt-20 pr-14 "
 						}`}
 					>
@@ -168,7 +168,7 @@ export default function Post({ params }: { params: { id: string } }) {
 								</Button>
 							</form>
 						</div>
-						<ScrollShadow className="gap-y-6 pl-14 mt-6 flex flex-col overflow-y-scroll flex-grow">
+						<ScrollShadow className="gap-y-6 pl-14 mt-6 flex flex-col overflow-y-scroll grow">
 							{post.comments.map((i: number, _: number) => (
 								<CommentCard key={_} comment={i} />
 							))}

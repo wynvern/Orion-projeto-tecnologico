@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import UserCard from "@/components/Cards/UserCard";
 import PostCard from "@/components/Cards/PostCard";
+import { CircularProgress, Link, Tab, Tabs } from "@nextui-org/react";
+import request from "@/util/api";
+import GroupCard from "@/components/Cards/GroupCard";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState({
@@ -14,6 +17,8 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		banner: "",
 	});
 	const [posts, setPosts] = useState([]);
+	const [contentLoaded, setContentLoaded] = useState(false);
+	const [userGroups, setUserGroups] = useState([]);
 
 	async function fetchUser() {
 		try {
@@ -67,8 +72,18 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		}
 	}
 
+	async function fetchGroups() {
+		if (user.id) {
+			const data = await request(`/api/user/${user.id}/group`);
+
+			setUserGroups(data.groups);
+			setContentLoaded(true);
+		}
+	}
+
 	useEffect(() => {
 		fetchPosts();
+		fetchGroups();
 	}, [user.id]);
 
 	useEffect(() => {
@@ -76,11 +91,41 @@ export default function UserPage({ params }: { params: { username: string } }) {
 	}, []);
 
 	return (
-		<div className="w-full h-full flex items-center justify-center flex-col">
-			<UserCard user={user} onUpdate={fetchUser} />
-			{posts.map((i: any, _: number) => (
-				<PostCard post={i} key={_} />
-			))}
+		<div className="w-full h-full overflow-y-scroll">
+			<div className="w-full flex items-center flex-col mt-[calc(50vh-200px)]">
+				<UserCard user={user} onUpdate={fetchUser} />
+				{contentLoaded ? (
+					<Tabs
+						className="my-14"
+						classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
+						variant="light"
+						color="primary"
+					>
+						<Tab title={<h3>Posts</h3>}>
+							<div className="flex flex-col gap-y-12">
+								{posts.map((i: any, _: number) => (
+									<PostCard post={i} key={_} />
+								))}
+							</div>
+						</Tab>
+						<Tab title={<h3>Salvos</h3>}>HELO</Tab>
+						<Tab title={<h3>Grupos</h3>}>
+							<div>
+								{userGroups.map((i: any) => (
+									<GroupCard
+										group={i.group}
+										update={() =>
+											console.log("not implemented")
+										}
+									></GroupCard>
+								))}
+							</div>
+						</Tab>
+					</Tabs>
+				) : (
+					<CircularProgress size="lg" className="mt-14" />
+				)}
+			</div>
 		</div>
 	);
 }

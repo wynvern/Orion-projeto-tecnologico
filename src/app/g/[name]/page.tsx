@@ -49,7 +49,17 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 
 			if (response.ok) {
 				const data = await response.json(); // TODO: Show message that group could not be found
-				setGroup(data.groups[0]);
+				const updateGroup = data.groups[0];
+				setGroup({
+					...updateGroup,
+					image: updateGroup.image
+						? updateGroup + `?timestamp=${new Date().getTime()}`
+						: updateGroup.image,
+					banner: updateGroup.banner
+						? updateGroup.banner +
+						  `?timestamp=${new Date().getTime()}`
+						: updateGroup.banner,
+				});
 			}
 		} catch (e: any) {
 			console.error("Error:", e.message); //mudar

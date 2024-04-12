@@ -43,8 +43,6 @@ export default function CustomizeGroup({
 		message: "",
 		active: false,
 	});
-	const session = useSession();
-	const { update } = useSession();
 	const [banner, setBanner] = useState({ base64: "", preview: "" });
 	const [logo, setlogo] = useState({ base64: "", preview: "" });
 	const [success, setSuccess] = useState(false);
@@ -59,7 +57,16 @@ export default function CustomizeGroup({
 
 		if (formName.length > 30) {
 			setInputNameVal({
-				message: "Nome de usuário não aceito.",
+				message: "Nome do grupo muito grande",
+				active: true,
+			});
+			setLoading(false);
+			return false;
+		}
+
+		if (formdescription.length < 1 || formdescription.length > 200) {
+			setInputdescriptionVal({
+				message: "Nome do grupo inválido",
 				active: true,
 			});
 			setLoading(false);
@@ -116,10 +123,6 @@ export default function CustomizeGroup({
 				},
 				body: JSON.stringify({ logo: logo.base64 }),
 			});
-			if (response.ok) {
-				const data = await response.json();
-				update({ image: data.url });
-			}
 		} catch (e) {
 			console.error(e);
 		}
@@ -141,10 +144,6 @@ export default function CustomizeGroup({
 				},
 				body: JSON.stringify({ banner: banner.base64 }),
 			});
-			if (response.ok) {
-				const data = await response.json();
-				update({ banner: data.url });
-			}
 		} catch (e) {
 			console.error(e);
 		}
