@@ -48,13 +48,12 @@ export default function Search() {
 	return (
 		<div className="w-full h-full relative overflow-y-scroll">
 			<div className="h-full w-full flex items-center flex-col">
-				<div className="w-full h-full mt-[calc(50vh-70px)] w-[750px] flex items-center flex-col h-[120px] bg-default-100 rounded-large">
+				<div className="w-full h-full mt-[calc(50vh-70px)] h-[100px] flex items-center flex-col rounded-large">
 					<form
 						onSubmit={handleFetch}
-						className="w-full h-full flex items-center p-8"
+						className="w-[750px] h-full flex items-center p-8"
 					>
 						<Input
-							variant="bordered"
 							type="text"
 							placeholder="Título do Grupo"
 							name="search"
@@ -74,7 +73,7 @@ export default function Search() {
 					</form>
 				</div>
 				<Tabs
-					className="mt-14"
+					className="mt-10"
 					classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
 					variant="light"
 					color="primary"

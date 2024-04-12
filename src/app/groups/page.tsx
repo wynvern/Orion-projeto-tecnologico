@@ -1,6 +1,7 @@
 "use client";
 
 import GroupCard from "@/components/Cards/GroupCard";
+import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 import CreateGroup from "@/components/modal/CreateGroup";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
@@ -136,12 +137,7 @@ export default function Groups() {
 						<div className="gap-x-6 flex">
 							{groups.map((i: any, _: number) => (
 								<div key={_}>
-									<GroupCard
-										update={() =>
-											console.log("not implemented")
-										}
-										group={i}
-									/>
+									<LightGroupCard group={i} />
 								</div>
 							))}
 						</div>
