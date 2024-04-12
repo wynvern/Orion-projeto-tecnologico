@@ -39,7 +39,6 @@ export default function Groups() {
 			if (response.ok) {
 				const data = await response.json();
 				setGroups(data.groups);
-				console.log(data);
 			}
 		} catch (e) {
 			console.error(e);

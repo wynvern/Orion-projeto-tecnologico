@@ -94,9 +94,6 @@ export default function CustomizeGroup({
 			if (response.ok) {
 				const data = await response.json();
 				// TODO: Make a success and reload page
-			} else {
-				const data = await response.json();
-				console.log(data);
 			}
 		} catch (e) {
 			console.error(e);

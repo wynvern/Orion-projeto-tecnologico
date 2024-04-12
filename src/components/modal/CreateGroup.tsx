@@ -191,7 +191,6 @@ export default function CreateGroup({
 				router.push(`/g/${data.newGroup.name}`); // TODO: see if this works
 			} else {
 				const data = await response.json();
-				console.log(data);
 
 				if (data.message == "name-already-in-use") {
 					setInputErrors({

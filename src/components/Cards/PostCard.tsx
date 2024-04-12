@@ -1,6 +1,7 @@
 import { prettyDateTime } from "@/util/prettyDateTime";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { Image, Link } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 
 export default function PostCard({ post }: { post: any }) {
 	function truncateString(input: string, maxLength: number): string {
@@ -10,6 +11,11 @@ export default function PostCard({ post }: { post: any }) {
 			return input;
 		}
 	}
+
+	const [imageLoaded, setImageLoaded] = useState(false);
+	const [loaded, setLoaded] = useState(false);
+
+	useEffect(() => {});
 
 	return (
 		<div className="w-[1000px] flex">

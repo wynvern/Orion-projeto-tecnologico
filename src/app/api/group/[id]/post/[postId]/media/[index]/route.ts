@@ -21,8 +21,6 @@ export const GET = async (
 		const postId = params.postId;
 		const index: number = Number(params.index);
 
-		console.log("post" + postId, "index" + index);
-
 		if (!postId) {
 			return Response.json(
 				{ message: "id not provided", type: "id-missing" },

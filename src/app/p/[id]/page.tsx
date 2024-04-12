@@ -55,7 +55,6 @@ export default function Post({ params }: { params: { id: string } }) {
 		const formData = new FormData(e.currentTarget);
 		const text: string = formData.get("text") as string;
 
-		console.log(text);
 		if (!text || text.length > 300) return false;
 
 		try {

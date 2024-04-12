@@ -99,7 +99,7 @@ export default function CreatePost({
 		try {
 			const mediaToPost = media.map((i) => i.base64);
 
-			const response = await fetch(`/api/group/${group.id}/post`, {
+			await fetch(`/api/group/${group.id}/post`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -110,14 +110,6 @@ export default function CreatePost({
 					images: mediaToPost,
 				}),
 			});
-
-			if (response.ok) {
-				const data = await response.json();
-				console.log(data);
-			} else {
-				const data = await response.json();
-				console.log(data);
-			}
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -163,7 +155,7 @@ export default function CreatePost({
 				files[0].type.split("/")[1]
 			)
 		) {
-			console.log("tipo não suportado");
+			console.error("tipo não suportado"); // TODO: Better drag notifications
 		}
 		if (media.length >= 5) return false;
 
