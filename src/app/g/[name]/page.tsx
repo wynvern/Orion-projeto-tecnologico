@@ -10,12 +10,12 @@ import { useEffect, useState } from "react";
 
 export default function GroupPage({ params }: { params: { name: string } }) {
 	const [group, setGroup] = useState({
-		groupname: "",
-		name: "",
-		image: "",
-		description: "",
-		banner: "",
-		id: "",
+		groupname: "a",
+		name: "a",
+		image: "a",
+		description: "a",
+		banner: "a",
+		id: "a",
 	});
 	const [createPostModal, setCreatePostModal] = useState(false);
 	const [posts, setPosts]: any[] = useState([]);
@@ -49,7 +49,6 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 
 			if (response.ok) {
 				const data = await response.json(); // TODO: Show message that group could not be found
-				console.log(data);
 				setGroup(data.groups[0]);
 			}
 		} catch (e: any) {
@@ -75,7 +74,6 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data);
 				setPosts(data.posts);
 			}
 		} catch (e) {
@@ -83,39 +81,13 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		}
 	}
 
-	const [loaded, setLoaded] = useState(false);
-
 	// TODO: Button to scroll to the top of the page on top of create button
 	return (
 		<div className="w-full h-full">
-			<style jsx>{`
-				.loader-container {
-					opacity: ${loaded ? 0 : 1};
-					transition: opacity 0.2s ease-in-out;
-				}
-
-				.content-container {
-					opacity: ${loaded ? 1 : 0};
-					transform: scale(${loaded ? "1" : "0.9"});
-					transition: all 0.2s ease-in-out;
-				}
-			`}</style>
-
 			<div className="w-full h-full flex items-center flex-col overflow-y-scroll">
 				<div className="flex items-center justify-center h-[400px] w-[1000px] mt-[calc(50vh-200px)]">
-					{group.id ? (
-						<div className="content-container">
-							<GroupCard
-								group={group}
-								update={() => fetchGroup()}
-								onLoad={() => setLoaded(true)}
-							/>
-						</div>
-					) : (
-						""
-					)}
-					<div className="loader-container fixed">
-						<Spinner size="lg" />
+					<div className="content-container">
+						<GroupCard group={group} update={() => fetchGroup()} />
 					</div>
 				</div>
 				<div className="flex flex-col gap-y-12 mt-20">

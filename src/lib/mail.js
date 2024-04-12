@@ -22,8 +22,6 @@ const sendMail = (email, subject, html) => {
 	});
 
 	transporter.sendMail(mailOptions, function (error, info) {
-		console.log(info, error);
-
 		if (error) {
 			return error;
 		} else {

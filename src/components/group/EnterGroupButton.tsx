@@ -16,7 +16,6 @@ export default function EnterGroupButton({
 			try {
 				const response = await fetch(`/api/group/${group.id}/in`);
 				const data = await response.json();
-				console.log(data);
 				setIsIn(data.message === "following");
 				if (onLoad) onLoad();
 			} catch (error) {

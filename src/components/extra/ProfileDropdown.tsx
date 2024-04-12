@@ -22,7 +22,6 @@ export default function ProfileDropdown() {
 	const session = useSession();
 	const [signOutModal, setSignOutModal] = useState(false);
 	const pathname = usePathname();
-	console.log(pathname);
 
 	// TODO: Fix the error message that shows on terminal that comes from here, but don't know what is causing it, plus error with keyframes
 	return (
