@@ -47,7 +47,7 @@ export default function SignOut({ isActive, setIsActive }: SignOutProps) {
 							entanto, seus dados permanecerão seguros e você
 							poderá efetuar login novamente a qualquer momento.
 						</ModalBody>
-						<ModalFooter className="flex justify-between">
+						<ModalFooter className="py-0">
 							<Button
 								color="danger"
 								onClick={() => {

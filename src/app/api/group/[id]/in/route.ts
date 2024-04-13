@@ -115,6 +115,8 @@ export const GET = async (
 			where: { groupId, userId },
 		});
 
+		console.log(userId, groupId);
+
 		if (linkExists) {
 			return NextResponse.json({ message: "following" }, { status: 200 });
 		} else {

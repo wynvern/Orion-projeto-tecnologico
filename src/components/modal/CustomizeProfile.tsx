@@ -255,7 +255,7 @@ export default function CustomizeProfile({
 									isDisabled={loading}
 								></Textarea>
 							</ModalBody>
-							<ModalFooter className="flex justify-between py-0">
+							<ModalFooter className="py-0">
 								<Button
 									color={success ? "success" : "primary"}
 									type="submit"

@@ -1,6 +1,7 @@
 import getFileBase64 from "@/util/getFile";
 import {
 	ChatBubbleBottomCenterTextIcon,
+	CheckIcon,
 	DocumentIcon,
 	PencilIcon,
 	PhotoIcon,
@@ -26,11 +27,14 @@ import {
 import { useState } from "react";
 import { TRANSITION_EASINGS } from "@nextui-org/framer-transitions";
 import { CloudArrowUpIcon } from "@heroicons/react/24/solid";
+import request from "@/util/api";
+import ConfirmationModal from "./ConfirmClose";
 
 interface CreatePostProps {
 	isActive: boolean;
 	setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 	group: any;
+	update: () => void;
 }
 
 interface Media {
@@ -44,20 +48,27 @@ export default function CreatePost({
 	isActive,
 	setIsActive,
 	group,
+	update,
 }: CreatePostProps) {
 	const [loading, setLoading] = useState(false);
 	const [selected, setSelected] = useState<TabKey>("post");
 	const [media, setMedia] = useState<Media[]>([]);
+	const [title, setTitle] = useState("");
+	const [description, setDescription] = useState("");
+	const [success, setSuccess] = useState(false);
+	const [confirmClose, setConfirmClose] = useState(false);
+	const [inputErrors, setInputErrors] = useState({
+		description: "",
+		title: "",
+	});
 
 	async function createPost(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
+		if (!validateInputs()) return false;
 		setLoading(true);
-		const formData = new FormData(e.currentTarget);
-		const formTitle: string = formData.get("title") as string;
-		const formDescription: string = formData.get("content") as string;
 
-		postCreatePost(formTitle, formDescription);
+		postCreatePost(title, description);
 	}
 
 	async function imageFileToDict(
@@ -95,25 +106,53 @@ export default function CreatePost({
 		});
 	}
 
-	async function postCreatePost(title: string, content: string) {
-		try {
-			const mediaToPost = media.map((i) => i.base64);
+	function validateInputs() {
+		var val = true;
 
-			await fetch(`/api/group/${group.id}/post`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					title,
-					content,
-					images: mediaToPost,
-				}),
+		if (title == "") {
+			setInputErrors({
+				...inputErrors,
+				title: "Este campo é obrigatório.",
 			});
-		} catch (e) {
-			console.error(e);
-		} finally {
+			val = false;
+		}
+
+		if (description == "") {
+			setInputErrors({
+				...inputErrors,
+				description: "Este campo é obrigatório.",
+			});
+			val = false;
+		}
+
+		return val;
+	}
+
+	async function postCreatePost(title: string, content: string) {
+		const mediaToPost = media.map((i) => i.base64);
+
+		const data = await request(
+			`/api/group/${group.id}/post`,
+			"POST",
+			undefined,
+			{
+				title,
+				content,
+				images: mediaToPost,
+			}
+		);
+
+		if (data) {
 			setLoading(false);
+			update();
+			setSuccess(true);
+			setTimeout(() => setSuccess(false), 3000);
+			setTimeout(() => {
+				setIsActive(false);
+				setMedia([]);
+				setTitle("");
+				setDescription("");
+			}, 1000);
 		}
 	}
 
@@ -171,7 +210,7 @@ export default function CreatePost({
 			isOpen={isActive}
 			className="text-foreground py-4"
 			onOpenChange={() => {
-				setIsActive(false);
+				setConfirmClose(true);
 			}}
 			backdrop="blur"
 			motionProps={{
@@ -261,6 +300,19 @@ export default function CreatePost({
 													<PencilIcon className="h-6 text-neutral-500" />
 												}
 												maxLength={100}
+												value={title}
+												onValueChange={(e) => {
+													setTitle(e);
+													setInputErrors({
+														...inputErrors,
+														title: "",
+													});
+												}}
+												isDisabled={loading}
+												isInvalid={Boolean(
+													inputErrors.title
+												)}
+												errorMessage={inputErrors.title}
 											></Input>
 											<Textarea
 												size="lg"
@@ -274,6 +326,21 @@ export default function CreatePost({
 													<PencilIcon className="h-6 text-neutral-500" />
 												}
 												maxLength={1500}
+												value={description}
+												isInvalid={Boolean(
+													inputErrors.description
+												)}
+												errorMessage={
+													inputErrors.description
+												}
+												onValueChange={(e) => {
+													setDescription(e);
+													setInputErrors({
+														...inputErrors,
+														description: "",
+													});
+												}}
+												isDisabled={loading}
 											/>
 										</div>
 									</Tab>
@@ -310,6 +377,9 @@ export default function CreatePost({
 																<Link
 																	onClick={
 																		handleSelectMedia
+																	}
+																	isDisabled={
+																		loading
 																	}
 																	className="text-foreground"
 																>
@@ -392,13 +462,22 @@ export default function CreatePost({
 									</Tab>
 								</Tabs>
 							</ModalBody>
-							<ModalFooter className="flex justify-between py-0">
+							<ModalFooter className="py-0">
 								<Button
-									color="primary"
+									color={success ? "success" : "primary"}
 									type="submit"
 									style={{ lineHeight: "1.5" }}
 									isLoading={loading}
-									startContent={<PlusIcon className="h-6" />}
+									startContent={
+										loading ? (
+											""
+										) : success ? (
+											<CheckIcon className="h-6" />
+										) : (
+											<PlusIcon className="h-6" />
+										)
+									}
+									isDisabled={loading || success}
 								>
 									Criar
 								</Button>
@@ -407,6 +486,20 @@ export default function CreatePost({
 					</>
 				)}
 			</ModalContent>
+
+			<ConfirmationModal
+				isOpen={confirmClose}
+				onClose={() => setConfirmClose(false)}
+				onConfirm={() => {
+					setConfirmClose(false);
+					setIsActive(false);
+					setMedia([]);
+					setTitle("");
+					setDescription("");
+				}}
+				title="Deseja realmente sair?"
+				message="Todas as suas mudanças serão perdidas caso saia."
+			/>
 		</Modal>
 	);
 }

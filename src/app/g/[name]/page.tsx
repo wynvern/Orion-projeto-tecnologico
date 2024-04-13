@@ -7,21 +7,25 @@ import CustomizeGroup from "@/components/modal/CustomizeGroup";
 import request from "@/util/api";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button, Spinner } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function GroupPage({ params }: { params: { name: string } }) {
 	const [group, setGroup] = useState({
-		groupname: "a",
-		name: "a",
-		image: "a",
-		description: "a",
-		banner: "a",
-		id: "a",
+		groupname: "",
+		name: "",
+		image: "",
+		description: "",
+		banner: "",
+		id: "",
+		ownerId: "",
 		_count: { members: 0, posts: 0 },
 		categories: [],
 	});
+	const session = useSession();
 	const [createPostModal, setCreatePostModal] = useState(false);
 	const [posts, setPosts]: any[] = useState([]);
+	const [isIn, setIsIn] = useState(false);
 
 	async function viewGroup() {
 		if (group.id) {
@@ -52,6 +56,15 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		});
 	}
 
+	async function fetchIsIn() {
+		if (group.id) {
+			const data = await request(`/api/group/${group.id}/in`);
+
+			console.log(data);
+			setIsIn(data.message == "following" ? true : false);
+		}
+	}
+
 	useEffect(() => {
 		fetchGroup();
 	}, []);
@@ -62,6 +75,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 
 	useEffect(() => {
 		fetchPosts();
+		fetchIsIn();
 	}, [group.id]);
 
 	async function fetchPosts() {
@@ -93,23 +107,29 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 				</div>
 			</div>
 
-			<div className="fixed z-50 bottom-0 right-0 pr-12 pb-12">
-				<Button
-					size="lg"
-					color="primary"
-					isIconOnly={true}
-					className="w-14 h-14"
-					onClick={() => setCreatePostModal(!createPostModal)}
-				>
-					<PlusIcon className="h-6 w-6" />
-				</Button>
-			</div>
-
-			<CreatePost
-				isActive={createPostModal}
-				setIsActive={setCreatePostModal}
-				group={group}
-			/>
+			{isIn || session.data?.user.id == group.ownerId ? (
+				<>
+					<div className="fixed z-50 bottom-0 right-0 pr-12 pb-12">
+						<Button
+							size="lg"
+							color="primary"
+							isIconOnly={true}
+							className="w-14 h-14"
+							onClick={() => setCreatePostModal(!createPostModal)}
+						>
+							<PlusIcon className="h-6 w-6" />
+						</Button>
+					</div>
+					<CreatePost
+						update={() => fetchPosts()}
+						isActive={createPostModal}
+						setIsActive={setCreatePostModal}
+						group={group}
+					/>{" "}
+				</>
+			) : (
+				""
+			)}
 		</div>
 	);
 }
