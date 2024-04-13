@@ -2,6 +2,7 @@
 
 import {
 	ArrowLeftEndOnRectangleIcon,
+	BellIcon,
 	InformationCircleIcon,
 	MoonIcon,
 	SunIcon,
@@ -18,13 +19,14 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import SignOut from "../modal/SignOut";
 import { useEffect, useState } from "react";
+import Notifications from "../modal/Notifications";
 
 export default function ProfileDropdown() {
 	const router = useRouter();
 	const session = useSession();
 	const [signOutModal, setSignOutModal] = useState(false);
 	const pathname = usePathname();
-
+	const [notificationsModal, setNotificationsModal] = useState(false);
 	const [isDarkMode, setIsDarkMode] = useState(false);
 	const [toggleDarkmode, setTriggerDarkmode] = useState("no");
 
@@ -110,6 +112,15 @@ export default function ProfileDropdown() {
 						Perfil
 					</DropdownItem>
 					<DropdownItem
+						key="notifications"
+						description="Veja as suas notificações"
+						className="border-radius-sys"
+						startContent={<BellIcon className="h-8" />}
+						onClick={() => setNotificationsModal(true)}
+					>
+						Notificações
+					</DropdownItem>
+					<DropdownItem
 						key="info"
 						description="Veja guias e contribua"
 						className="border-radius-sys"
@@ -132,6 +143,11 @@ export default function ProfileDropdown() {
 					</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
+
+			<Notifications
+				isActive={notificationsModal}
+				setIsActive={setNotificationsModal}
+			/>
 			<SignOut isActive={signOutModal} setIsActive={setSignOutModal} />
 		</>
 	);

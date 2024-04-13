@@ -25,35 +25,51 @@ export const GET = async (req: Request) => {
 		const recents = url.searchParams.get("recents");
 
 		if (recents) {
-			const recentGroups = await db.groupView.findMany({
+			const preGroups = await db.groupView.findMany({
 				where: { viewerId: session.user.id },
-				orderBy: { viewedAt: "desc" },
-				include: { group: true },
 			});
 
-			const groups = recentGroups.map((recentGroup) => recentGroup.group);
+			const groups: any = [];
 
-			const groupsWithViews = await Promise.all(
-				groups.map(async (group) => {
-					const uniqueViewsCount = await db.groupView.count({
-						where: { groupId: group.id },
-					});
-					return { ...group, views: uniqueViewsCount }; // Add the views field to each group
-				})
-			);
-
-			const groupsWithParticipants = await Promise.all(
-				groupsWithViews.map(async (group) => {
-					const uniqueViewsCount = await db.inGroups.count({
-						where: { groupId: group.id },
-					});
-					return { ...group, participants: uniqueViewsCount }; // Add the participants field to each group
-				})
-			);
+			for (var i = 0; i < preGroups.length; i++) {
+				var groupC = await db.group.findFirst({
+					where: { id: preGroups[i].groupId },
+					select: {
+						name: true,
+						groupName: true,
+						banner: true,
+						logo: true,
+						description: true,
+						categories: true,
+						id: true,
+						ownerId: true,
+						_count: {
+							select: {
+								groupViews: {
+									where: {
+										group: { id: preGroups[i].groupId },
+									},
+								},
+								members: {
+									where: {
+										group: { id: preGroups[i].groupId },
+									},
+								},
+								posts: {
+									where: {
+										group: { id: preGroups[i].groupId },
+									},
+								},
+							},
+						},
+					},
+				});
+				groups.push(groupC);
+			}
 
 			return NextResponse.json(
 				{
-					groups: groupsWithParticipants,
+					groups,
 					message: "recent groups retreived succsessfully",
 				},
 				{ status: 200 }
@@ -82,8 +98,6 @@ export const GET = async (req: Request) => {
 				},
 			},
 		});
-
-		console.log(group);
 
 		return NextResponse.json(
 			{

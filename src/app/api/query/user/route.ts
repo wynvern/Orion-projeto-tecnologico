@@ -55,8 +55,6 @@ export const GET = async (req: Request) => {
 			},
 		});
 
-		console.log(userFetched);
-
 		if (!userFetched) {
 			return NextResponse.json(
 				{

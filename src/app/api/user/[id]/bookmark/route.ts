@@ -9,6 +9,8 @@ export const GET = async (
 ) => {
 	try {
 		const session = await getServerSession(authOptions);
+		const url = new URL(req.url);
+		const skip = Number(url.searchParams.get("skip"));
 
 		if (!session) {
 			return NextResponse.json(
@@ -27,32 +29,22 @@ export const GET = async (
 			);
 		}
 
-		const groups = await db.inGroups.findMany({
+		const bookmarks = await db.bookmark.findMany({
 			where: { userId },
-			include: { group: true },
-		});
-
-		const ownedGroups = await db.group.findMany({
-			where: { ownerId: userId },
-			select: {
-				name: true,
-				groupName: true,
-				banner: true,
-				logo: true,
-				description: true,
-				categories: true,
-				id: true,
-				ownerId: true,
-				_count: {
-					select: {
-						groupViews: true,
-						members: true,
-						posts: true,
+			include: {
+				post: {
+					include: {
+						author: {
+							select: { id: true, image: true, username: true },
+						},
 					},
 				},
 			},
+			skip,
+			take: 10,
 		});
-		return NextResponse.json({ groups, ownedGroups }, { status: 200 });
+
+		return NextResponse.json({ bookmarks }, { status: 201 });
 	} catch (e) {
 		console.error(e);
 		return Response.json(

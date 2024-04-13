@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { createNotification } from "@/util/createNotification";
 import { processAnyImage } from "@/util/processSquareImage";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
@@ -44,6 +45,16 @@ export const POST = async (
 			data: { text, authorId: session.user.id, postId },
 		});
 
+		if (session.user.id !== post.authorId) {
+			// NOTIFICATION: create a notification for when someone comments in your post
+			await createNotification({
+				title: `${session.user.username} comentou em seu post.`,
+				userId: post.authorId,
+				link: `${process.env.NEXTAUTH_URL}/p/${post.id}`,
+				image: `${session.user.image}`,
+			});
+		}
+
 		return NextResponse.json(
 			{ message: "Comment created succsessfully" },
 			{ status: 201 }
@@ -81,14 +92,15 @@ export const GET = async (
 			);
 		}
 
-		// TODO: Remove password
-		const posts = await db.comment.findMany({
+		const comments = await db.comment.findMany({
 			where: { postId },
-			include: { author: true },
+			include: {
+				author: { select: { username: true, id: true, image: true } },
+			},
 			orderBy: { createdAt: "desc" },
 		});
 
-		return NextResponse.json({ posts: posts }, { status: 201 });
+		return NextResponse.json({ comments }, { status: 201 });
 	} catch (e) {
 		console.error(e);
 		return Response.json(

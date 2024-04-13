@@ -1,9 +1,6 @@
 import { db } from "@/lib/db";
 import sendMail from "../../../../lib/mail";
 import { hash } from "bcrypt";
-const activeCodes: {
-	[key: string]: { code: string; email: string; expiry: number };
-} = {};
 
 function generateRandomString(length: number): string {
 	let result = "";
@@ -16,15 +13,6 @@ function generateRandomString(length: number): string {
 		);
 	}
 	return result;
-}
-
-function deleteExpiredCodes() {
-	const currentTime = new Date().getTime();
-	for (const email in activeCodes) {
-		if (activeCodes[email].expiry < currentTime) {
-			delete activeCodes[email];
-		}
-	}
 }
 
 export const POST = async (req: Request) => {
@@ -40,7 +28,7 @@ export const POST = async (req: Request) => {
 
 		if (!user) {
 			return Response.json(
-				{ message: "user-does-not-exist" },
+				{ message: "created" }, // anonymity
 				{ status: 200 }
 			);
 		}
@@ -52,7 +40,11 @@ export const POST = async (req: Request) => {
 			);
 		}
 
-		if (Object.keys(activeCodes).includes(email)) {
+		const existingCode = await db.activeCodeEmail.findFirst({
+			where: { email },
+		});
+
+		if (existingCode) {
 			return Response.json(
 				{ message: "request-already-pending" },
 				{ status: 409 }
@@ -62,23 +54,35 @@ export const POST = async (req: Request) => {
 		const newCode = generateRandomString(50);
 
 		const expiryTime = new Date().getTime() + 5 * 60 * 1000; // 5 minutes from now
-		activeCodes[email] = { code: newCode, email, expiry: expiryTime };
+
+		await db.activeCodeEmail.create({
+			data: { code: newCode, email, expiry: new Date(expiryTime) },
+		});
 
 		const link = `${
 			process.env.NEXTAUTH_URL
 		}/new-password?verificationCode=${newCode}&expTime=${new Date().getTime()}`;
 
+		// Send the link to the user's email...
+
 		sendMail(
 			email,
-			"Recuperação de Conta Orion",
-			"Aqui está o seu código " + link
+			"Atualize sua senha.",
+			`
+            <h1>Atualize sua senha.</h1>
+            <p>Clique no link abaixo para atualizar a sua senha. Sua requisição expira em 5 minutos.</p>
+            <a href="${link}">Atualizar senha</a>
+         `
 		);
 
-		return Response.json({ message: "request-created" }, { status: 200 });
+		return Response.json(
+			{ message: "request-successful" },
+			{ status: 200 }
+		);
 	} catch (e) {
 		console.error(e);
 		return Response.json(
-			{ message: "Someting went wrong..." },
+			{ message: "Something went wrong..." },
 			{ status: 500 }
 		);
 	}
@@ -89,22 +93,19 @@ export const PATCH = async (req: Request) => {
 		const body = await req.json();
 		const { newPassword, code } = body;
 
-		console.log("activeCodes:", activeCodes); // Log the activeCodes object
-		console.log("code:", code); // Log the code value
-
-		// Find the code data using Object.entries()
-		const codeEntry = Object.entries(activeCodes).find(
-			([_, value]) => value.code === code
-		);
+		const codeEntry = await db.activeCodeEmail.findUnique({
+			where: { code },
+		});
 
 		if (!codeEntry) {
 			return Response.json({ message: "invalid-code" }, { status: 400 });
 		}
 
-		const { email, expiry } = codeEntry[1];
+		const { email, expiry } = codeEntry;
 		const currentTime = new Date().getTime();
 
-		if (expiry < currentTime) {
+		if (expiry.getTime() < currentTime) {
+			await db.activeCodeEmail.delete({ where: { code } });
 			return Response.json({ message: "code-expired" }, { status: 400 });
 		}
 
@@ -114,6 +115,10 @@ export const PATCH = async (req: Request) => {
 			data: { password: hashedPassword },
 		});
 
+		await db.activeCodeEmail.delete({
+			where: { code },
+		});
+
 		return Response.json(
 			{ message: "request-successful" },
 			{ status: 200 }
@@ -121,7 +126,7 @@ export const PATCH = async (req: Request) => {
 	} catch (e) {
 		console.error(e);
 		return Response.json(
-			{ message: "Someting went wrong..." },
+			{ message: "Something went wrong..." },
 			{ status: 500 }
 		);
 	}

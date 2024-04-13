@@ -3,10 +3,9 @@
 import GroupCard from "@/components/Cards/GroupCard";
 import PostCard from "@/components/Cards/PostCard";
 import CreatePost from "@/components/modal/CreatePost";
-import CustomizeGroup from "@/components/modal/CustomizeGroup";
 import request from "@/util/api";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { Button, Spinner } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
@@ -26,6 +25,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 	const [createPostModal, setCreatePostModal] = useState(false);
 	const [posts, setPosts]: any[] = useState([]);
 	const [isIn, setIsIn] = useState(false);
+	const [skip, setSkip] = useState(0);
 
 	async function viewGroup() {
 		if (group.id) {
@@ -59,8 +59,6 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 	async function fetchIsIn() {
 		if (group.id) {
 			const data = await request(`/api/group/${group.id}/in`);
-
-			console.log(data);
 			setIsIn(data.message == "following" ? true : false);
 		}
 	}
@@ -79,16 +77,11 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 	}, [group.id]);
 
 	async function fetchPosts() {
-		try {
-			const response = await fetch(`/api/group/${group.id}/post`);
-
-			if (response.ok) {
-				const data = await response.json();
-				setPosts(data.posts);
-			}
-		} catch (e) {
-			console.error(e);
-		}
+		const data = await request(
+			`/api/group/${group.id}/post?skip=${skip}&orderBy=createdAt`
+		);
+		setPosts(posts.concat(data.posts));
+		setSkip(skip + 10);
 	}
 
 	// TODO: Button to scroll to the top of the page on top of create button
@@ -102,7 +95,11 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 				</div>
 				<div className="flex flex-col gap-y-12 mt-20">
 					{posts.map((i: any, _: number) => (
-						<PostCard key={_} post={i} />
+						<PostCard
+							key={_}
+							post={i}
+							update={() => fetchPosts()}
+						/>
 					))}
 				</div>
 			</div>

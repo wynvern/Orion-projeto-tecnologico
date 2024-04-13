@@ -40,7 +40,6 @@ export default function UserCard({
 
 	useEffect(() => {
 		if (user.id) {
-			console.log(user.image);
 			const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0);
 			if (imagesLoaded == count) onLoad(); // amount of images to load before showing
 		}

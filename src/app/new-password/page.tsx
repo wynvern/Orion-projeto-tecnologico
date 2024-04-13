@@ -1,7 +1,11 @@
 "use client";
 
-import { KeyIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
-import { Button, Input, Image } from "@nextui-org/react";
+import {
+	CheckIcon,
+	KeyIcon,
+	PaperAirplaneIcon,
+} from "@heroicons/react/24/outline";
+import { Button, Input, Image, Link } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -17,14 +21,13 @@ export default function UpdatePassword() {
 	});
 	const params = useSearchParams();
 	const router = useRouter();
-	const [emailSent, setEmailSent] = useState(false);
+	const [success, setSuccess] = useState(false);
 
 	const verificationCode = params.get("verificationCode");
 
 	if (!verificationCode) {
 		router.push("/forgot-password");
 	}
-	const expireDate = params.get("expTime");
 
 	async function updatePassword(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -75,10 +78,7 @@ export default function UpdatePassword() {
 			});
 
 			if (response.ok) {
-				setEmailSent(true);
-				setTimeout(() => {
-					setEmailSent(false);
-				}, 3000);
+				setSuccess(true);
 			} else {
 				const data = await response.json();
 
@@ -108,7 +108,10 @@ export default function UpdatePassword() {
 			<div className="flex flex-col gap-y-6 lg:w-[400px] md:w-[400px] sm:w-[300px]">
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
 					<Image src="/brand/logo.svg" className="h-16" alt="logo" />
-					<h1>Nova Senha</h1>
+					<div>
+						<h1 className="max-w-[200px]">Nova Senha</h1>
+						<p className="max-w-[200px]">Escolha uma nova senha.</p>
+					</div>
 				</div>
 				<form
 					className="gap-y-6 flex flex-col"
@@ -154,11 +157,24 @@ export default function UpdatePassword() {
 						color="primary"
 						isLoading={loading}
 						startContent={
-							loading ? "" : <PaperAirplaneIcon className="h-6" />
+							loading ? (
+								""
+							) : success ? (
+								<CheckIcon className="h-6" />
+							) : (
+								<PaperAirplaneIcon className="h-6" />
+							)
 						}
 					>
-						Atualizar
+						{success ? "Atualizado" : "Atualizar"}
 					</Button>
+					{success ? (
+						<p className="text-center">
+							Vá para a página de <Link href="/login">Login</Link>
+						</p>
+					) : (
+						""
+					)}
 				</form>
 			</div>
 		</div>

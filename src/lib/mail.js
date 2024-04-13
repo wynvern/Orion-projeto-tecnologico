@@ -19,7 +19,11 @@ const sendMail = (email, subject, html) => {
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
 		},
+		debug: true,
+		logger: true,
 	});
+
+	console.log("sending email");
 
 	transporter.sendMail(mailOptions, function (error, info) {
 		if (error) {

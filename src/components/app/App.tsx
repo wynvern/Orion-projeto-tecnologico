@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import Sidebar from "../Sidebar/Sidebar";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default function RootLayout({
 	children,
@@ -24,6 +25,7 @@ export default function RootLayout({
 		<NextUIProvider className="w-full h-full">
 			<SessionProvider>
 				<Suspense>
+					<SpeedInsights />
 					{!notVisibleSidebarPages.includes(pathname) && <Sidebar />}
 					<div
 						className={`w-full h-full  text-foreground bg-background ${

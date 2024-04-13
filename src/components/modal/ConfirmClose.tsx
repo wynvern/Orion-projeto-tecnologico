@@ -1,3 +1,4 @@
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
 	Modal,
 	ModalContent,
@@ -28,10 +29,18 @@ const ConfirmationModal = ({
 				<ModalHeader>{title}</ModalHeader>
 				<ModalBody>{message}</ModalBody>
 				<ModalFooter>
-					<Button color="primary" onClick={onClose}>
+					<Button
+						color="primary"
+						onClick={onClose}
+						startContent={<XMarkIcon className="h-6" />}
+					>
 						Cancelar
 					</Button>
-					<Button color="danger" onClick={onConfirm}>
+					<Button
+						color="danger"
+						onClick={onConfirm}
+						startContent={<CheckIcon className="h-6" />}
+					>
 						Confirmar
 					</Button>
 				</ModalFooter>

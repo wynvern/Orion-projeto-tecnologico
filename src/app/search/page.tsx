@@ -96,7 +96,10 @@ export default function Search() {
 
 	// TODO: not update when typed because its too heavy on the server
 	return (
-		<div className="w-full h-full relative" onScroll={handleScroll}>
+		<div
+			className="w-full h-full relative overflow-y-scroll"
+			onScroll={handleScroll}
+		>
 			<div className="h-full w-full flex items-center flex-col h-fit">
 				<div
 					className={`w-full h-fit flex items-center flex-col rounded-large transition-all ${
@@ -136,7 +139,11 @@ export default function Search() {
 					<Tab title={<h3>Posts</h3>}>
 						<div className="w-full gap-y-12 flex flex-col pt-10">
 							{retrievedPosts.map((i: any, _: number) => (
-								<PostCard post={i} key={_} />
+								<PostCard
+									post={i}
+									key={_}
+									update={fetchPosts}
+								/>
 							))}
 						</div>
 						<div

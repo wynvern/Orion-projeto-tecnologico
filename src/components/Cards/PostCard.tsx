@@ -1,10 +1,9 @@
 import { prettyDateTime } from "@/util/prettyDateTime";
-import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { Image, Link } from "@nextui-org/react";
-import { useEffect, useState } from "react";
 import BookmarkPost from "../post/BookmarkPost";
+import PostDropdown from "../dropdown/PostDropdown";
 
-export default function PostCard({ post }: { post: any }) {
+export default function PostCard({ post, update }: { post: any; update: any }) {
 	function truncateString(input: string, maxLength: number): string {
 		if (input.length > maxLength) {
 			return input.substring(0, maxLength) + "...";
@@ -12,11 +11,6 @@ export default function PostCard({ post }: { post: any }) {
 			return input;
 		}
 	}
-
-	const [imageLoaded, setImageLoaded] = useState(false);
-	const [loaded, setLoaded] = useState(false);
-
-	useEffect(() => {});
 
 	return (
 		<div className="w-[1000px] flex">
@@ -44,10 +38,8 @@ export default function PostCard({ post }: { post: any }) {
 					</Link>
 					<div>
 						<div className="flex items-center gap-x-4">
-							<BookmarkPost
-								post={post}
-								onLoad={() => console.log("not implemented")}
-							/>
+							<BookmarkPost post={post} />
+							<PostDropdown post={post} onDelete={update} />
 						</div>
 					</div>
 				</div>

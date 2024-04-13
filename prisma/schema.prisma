@@ -26,11 +26,36 @@ model User {
    ownedGroups         Group[]              @relation("GroupOwner")
    userProfilePictures UserProfilePictures?
    viewed              GroupView[]
+   notifications       Notification[]
 
    createdReports  Report[] @relation("ReportCreator")
    receivedReports Report[] @relation("ReportedUser")
 
    @@map("users")
+}
+
+model ActiveCodeEmail {
+   id     String   @id @default(cuid())
+   code   String   @unique
+   email  String
+   expiry DateTime
+
+   @@map("active_codes_for_email")
+}
+
+model Notification {
+   id          String   @id @default(cuid())
+   title       String
+   description String?
+   image       String?
+   link        String?
+   viewed      Boolean  @default(false)
+   createdAt   DateTime @default(now())
+
+   user   User   @relation(fields: [userId], references: [id])
+   userId String
+
+   @@map("notifications")
 }
 
 model Report {
@@ -76,7 +101,7 @@ model Post {
 
 model PostMedia {
    id     String @id @default(cuid())
-   post   Post   @relation(fields: [postId], references: [id])
+   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
    postId String
    image  String
    index  Int
@@ -89,7 +114,7 @@ model Comment {
    text      String
    author    User     @relation(fields: [authorId], references: [id])
    authorId  String
-   post      Post     @relation(fields: [postId], references: [id])
+   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
    postId    String
    createdAt DateTime @default(now())
 
@@ -100,7 +125,7 @@ model Bookmark {
    id     String @id @default(cuid())
    user   User   @relation(fields: [userId], references: [id])
    userId String
-   post   Post   @relation(fields: [postId], references: [id])
+   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
    postId String
 
    @@unique([postId, userId])

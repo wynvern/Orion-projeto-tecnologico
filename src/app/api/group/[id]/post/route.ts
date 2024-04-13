@@ -113,6 +113,9 @@ export const GET = async (
 
 		const groupId = params.id;
 		const group = await db.group.findUnique({ where: { id: groupId } });
+		const url = new URL(req.url);
+		const skip = Number(url.searchParams.get("skip"));
+		const orderBy = { [`${url.searchParams.get("orderBy")}`]: "desc" };
 
 		if (!group) {
 			return NextResponse.json(
@@ -124,7 +127,9 @@ export const GET = async (
 		const posts = await db.post.findMany({
 			where: { groupId },
 			include: { author: true },
-			orderBy: { createdAt: "desc" },
+			orderBy,
+			take: 10,
+			skip,
 		});
 
 		return NextResponse.json({ posts: posts }, { status: 201 });

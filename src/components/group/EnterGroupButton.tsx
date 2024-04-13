@@ -23,7 +23,7 @@ export default function EnterGroupButton({
 			}
 		};
 
-		fetchGroupStatus();
+		if (group.id) fetchGroupStatus();
 	}, [group.id]);
 
 	const handleButtonClick = async () => {
