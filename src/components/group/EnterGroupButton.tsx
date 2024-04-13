@@ -37,23 +37,18 @@ export default function EnterGroupButton({
 	};
 
 	return (
-		<Tooltip
-			content={isIn ? `Sair de @${group.name}` : "Entrar"}
-			className="dark"
+		<Button
+			isIconOnly={true}
+			className="h-14 w-14"
+			size="lg"
+			color={isIn ? "default" : "primary"}
+			onClick={handleButtonClick}
 		>
-			<Button
-				isIconOnly={true}
-				className="h-14 w-14"
-				size="lg"
-				color={isIn ? "default" : "primary"}
-				onClick={handleButtonClick}
-			>
-				{isIn ? (
-					<UserMinusIcon className="h-6" />
-				) : (
-					<UserPlusIcon className="h-6 w-6" />
-				)}
-			</Button>
-		</Tooltip>
+			{isIn ? (
+				<UserMinusIcon className="h-6" />
+			) : (
+				<UserPlusIcon className="h-6 w-6" />
+			)}
+		</Button>
 	);
 }

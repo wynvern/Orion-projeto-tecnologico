@@ -39,5 +39,6 @@ export const config = {
 		"/g/:path*",
 		"/bookmarks",
 		"/groups",
+		"/search",
 	],
 };

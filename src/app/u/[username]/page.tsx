@@ -88,36 +88,32 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		>
 			<div className="w-full flex items-center flex-col mt-[calc(50vh-200px)]">
 				<UserCard user={user} onUpdate={fetchUser} />
-				{contentLoaded ? (
-					<Tabs
-						className="my-14"
-						classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
-						variant="light"
-						color="primary"
-						onSelectionChange={(e: any) => setCurrentTab(e)}
-					>
-						<Tab title={<h3>Posts</h3>}>
-							<div className="flex flex-col gap-y-12">
-								{posts.map((i: any, _: number) => (
-									<PostCard post={i} key={_} />
-								))}
-							</div>
-						</Tab>
-						<Tab title={<h3>Salvos</h3>}>HELO</Tab>
-						<Tab title={<h3>Grupos</h3>}>
-							<div>
-								{userGroups.map((i: any, _: number) => (
-									<LightGroupCard
-										key={_}
-										group={i.group}
-									></LightGroupCard>
-								))}
-							</div>
-						</Tab>
-					</Tabs>
-				) : (
-					<CircularProgress size="lg" className="mt-14" />
-				)}
+				<Tabs
+					className="my-14"
+					classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
+					variant="light"
+					color="primary"
+					onSelectionChange={(e: any) => setCurrentTab(e)}
+				>
+					<Tab title={<h3>Posts</h3>}>
+						<div className="flex flex-col gap-y-12">
+							{posts.map((i: any, _: number) => (
+								<PostCard post={i} key={_} />
+							))}
+						</div>
+					</Tab>
+					<Tab title={<h3>Salvos</h3>}>HELO</Tab>
+					<Tab title={<h3>Grupos</h3>}>
+						<div>
+							{userGroups.map((i: any, _: number) => (
+								<LightGroupCard
+									key={_}
+									group={i.group}
+								></LightGroupCard>
+							))}
+						</div>
+					</Tab>
+				</Tabs>
 			</div>
 		</div>
 	);

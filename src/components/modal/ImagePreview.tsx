@@ -19,7 +19,7 @@ export default function ImagePreview({
 		<Modal
 			size="full"
 			isOpen={isActive}
-			className="dark py-4"
+			className="text-foreground py-4"
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
@@ -31,7 +31,7 @@ export default function ImagePreview({
 						<div className="absolute right-0 h-full flex items-center z-50">
 							<div>
 								<Link
-									className="text-white"
+									className="text-foreground"
 									onClick={() => setImagePost(imagePos + 1)}
 									isDisabled={imagePos == images.length - 1}
 								>
@@ -43,7 +43,7 @@ export default function ImagePreview({
 							<div>
 								<Link
 									isDisabled={imagePos < 1}
-									className="text-white"
+									className="text-foreground"
 									onClick={() => setImagePost(imagePos - 1)}
 								>
 									<ChevronLeftIcon className="h-6" />

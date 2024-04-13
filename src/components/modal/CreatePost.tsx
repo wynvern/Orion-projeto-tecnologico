@@ -169,7 +169,7 @@ export default function CreatePost({
 		<Modal
 			size="3xl"
 			isOpen={isActive}
-			className="dark py-4"
+			className="text-foreground py-4"
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
@@ -311,7 +311,7 @@ export default function CreatePost({
 																	onClick={
 																		handleSelectMedia
 																	}
-																	className="text-white"
+																	className="text-foreground"
 																>
 																	<b>
 																		clique

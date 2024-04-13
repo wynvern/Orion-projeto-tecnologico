@@ -92,7 +92,7 @@ export default function Post({ params }: { params: { id: string } }) {
 					>
 						<div className="flex justify-between items-center w-full">
 							<Link
-								className="flex items-center gap-x-4 w-full text-white"
+								className="flex items-center gap-x-4 w-full text-foreground"
 								href={`/u/${post.author.username}`}
 							>
 								<Image
@@ -125,7 +125,7 @@ export default function Post({ params }: { params: { id: string } }) {
 								</div>
 							</div>
 						</div>
-						<div className="pl-14 relative flex flex-col items-start text-white">
+						<div className="pl-14 relative flex flex-col items-start text-foreground">
 							<h2 className="mt-4 break-all	">
 								<b>{post.title}</b>
 							</h2>
@@ -154,7 +154,7 @@ export default function Post({ params }: { params: { id: string } }) {
 									isDisabled={commentLoading}
 								></Input>
 								<Button
-									className="h-14 w-14 text-white flex items-center justify-center border-none"
+									className="h-14 w-14 text-foreground flex items-center justify-center border-none"
 									type="submit"
 									isDisabled={commentLoading}
 									variant="bordered"
@@ -182,7 +182,7 @@ export default function Post({ params }: { params: { id: string } }) {
 							<div className="fixed right-0 h-full flex items-center z-50">
 								<div className="pr-10">
 									<Link
-										className="text-white"
+										className="text-foreground"
 										onClick={() =>
 											setImagePost(imagePos + 1)
 										}
@@ -198,7 +198,7 @@ export default function Post({ params }: { params: { id: string } }) {
 								<div className="pl-10">
 									<Link
 										isDisabled={imagePos < 1}
-										className="text-white"
+										className="text-foreground"
 										onClick={() =>
 											setImagePost(imagePos - 1)
 										}

@@ -24,17 +24,17 @@ export default function Sidebar() {
 				</Link>
 			</div>
 			<div className="gap-y-12 flex flex-col">
-				<Link className="text-white" href="/search">
+				<Link className="text-foreground" href="/search">
 					<MagnifyingGlassIcon className="h-8" />
 				</Link>
-				<Link href="/bookmarks" className="text-white">
+				<Link href="/bookmarks" className="text-foreground">
 					{url == "/bookmarks" ? (
 						<SolidBookmarkIcon className="h-8" />
 					) : (
 						<BookmarkIcon className="h-8" />
 					)}
 				</Link>
-				<Link href="/groups" className="text-white">
+				<Link href="/groups" className="text-foreground">
 					{url == "/groups" ? (
 						<SolidUserGroupIcon className="h-8" />
 					) : (

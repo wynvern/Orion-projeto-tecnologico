@@ -30,7 +30,7 @@ export default function SignOut({ isActive, setIsActive }: SignOutProps) {
 		<Modal
 			size="md"
 			isOpen={isActive}
-			className="dark py-4"
+			className="text-foreground py-4"
 			onOpenChange={() => {
 				setIsActive(false);
 			}}

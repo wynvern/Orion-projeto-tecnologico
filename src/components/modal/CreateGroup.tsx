@@ -221,7 +221,7 @@ export default function CreateGroup({
 		<Modal
 			size="3xl"
 			isOpen={isActive}
-			className="dark py-4"
+			className="py-4 text-foreground"
 			onOpenChange={() => {
 				setIsActive(false);
 			}}
@@ -313,7 +313,7 @@ export default function CreateGroup({
 								></Input>
 								<Autocomplete // TODO: When cleared it shows error in name
 									placeholder="Selecione categorias"
-									className="dark wider-autocomplete"
+									className="wider-autocomplete"
 									startContent={
 										<CubeIcon className="h-6 text-neutral-500" />
 									}
@@ -327,13 +327,13 @@ export default function CreateGroup({
 										if (e) handleCategoryInput(e + " ");
 									}}
 									classNames={{
-										base: "dark ",
-										clearButton: "dark",
-										endContentWrapper: "dark",
-										listbox: "dark",
-										listboxWrapper: "dark",
-										popoverContent: "dark",
-										selectorButton: "dark",
+										base: "text-foreground",
+										clearButton: "text-foreground",
+										endContentWrapper: "text-foreground",
+										listbox: "text-foreground",
+										listboxWrapper: "text-foreground",
+										popoverContent: "text-foreground",
+										selectorButton: "text-foreground",
 									}}
 								>
 									{categoriesServer.map((i: Category) => (

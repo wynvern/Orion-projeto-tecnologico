@@ -96,10 +96,7 @@ export default function Search() {
 
 	// TODO: not update when typed because its too heavy on the server
 	return (
-		<div
-			className="w-full h-full relative overflow-y-scroll"
-			onScroll={handleScroll}
-		>
+		<div className="w-full h-full relative" onScroll={handleScroll}>
 			<div className="h-full w-full flex items-center flex-col h-fit">
 				<div
 					className={`w-full h-fit flex items-center flex-col rounded-large transition-all ${

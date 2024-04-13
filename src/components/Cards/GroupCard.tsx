@@ -2,6 +2,7 @@
 
 import {
 	Button,
+	Chip,
 	CircularProgress,
 	Image,
 	Link,
@@ -59,7 +60,7 @@ export default function GroupCard({
 				}
 			`}</style>
 
-			<div className="content-container opacity-0">
+			<div className="content-container opacity-0 text-white">
 				<div
 					className={`rounded-large  w-[1000px] h-[400px] flex object-contain relative bg-neutral-900`}
 				>
@@ -135,18 +136,28 @@ export default function GroupCard({
 							</div>
 						</div>
 						<div className="flex justify-between items-end">
-							<div className="flex gap-x-4 items-center w-full">
-								<p className="flex gap-x-2">
-									<b>Posts </b>0
-								</p>
-								<p className="flex gap-x-2">
-									<b>Participantes </b>
-									{group.participants}
-								</p>
-								<p className="flex gap-x-2">
-									<b>Visualizações </b>
-									{group.views}
-								</p>
+							<div className="flex flex-col gap-y-2">
+								<div className="flex gap-x-4 items-center w-full">
+									<p className="flex gap-x-2">
+										<b>Posts </b>
+										{group._count.posts}
+									</p>
+									<p className="flex gap-x-2">
+										<b>Participantes </b>
+										{group._count.members}
+									</p>
+									<p className="flex gap-x-2">
+										<b>Visualizações </b>
+										{group._count.groupViews}
+									</p>
+								</div>
+								<div className="flex flex-row gap-x-2">
+									{group.categories.map(
+										(i: string, _: number) => (
+											<Chip key={_}>{i}</Chip>
+										)
+									)}
+								</div>
 							</div>
 							<div className="ml-auto">
 								{session.data?.user.id == group.ownerId ? (

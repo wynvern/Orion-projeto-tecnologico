@@ -4,6 +4,7 @@ import GroupCard from "@/components/Cards/GroupCard";
 import PostCard from "@/components/Cards/PostCard";
 import CreatePost from "@/components/modal/CreatePost";
 import CustomizeGroup from "@/components/modal/CustomizeGroup";
+import request from "@/util/api";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -16,6 +17,8 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		description: "a",
 		banner: "a",
 		id: "a",
+		_count: { members: 0, posts: 0 },
+		categories: [],
 	});
 	const [createPostModal, setCreatePostModal] = useState(false);
 	const [posts, setPosts]: any[] = useState([]);
@@ -36,34 +39,17 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 	}
 
 	async function fetchGroup() {
-		try {
-			const response = await fetch(
-				`/api/query/group?name=${params.name}`,
-				{
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
-
-			if (response.ok) {
-				const data = await response.json(); // TODO: Show message that group could not be found
-				const updateGroup = data.groups[0];
-				setGroup({
-					...updateGroup,
-					image: updateGroup.image
-						? updateGroup + `?timestamp=${new Date().getTime()}`
-						: updateGroup.image,
-					banner: updateGroup.banner
-						? updateGroup.banner +
-						  `?timestamp=${new Date().getTime()}`
-						: updateGroup.banner,
-				});
-			}
-		} catch (e: any) {
-			console.error("Error:", e.message); //mudar
-		}
+		const data = await request(`/api/query/group?name=${params.name}`); // TODO: Show message that group could not be found
+		const updateGroup = data.group;
+		setGroup({
+			...updateGroup,
+			image: updateGroup.image
+				? updateGroup + `?timestamp=${new Date().getTime()}`
+				: updateGroup.image,
+			banner: updateGroup.banner
+				? updateGroup.banner + `?timestamp=${new Date().getTime()}`
+				: updateGroup.banner,
+		});
 	}
 
 	useEffect(() => {

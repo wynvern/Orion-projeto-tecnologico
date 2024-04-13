@@ -3,6 +3,8 @@
 import {
 	ArrowLeftEndOnRectangleIcon,
 	InformationCircleIcon,
+	MoonIcon,
+	SunIcon,
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -15,7 +17,7 @@ import {
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import SignOut from "../modal/SignOut";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ProfileDropdown() {
 	const router = useRouter();
@@ -23,10 +25,37 @@ export default function ProfileDropdown() {
 	const [signOutModal, setSignOutModal] = useState(false);
 	const pathname = usePathname();
 
+	const [isDarkMode, setIsDarkMode] = useState(false);
+	const [toggleDarkmode, setTriggerDarkmode] = useState("no");
+
+	useEffect(() => {
+		const isDarkModeEnabled = localStorage.getItem("darkMode") === "1";
+		setIsDarkMode(isDarkModeEnabled);
+	}, []);
+
+	const toggleDarkMode = () => {
+		setTriggerDarkmode("yes");
+	};
+
+	useEffect(() => {
+		if (toggleDarkmode == "yes") {
+			const newDarkModeValue = (
+				localStorage.getItem("darkMode") == "1" ? true : false
+			)
+				? "0"
+				: "1";
+
+			localStorage.setItem("darkMode", newDarkModeValue);
+			setIsDarkMode(!isDarkMode);
+			setTriggerDarkmode("no");
+			window.location.reload();
+		}
+	}, [toggleDarkmode]);
+
 	// TODO: Fix the error message that shows on terminal that comes from here, but don't know what is causing it, plus error with keyframes
 	return (
 		<>
-			<Dropdown placement="right" className="dark">
+			<Dropdown placement="right" className="text-foreground">
 				<DropdownTrigger>
 					<div className="h-8 w-8 transition-dropdown">
 						<Image
@@ -55,6 +84,19 @@ export default function ProfileDropdown() {
 						<p className="font-bold">
 							<b>@{session.data?.user.username}</b>
 						</p>
+					</DropdownItem>
+					<DropdownItem
+						onClick={toggleDarkMode}
+						startContent={
+							isDarkMode ? (
+								<SunIcon className="h-8" />
+							) : (
+								<MoonIcon className="h-7 p-[0.5px]" />
+							)
+						}
+						description="Troque para outro tema"
+					>
+						Modo {isDarkMode ? "claro" : "escuro"}
 					</DropdownItem>
 					<DropdownItem
 						key="profile"

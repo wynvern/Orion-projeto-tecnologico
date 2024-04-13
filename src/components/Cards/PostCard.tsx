@@ -24,7 +24,7 @@ export default function PostCard({ post }: { post: any }) {
 			<div className="flex flex-col flex-grow">
 				<div className="flex justify-between items-center w-full">
 					<Link
-						className="flex items-center gap-x-2 w-full text-white"
+						className="flex items-center gap-x-2 w-full text-foreground"
 						href={`/u/${post.author.username}`}
 					>
 						<Image
@@ -52,7 +52,7 @@ export default function PostCard({ post }: { post: any }) {
 					</div>
 				</div>
 				<Link
-					className="pl-10 relative flex flex-col items-start text-white"
+					className="pl-10 relative flex flex-col items-start text-foreground"
 					href={`/p/${post.id}`}
 				>
 					<h2 className="mt-4 break-all	">

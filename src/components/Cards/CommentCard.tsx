@@ -20,7 +20,7 @@ export default function CommentCard({ comment }: { comment: any }) {
 			<div className="flex flex-col flex-grow">
 				<div className="flex justify-between items-center w-full">
 					<Link
-						className="flex items-center gap-x-2 w-full text-white"
+						className="flex items-center gap-x-2 w-full text-foreground"
 						href={`/u/${comment.author.username}`}
 					>
 						<Image
@@ -45,7 +45,7 @@ export default function CommentCard({ comment }: { comment: any }) {
 					</div>
 				</div>
 				<Link
-					className="pl-10 relative flex flex-col items-start text-white"
+					className="pl-10 relative flex flex-col items-start text-foreground"
 					href={`/p/${comment.id}`}
 				>
 					<p className="mt-2 relative break-all	">

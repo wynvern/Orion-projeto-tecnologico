@@ -21,12 +21,12 @@ export default function RootLayout({
 	];
 
 	return (
-		<NextUIProvider className="dark w-full h-full">
+		<NextUIProvider className="w-full h-full">
 			<SessionProvider>
 				<Suspense>
 					{!notVisibleSidebarPages.includes(pathname) && <Sidebar />}
 					<div
-						className={`w-full h-full dark text-foreground bg-background ${
+						className={`w-full h-full  text-foreground bg-background ${
 							!notVisibleSidebarPages.includes(pathname) &&
 							"pl-20"
 						}`}

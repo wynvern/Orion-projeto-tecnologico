@@ -51,7 +51,7 @@ export default function UserCard({
 	}
 
 	return (
-		<div className="flex w-[1000px] h-[400px] items-center justify-center">
+		<div className="flex w-[1000px] h-[400px] items-center justify-center relative">
 			<style jsx>{`
 				.loader-container {
 					opacity: ${loading ? 1 : 0};
@@ -66,13 +66,13 @@ export default function UserCard({
 				}
 			`}</style>
 
-			<div className="loader-container fixed">
+			<div className="loader-container absolute">
 				<CircularProgress size="lg" />
 			</div>
 
 			{user.id ? (
 				<div
-					className={`rounded-large  w-[1000px] h-[400px] flex object-contain relative content-container ${
+					className={`rounded-large  w-[1000px] h-[400px] flex text-white object-contain relative content-container ${
 						user.banner ? "" : "bg-default-100"
 					}`}
 				>
@@ -81,7 +81,7 @@ export default function UserCard({
 						src={user.banner}
 						style={{
 							objectFit: "cover",
-							opacity: "0.5",
+							filter: "brightness(0.4)",
 							visibility: user.banner ? "visible" : "hidden",
 						}}
 						removeWrapper={true}
@@ -129,7 +129,7 @@ export default function UserCard({
 								<div>
 									<Dropdown
 										placement="bottom"
-										className="dark"
+										className="text-foreground"
 									>
 										<DropdownTrigger>
 											<EllipsisHorizontalIcon className="h-10 transition-dropdown"></EllipsisHorizontalIcon>

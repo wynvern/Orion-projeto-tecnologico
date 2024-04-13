@@ -60,12 +60,17 @@ export const GET = async (req: Request) => {
 			);
 		}
 
-		const groups = await db.group.findFirst({
+		const group = await db.group.findFirst({
 			where: { name: name as string },
 			select: {
 				name: true,
 				groupName: true,
 				banner: true,
+				logo: true,
+				description: true,
+				categories: true,
+				id: true,
+				ownerId: true,
 				_count: {
 					select: {
 						groupViews: {
@@ -78,9 +83,11 @@ export const GET = async (req: Request) => {
 			},
 		});
 
+		console.log(group);
+
 		return NextResponse.json(
 			{
-				groups,
+				group,
 				message: "Group retreived succsessfully",
 			},
 			{ status: 200 }

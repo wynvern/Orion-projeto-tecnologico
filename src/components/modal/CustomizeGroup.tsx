@@ -153,7 +153,7 @@ export default function CustomizeGroup({
 		<Modal
 			size="3xl"
 			isOpen={isActive}
-			className="dark py-4"
+			className="text-foreground py-4"
 			onOpenChange={() => {
 				setIsActive(false);
 			}}

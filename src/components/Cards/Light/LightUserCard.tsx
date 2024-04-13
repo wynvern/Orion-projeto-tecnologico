@@ -106,7 +106,7 @@ export default function LightUserCard({ user }: { user: any }) {
 									<div>
 										<Dropdown
 											placement="bottom"
-											className="dark"
+											className="text-foreground"
 										>
 											<DropdownTrigger>
 												<EllipsisHorizontalIcon className="h-10 transition-dropdown"></EllipsisHorizontalIcon>
