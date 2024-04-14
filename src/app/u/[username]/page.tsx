@@ -129,7 +129,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						</div>
 						{posts.length < 1 ? (
 							<h2
-								className={`opacity-[30%] ${
+								className={`opacity-[30%] text-center ${
 									user.id !== "" ? "" : "hidden"
 								}`}
 							>
@@ -158,7 +158,9 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							))}
 						</div>
 						{bookmarks.length < 1 ? (
-							<h2 className="opacity-[30%]">Nada salvo</h2>
+							<h2 className="opacity-[30%] text-center">
+								Nada salvo
+							</h2>
 						) : (
 							""
 						)}
@@ -187,7 +189,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							""
 						)}
 						<div
-							className={`gap-y-12 ${
+							className={`flex flex-col gap-y-12 ${
 								ownedGroups.length >= 1 ? "mt-12" : ""
 							}`}
 						>
@@ -199,7 +201,9 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							))}
 						</div>
 						{ownedGroups.length < 1 && userGroups.length < 1 ? (
-							<h2 className="opacity-[30%]">Nenhum grupo</h2>
+							<h2 className="opacity-[30%] text-center">
+								Nenhum grupo
+							</h2>
 						) : (
 							""
 						)}

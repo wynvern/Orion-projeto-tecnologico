@@ -9,7 +9,8 @@ import {
 	BookmarkIcon as SolidBookmarkIcon,
 } from "@heroicons/react/24/solid";
 
-import { Image, Link } from "@nextui-org/react";
+import { Link } from "@nextui-org/react";
+import Image from "next/image";
 import ProfileDropdown from "../extra/ProfileDropdown";
 import { usePathname } from "next/navigation";
 
@@ -20,7 +21,13 @@ export default function Sidebar() {
 		<div className="fixed h-screen w-20 items-center justify-between flex flex-col py-6">
 			<div>
 				<Link href="/">
-					<Image src="/brand/logo.svg" className="h-8" alt="logo" />
+					<Image
+						src="/brand/logo.svg"
+						className="h-8"
+						alt="logo"
+						width={40}
+						height={40}
+					/>
 				</Link>
 			</div>
 			<div className="gap-y-12 flex flex-col items-center">

@@ -31,18 +31,12 @@ export default function GroupCard({
 	const [customizeGroup, setCustomizeGroup] = useState(false);
 	const [loaded, setLoaded] = useState(false);
 
-	function handleComponentLoaded() {
-		setImagesLoaded((prev) => prev + 1);
-	}
-
 	useEffect(() => {
-		const amountToLoad =
-			(session.data?.user.id == group.ownerId ? 0 : 1) +
-			(group.logo ? 1 : 0) +
-			(group.banner ? 1 : 0);
+		const amountToLoad = 2;
+
 		if (imagesLoaded == amountToLoad) {
 			setLoaded(true);
-		} // 3 is the amount of components in wait for load
+		}
 	}, [imagesLoaded]);
 
 	return (
@@ -72,7 +66,7 @@ export default function GroupCard({
 						style={{ objectFit: "cover", opacity: "0.5" }}
 						removeWrapper={true}
 						alt="banner-group"
-						onLoad={handleComponentLoaded}
+						onLoad={() => setImagesLoaded(imagesLoaded + 1)}
 					></Image>
 					<div className="relative">
 						<div className="h-[400px] w-[400px]">
@@ -81,7 +75,7 @@ export default function GroupCard({
 								src={group.logo ?? "/brand/default-group.svg"}
 								className="h-[400px] w-[400px] object-cover z-50"
 								alt="banner-group"
-								onLoad={handleComponentLoaded}
+								onLoad={() => setImagesLoaded(imagesLoaded + 1)}
 							/>
 						</div>
 						<div className="absolute h-[400px] w-[400px] bg-neutral-900 rounded-large top-0 z-20"></div>
@@ -168,10 +162,7 @@ export default function GroupCard({
 											loaded ? "" : "opacity-0"
 										}`}
 									>
-										<EnterGroupButton
-											group={group}
-											onLoad={handleComponentLoaded}
-										/>
+										<EnterGroupButton group={group} />
 									</div>
 								)}
 							</div>

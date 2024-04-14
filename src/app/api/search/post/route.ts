@@ -34,6 +34,7 @@ export const GET = async (req: Request) => {
 			include: { author: true },
 			skip,
 			take: 10,
+			orderBy: { createdAt: "desc" },
 		});
 
 		return NextResponse.json(

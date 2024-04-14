@@ -76,6 +76,7 @@ export default function ProfileDropdown() {
 							}
 							alt="avatar-user"
 							width={34}
+							unoptimized={true}
 							height={34}
 							className={`rounded-full ${
 								pathname.includes(
