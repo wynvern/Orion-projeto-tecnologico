@@ -1,3 +1,4 @@
+import request from "@/util/api";
 import getFileBase64 from "@/util/getFile";
 import {
 	CheckIcon,
@@ -16,9 +17,7 @@ import {
 	ModalHeader,
 	Image,
 	Textarea,
-	Tooltip,
 } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 interface CustomizeGroupProps {
@@ -86,25 +85,12 @@ export default function CustomizeGroup({
 	}
 
 	async function CustomizeGroup(name: string, description: string) {
-		try {
-			const response = await fetch(`/api/group/${group.id}`, {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					groupName: name,
-					description: description,
-				}),
-			});
-
-			if (response.ok) {
-				const data = await response.json();
-				// TODO: Make a success and reload page
-			}
-		} catch (e) {
-			console.error(e);
-		}
+		await request(
+			`/api/group/${group.id}`,
+			"PATCH",
+			{},
+			{ groupName: name, description: description }
+		);
 	}
 
 	async function triggerlogoUpdate() {
@@ -114,18 +100,12 @@ export default function CustomizeGroup({
 
 	async function updatelogo() {
 		if (!logo.base64) return;
-
-		try {
-			const response = await fetch(`/api/group/${group.id}/logo`, {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ logo: logo.base64 }),
-			});
-		} catch (e) {
-			console.error(e);
-		}
+		await request(
+			`/api/group/${group.id}/logo`,
+			"PATCH",
+			{},
+			{ logo: logo.base64 }
+		);
 	}
 
 	async function triggerBannerUpdate() {
@@ -135,18 +115,12 @@ export default function CustomizeGroup({
 
 	async function updateBanner() {
 		if (!banner.base64) return;
-
-		try {
-			const response = await fetch(`/api/group/${group.id}/banner`, {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ banner: banner.base64 }),
-			});
-		} catch (e) {
-			console.error(e);
-		}
+		await request(
+			`/api/group/${group.id}/banner`,
+			"PATCH",
+			{},
+			{ banner: banner.base64 }
+		);
 	}
 
 	return (
@@ -160,7 +134,7 @@ export default function CustomizeGroup({
 			backdrop="blur"
 		>
 			<ModalContent>
-				{(onClose) => (
+				{() => (
 					<>
 						<ModalHeader className="flex flex-col gap-1 pt-1">
 							Personalizar Grupo

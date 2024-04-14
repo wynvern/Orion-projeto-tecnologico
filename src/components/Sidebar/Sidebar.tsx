@@ -23,7 +23,7 @@ export default function Sidebar() {
 				<Link href="/">
 					<Image
 						src="/brand/logo.svg"
-						className="h-8"
+						className="h-8 inverted-image"
 						alt="logo"
 						width={40}
 						height={40}
@@ -51,7 +51,7 @@ export default function Sidebar() {
 				<ProfileDropdown />
 			</div>
 			<div>
-				<Cog6ToothIcon className="h-8" />
+				<Cog6ToothIcon className="h-8 text-foreground" />
 			</div>
 		</div>
 	);

@@ -1,4 +1,3 @@
-import { removePasswordFields } from "@/lib/api";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";

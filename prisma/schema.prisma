@@ -25,8 +25,9 @@ model User {
    sessions            Session[]
    ownedGroups         Group[]              @relation("GroupOwner")
    userProfilePictures UserProfilePictures?
-   viewed              GroupView[]
+   groupViewed         GroupView[]
    notifications       Notification[]
+   postViewed          PostViews[]
 
    createdReports  Report[] @relation("ReportCreator")
    receivedReports Report[] @relation("ReportedUser")
@@ -34,13 +35,22 @@ model User {
    @@map("users")
 }
 
-model ActiveCodeEmail {
+model CodeReset {
    id     String   @id @default(cuid())
    code   String   @unique
    email  String
    expiry DateTime
 
-   @@map("active_codes_for_email")
+   @@map("code_reset_password")
+}
+
+model CodeVerifyAccount {
+   id     String   @id @default(cuid())
+   code   String   @unique
+   email  String
+   expiry DateTime
+
+   @@map("code_verify_account")
 }
 
 model Notification {
@@ -92,11 +102,25 @@ model Post {
    comments  Comment[]
    bookmarks Bookmark[]
    postMedia PostMedia[]
+   postViews PostViews[]
    group     Group       @relation(fields: [groupId], references: [id])
    groupId   String
    createdAt DateTime    @default(now())
 
    @@map("posts")
+}
+
+model PostViews {
+   id       String   @id @default(cuid())
+   viewedAt DateTime @default(now())
+
+   post     Post   @relation(fields: [postId], references: [id])
+   postId   String
+   viewer   User   @relation(fields: [viewerId], references: [id])
+   viewerId String
+
+   @@unique([postId, viewerId])
+   @@map("post_views")
 }
 
 model PostMedia {
@@ -122,11 +146,12 @@ model Comment {
 }
 
 model Bookmark {
-   id     String @id @default(cuid())
-   user   User   @relation(fields: [userId], references: [id])
-   userId String
-   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-   postId String
+   id        String   @id @default(cuid())
+   user      User     @relation(fields: [userId], references: [id])
+   userId    String
+   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+   postId    String
+   createdAt DateTime @default(now())
 
    @@unique([postId, userId])
    @@map("bookmarks")

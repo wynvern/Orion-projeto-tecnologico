@@ -1,6 +1,5 @@
 "use client";
 
-import GroupCard from "@/components/Cards/GroupCard";
 import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 import CreateGroup from "@/components/modal/CreateGroup";
 import { PlusIcon } from "@heroicons/react/24/outline";

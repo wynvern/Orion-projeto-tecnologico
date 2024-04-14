@@ -17,7 +17,6 @@ export default function SignUp() {
 		email: "",
 		password: "",
 	});
-	const [viewPassword, setViewPassword] = useState(false);
 	const router = useRouter();
 
 	function validateInputs(email: string, password: string) {
@@ -122,7 +121,11 @@ export default function SignUp() {
 		<div className="flex w-full h-full items-center justify-center">
 			<div className="flex flex-col gap-y-6 lg:w-[400px] md:w-[400px] sm:w-[300px]">
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
-					<Image src="/brand/logo.svg" className="h-16" alt="logo" />
+					<Image
+						src="/brand/logo.svg"
+						className="h-16 inverted-image"
+						alt="logo"
+					/>
 					<h1>Criar Conta</h1>
 				</div>
 				<form className="gap-y-6 flex flex-col" onSubmit={handleSignUp}>
@@ -180,8 +183,8 @@ export default function SignUp() {
 							) : (
 								<Image
 									width="20"
-									style={{ filter: "invert()" }}
-									src="/google-logo.svg"
+									className="inverted-image"
+									src="/google-logo.png"
 									alt="logo-google"
 								/>
 							)

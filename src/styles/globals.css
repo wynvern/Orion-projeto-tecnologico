@@ -1,19 +1,23 @@
+/* Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Global Variables */
 * {
 	--bg-color: black;
 	--fg-color: white;
 	--hi-color: blue;
 }
 
+/* Body Styles */
 html,
 body {
 	background-color: var(--bg-color);
 	color: var(--fg-color);
 }
 
+/* Heading Styles */
 h1 {
 	font-size: 3em;
 	font-weight: 700;
@@ -32,6 +36,7 @@ h3 {
 	line-height: 30px;
 }
 
+/* Button Styles */
 .hide-button-hover:hover .hidden-button {
 	opacity: 1;
 }
@@ -41,18 +46,22 @@ h3 {
 	transition: opacity 0.2s ease-in-out;
 }
 
+/* Box Shadow Styles */
 .shadow-custom {
 	box-shadow: 0 0 1em rgba(0, 112, 240, 0.5);
 }
 
+/* Transition Styles */
 .transition-dropdown {
 	transition: 150ms all ease-in-out;
 }
 
+/* Image Styles */
 img {
 	user-select: none;
 }
 
+/* Scrollbar Styles */
 /* width */
 ::-webkit-scrollbar {
 	width: 8px;
@@ -76,6 +85,7 @@ img {
 	background: #555;
 }
 
+/* Miscellaneous Styles */
 .under-box-shadow {
 	display: inline-block;
 }
@@ -86,4 +96,8 @@ img {
 
 a {
 	cursor: pointer;
+}
+
+.invert-images .inverted-image {
+	filter: invert(1);
 }

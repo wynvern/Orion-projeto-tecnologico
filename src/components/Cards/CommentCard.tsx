@@ -1,8 +1,5 @@
 import { prettyDateTime } from "@/util/prettyDateTime";
-import {
-	BookmarkIcon,
-	EllipsisHorizontalIcon,
-} from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { Image, Link } from "@nextui-org/react";
 
 export default function CommentCard({ comment }: { comment: any }) {

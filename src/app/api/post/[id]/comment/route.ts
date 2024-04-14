@@ -1,7 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createNotification } from "@/util/createNotification";
-import { processAnyImage } from "@/util/processSquareImage";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -41,17 +40,20 @@ export const POST = async (
 
 		// After validation, create the actual post
 
-		await db.comment.create({
+		const comment = await db.comment.create({
 			data: { text, authorId: session.user.id, postId },
 		});
+
+		console.log(session.user);
 
 		if (session.user.id !== post.authorId) {
 			// NOTIFICATION: create a notification for when someone comments in your post
 			await createNotification({
-				title: `${session.user.username} comentou em seu post.`,
+				title: `${session.user.username} comentou em seu post`,
 				userId: post.authorId,
-				link: `${process.env.NEXTAUTH_URL}/p/${post.id}`,
+				link: `${process.env.NEXTAUTH_URL}/p/${post.id}?highlight=${comment.id}`,
 				image: `${session.user.image}`,
+				description: `O usuário ${session.user.username} comentou em seu post. Clique para ver.`,
 			});
 		}
 

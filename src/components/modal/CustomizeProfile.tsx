@@ -1,3 +1,4 @@
+import request from "@/util/api";
 import getFileBase64 from "@/util/getFile";
 import {
 	CheckIcon,
@@ -16,10 +17,8 @@ import {
 	ModalHeader,
 	Image,
 	Textarea,
-	Tooltip,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface CustomizeProfileProps {
@@ -49,7 +48,6 @@ export default function CustomizeProfile({
 	const [banner, setBanner] = useState({ base64: "", preview: "" });
 	const [avatar, setAvatar] = useState({ base64: "", preview: "" });
 	const [success, setSuccess] = useState(false);
-	const router = useRouter();
 
 	async function handleCustomizeProfile(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -79,25 +77,7 @@ export default function CustomizeProfile({
 	}
 
 	async function CustomizeProfile(name: string, bio: string) {
-		try {
-			const response = await fetch("/api/user", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					name,
-					bio: bio,
-				}),
-			});
-
-			if (response.ok) {
-				const data = await response.json();
-				// TODO: Make a success and reload page
-			}
-		} catch (e) {
-			console.error(e);
-		}
+		await request(`/api/user`, "PATCH", {}, { name, bio });
 	}
 
 	async function triggerAvatarUpdate() {
@@ -107,22 +87,13 @@ export default function CustomizeProfile({
 
 	async function updateAvatar() {
 		if (!avatar.base64) return;
-
-		try {
-			const response = await fetch("/api/user/avatar", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ avatar: avatar.base64 }),
-			});
-			if (response.ok) {
-				const data = await response.json();
-				update({ image: data.url });
-			}
-		} catch (e) {
-			console.error(e);
-		}
+		const data = await request(
+			`/api/user/avatar`,
+			"PATCH",
+			{},
+			{ avatar: avatar.base64 }
+		);
+		update({ image: data.url });
 	}
 
 	async function triggerBannerUpdate() {
@@ -132,22 +103,13 @@ export default function CustomizeProfile({
 
 	async function updateBanner() {
 		if (!banner.base64) return;
-
-		try {
-			const response = await fetch("/api/user/banner", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ banner: banner.base64 }),
-			});
-			if (response.ok) {
-				const data = await response.json();
-				update({ banner: data.url });
-			}
-		} catch (e) {
-			console.error(e);
-		}
+		const data = await request(
+			`/api/user/banner`,
+			"PATCH",
+			{},
+			{ banner: banner.base64 }
+		);
+		update({ banner: data.url });
 	}
 
 	return (
@@ -163,7 +125,7 @@ export default function CustomizeProfile({
 			aria-labelledby="customize-profile-title"
 		>
 			<ModalContent>
-				{(onClose) => (
+				{() => (
 					<>
 						<ModalHeader
 							className="flex flex-col gap-1 pt-1"

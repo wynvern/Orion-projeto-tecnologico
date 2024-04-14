@@ -1,4 +1,3 @@
-import { debug } from "console";
 import { createTransport } from "nodemailer";
 
 const sendMail = (email, subject, html) => {
@@ -19,8 +18,6 @@ const sendMail = (email, subject, html) => {
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
 		},
-		debug: true,
-		logger: true,
 	});
 
 	console.log("sending email");
@@ -29,7 +26,7 @@ const sendMail = (email, subject, html) => {
 		if (error) {
 			return error;
 		} else {
-			return "E-mail enviado com sucesso!";
+			return info;
 		}
 	});
 };

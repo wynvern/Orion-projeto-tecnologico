@@ -13,6 +13,12 @@ export default async function middleware(req: NextRequest) {
 			return NextResponse.redirect(new URL("/login", req.url));
 		}
 	} else {
+		if (!session.emailVerified && !url.pathname.includes("/verify-email")) {
+			return NextResponse.redirect(new URL("/verify-email", req.url));
+		}
+		if (session.emailVerified && url.pathname.includes("/verify-email")) {
+			return NextResponse.redirect(new URL("/", req.url));
+		}
 		if (session.username && url.pathname.includes("/finish")) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}
@@ -40,5 +46,7 @@ export const config = {
 		"/bookmarks",
 		"/groups",
 		"/search",
+		"/p/:path*",
+		"/verify-email",
 	],
 };

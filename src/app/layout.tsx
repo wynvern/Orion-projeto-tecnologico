@@ -13,14 +13,13 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const [isDarkMode, setIsDarkMode] = useState(true);
+	const [isDarkMode, setIsDarkMode] = useState("1");
 
 	useEffect(() => {
-		const isDarkModeEnabled = localStorage.getItem("darkMode") === "1";
-		setIsDarkMode(isDarkModeEnabled);
+		setIsDarkMode(localStorage.getItem("darkMode") as string);
 
 		const handleDarkModeChange = () => {
-			setIsDarkMode(localStorage.getItem("darkMode") === "1");
+			setIsDarkMode(localStorage.getItem("darkMode") as string);
 		};
 
 		window.addEventListener("storage", handleDarkModeChange);
@@ -29,7 +28,7 @@ export default function RootLayout({
 		};
 	}, []);
 
-	if (isDarkMode) {
+	if (isDarkMode === "1") {
 		return (
 			<html lang="pt-BR">
 				<head>
@@ -59,7 +58,7 @@ export default function RootLayout({
 					<title>Orion</title>
 				</head>
 				<body
-					className={`${inter.className} w-screen h-[calc(100dvh)] overflow-y-hidden`}
+					className={`invert-images ${inter.className} w-screen h-[calc(100dvh)] overflow-y-hidden`}
 				>
 					<App>{children}</App>
 				</body>

@@ -8,7 +8,6 @@ import {
 	DropdownTrigger,
 	Image,
 	Link,
-	Spinner,
 } from "@nextui-org/react";
 import {
 	EllipsisHorizontalIcon,
@@ -24,9 +23,11 @@ import UserIcon from "@heroicons/react/24/solid/UserIcon";
 export default function UserCard({
 	user,
 	onUpdate,
+	onLoad,
 }: {
 	user: any;
 	onUpdate: () => void;
+	onLoad: () => void;
 }) {
 	const session = useSession();
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0);
@@ -41,12 +42,13 @@ export default function UserCard({
 	useEffect(() => {
 		if (user.id) {
 			const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0);
-			if (imagesLoaded == count) onLoad(); // amount of images to load before showing
+			if (imagesLoaded == count) onImageLoad(); // amount of images to load before showing
 		}
 	}, [imagesLoaded, user.banner, user.image]);
 
-	function onLoad() {
+	function onImageLoad() {
 		setLoading(false);
+		onLoad();
 	}
 
 	return (

@@ -1,11 +1,7 @@
-import getFileBase64 from "@/util/getFile";
 import {
 	CheckIcon,
 	PaperAirplaneIcon,
 	PencilIcon,
-	PencilSquareIcon,
-	PhotoIcon,
-	UserIcon,
 } from "@heroicons/react/24/outline";
 import {
 	Button,
@@ -15,10 +11,8 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
-	Image,
 	Textarea,
 } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 interface ReportUserProps {
@@ -127,7 +121,7 @@ export default function ReportUser({
 			backdrop="blur"
 		>
 			<ModalContent>
-				{(onClose) => (
+				{() => (
 					<>
 						<ModalHeader className="flex flex-col gap-1 pt-1">
 							Reportar Perfil

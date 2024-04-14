@@ -3,12 +3,9 @@
 import GroupCard from "@/components/Cards/GroupCard";
 import PostCard from "@/components/Cards/PostCard";
 import CreatePost from "@/components/modal/CreatePost";
+import { Group } from "@/types/Group";
 import request from "@/util/api";
-import {
-	BarsArrowDownIcon,
-	FunnelIcon,
-	PlusIcon,
-} from "@heroicons/react/24/outline";
+import { BarsArrowDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 import {
 	Button,
 	CircularProgress,
@@ -19,15 +16,15 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function GroupPage({ params }: { params: { name: string } }) {
-	const [group, setGroup] = useState({
-		groupname: "",
+	const [group, setGroup] = useState<Group>({
+		groupName: "",
 		name: "",
-		image: "",
 		description: "",
-		banner: "",
 		id: "",
+		image: "",
+		banner: "",
 		ownerId: "",
-		_count: { members: 0, posts: 0 },
+		_count: { members: 0, posts: 0, groupViews: 0 },
 		categories: [],
 	});
 	const session = useSession();
@@ -37,19 +34,11 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 	const [skip, setSkip] = useState(0);
 	const [loading, setLoading] = useState(true);
 	const [sortingType, setSortingType] = useState(new Set(["createdAt"]));
+	const [cardLoaded, setCardLoaded] = useState(false);
 
 	async function viewGroup() {
 		if (group.id) {
-			try {
-				await fetch(`/api/group/${group.id}/view`, {
-					method: "PATCH",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				});
-			} catch (e) {
-				console.error(e);
-			}
+			await request(`/api/group/${group.id}/view`, "PATCH");
 		}
 	}
 
@@ -98,7 +87,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 			"GET"
 		);
 		setPosts(posts.concat(data.posts));
-		setSkip(skip + 10);
+		if (data.posts.length > 0) setSkip(skip + 10);
 		setLoading(false);
 	}
 
@@ -129,55 +118,63 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 				<div className="flex items-center justify-center h-[400px] w-[1000px] mt-[calc(50vh-200px)]">
 					<div className="content-container">
 						<GroupCard
+							onLoad={() => setCardLoaded(true)}
 							group={group}
 							update={() => fetchGroup()}
 							aria-label="Group Card"
 						/>
 					</div>
 				</div>
-				<div className="my-14">
-					<div
-						className={`w-[1000px] ${
-							loading ? "hidden" : "visible"
-						}`}
-					>
-						<Select
-							selectedKeys={sortingType}
-							onSelectionChange={(e: any) => {
-								if (e.size == 1) setSortingType(e);
-							}}
-							placeholder="Select sorting type"
-							variant="bordered"
-							className="border-none w-[200px]"
-							startContent={
-								<BarsArrowDownIcon className="h-6 w-6" />
-							}
-							aria-label="Sorting Select"
+				<div
+					className={`${
+						cardLoaded ? "opacity-1" : "opacity-0"
+					} transition-all duration-200 w-[1000px] flex flex-col gap-y-12`}
+				>
+					<div className="mt-14">
+						<div
+							className={`w-[1000px] ${
+								loading ? "hidden" : "visible"
+							}`}
 						>
-							<SelectItem key={"createdAt"} value="createdAt">
-								Mais recentes
-							</SelectItem>
-							<SelectItem
-								key={"createdAt_asc"}
-								value="createdAt_asc"
+							<Select
+								selectedKeys={sortingType}
+								onSelectionChange={(e: any) => {
+									if (e.size == 1) setSortingType(e);
+								}}
+								placeholder="Select sorting type"
+								variant="bordered"
+								className="w-[200px]"
+								classNames={{ trigger: "border-none" }}
+								startContent={
+									<BarsArrowDownIcon className="h-6 w-6" />
+								}
+								aria-label="Sorting Select"
 							>
-								Mais antigos
-							</SelectItem>
-						</Select>
+								<SelectItem key={"createdAt"} value="createdAt">
+									Mais recentes
+								</SelectItem>
+								<SelectItem
+									key={"createdAt_asc"}
+									value="createdAt_asc"
+								>
+									Mais antigos
+								</SelectItem>
+							</Select>
+						</div>
 					</div>
-				</div>
-				<div className="flex flex-col gap-y-12">
-					{posts.map((i: any, _: number) => (
-						<PostCard
-							key={_}
-							post={i}
-							update={() => fetchPosts()}
-							aria-label="Post Card"
-						/>
-					))}
-				</div>
-				<div className={loading ? "visible" : "hidden"}>
-					<CircularProgress size="lg" aria-label="Loading" />
+					<div className="flex flex-col gap-y-12">
+						{posts.map((i: any, _: number) => (
+							<PostCard
+								key={_}
+								post={i}
+								update={() => fetchPosts()}
+								aria-label="Post Card"
+							/>
+						))}
+					</div>
+					<div className={loading ? "visible" : "hidden"}>
+						<CircularProgress size="lg" aria-label="Loading" />
+					</div>
 				</div>
 			</div>
 

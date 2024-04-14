@@ -23,7 +23,7 @@ export const PATCH = async (
 		const viewerId = session.user.id;
 		const currentDate = new Date();
 
-		const groupView = await db.groupView.upsert({
+		await db.groupView.upsert({
 			where: {
 				groupId_viewerId: {
 					groupId,

@@ -1,13 +1,16 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import UserCard from "@/components/Cards/UserCard";
 import PostCard from "@/components/Cards/PostCard";
-import { CircularProgress, Link, Tab, Tabs } from "@nextui-org/react";
+import { CircularProgress, Tab, Tabs, card } from "@nextui-org/react";
 import request from "@/util/api";
 import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 import { useSession } from "next-auth/react";
-import { UserGroupIcon } from "@heroicons/react/24/solid";
+import {
+	ExclamationTriangleIcon,
+	UserGroupIcon,
+} from "@heroicons/react/24/solid";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState({
@@ -19,7 +22,6 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		banner: "",
 	});
 	const [posts, setPosts] = useState([]);
-	const [contentLoaded, setContentLoaded] = useState(false);
 	const [userGroups, setUserGroups] = useState([]);
 	const [skip, setSkip] = useState(0);
 	const [currentTab, setCurrentTab] = useState(0);
@@ -27,57 +29,77 @@ export default function UserPage({ params }: { params: { username: string } }) {
 	const session = useSession();
 	const [bookmarks, setBookmarks] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState({ message: "", show: false });
+	const [cardLoaded, setCardLoaded] = useState(false);
+	const [bookmarkSkip, setBookmarkSkip] = useState(0);
 
 	async function fetchUser() {
-		const data = await request(
-			`/api/query/user?username=${params.username}`
-		);
-		const fetchedUser = data.user;
-		const updatedImage =
-			fetchedUser.image && fetchedUser.image.includes("=s96-c")
-				? fetchedUser.image.replace("=s96-c", "=s1000-c")
-				: fetchedUser.image;
+		try {
+			const data = await request(
+				`/api/query/user?username=${params.username}`
+			);
+			const fetchedUser = data.user;
+			const updatedImage =
+				fetchedUser.image && fetchedUser.image.includes("=s96-c")
+					? fetchedUser.image.replace("=s96-c", "=s1000-c")
+					: fetchedUser.image;
 
-		setUser({
-			...fetchedUser,
-			image: fetchedUser.image
-				? updatedImage + `?timestamp=${new Date().getTime()}`
-				: fetchedUser.image,
-			banner: fetchedUser.banner
-				? fetchedUser.banner + `?timestamp=${new Date().getTime()}`
-				: fetchedUser.banner,
-		});
+			setUser({
+				...fetchedUser,
+				image: fetchedUser.image
+					? updatedImage + `?timestamp=${new Date().getTime()}`
+					: fetchedUser.image,
+				banner: fetchedUser.banner
+					? fetchedUser.banner + `?timestamp=${new Date().getTime()}`
+					: fetchedUser.banner,
+			});
+		} catch (error) {
+			setError({ message: "Erro ao buscar usuário", show: true });
+		}
 	}
 
 	async function fetchPosts() {
-		if (user.id) {
-			setLoading(true);
-			const data = await request(
-				`/api/user/${user.id}/post?skip=${skip}`
-			);
-			setPosts(posts.concat(data.posts));
-			setSkip(skip + 10);
-			setLoading(false);
+		try {
+			if (user.id) {
+				setLoading(true);
+				const data = await request(
+					`/api/user/${user.id}/post?skip=${skip}`
+				);
+				setPosts(posts.concat(data.posts));
+				setSkip(skip + 10);
+				setLoading(false);
+			}
+		} catch (error) {
+			setError({ message: "Erro ao buscar posts", show: true });
 		}
 	}
 
 	async function fetchBookmarks() {
-		if (user.id) {
-			const data = await request(
-				`/api/user/${user.id}/bookmark?skip=${skip}`
-			);
-			setBookmarks(posts.concat(data.bookmarks));
-			setSkip(skip + 10);
+		try {
+			if (user.id) {
+				setLoading(true);
+				const data = await request(
+					`/api/user/${user.id}/bookmark?skip=${bookmarkSkip}`
+				);
+				setBookmarks(bookmarks.concat(data.bookmarks));
+				setBookmarkSkip(bookmarkSkip + 10);
+				setLoading(false);
+			}
+		} catch (error) {
+			setError({ message: "Erro ao buscar bookmarks", show: true });
 		}
 	}
 
 	async function fetchGroups() {
-		if (user.id) {
-			const data = await request(`/api/user/${user.id}/group`);
+		try {
+			if (user.id) {
+				const data = await request(`/api/user/${user.id}/group`);
 
-			setUserGroups(data.groups);
-			setContentLoaded(true);
-			setOwnedGroups(data.ownedGroups);
+				setUserGroups(data.groups);
+				setOwnedGroups(data.ownedGroups);
+			}
+		} catch (error) {
+			setError({ message: "Erro ao buscar grupos", show: true });
 		}
 	}
 
@@ -97,8 +119,25 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			e.target.scrollHeight;
 		if (bottom) {
 			if (currentTab == 0) fetchPosts();
+			if (currentTab == 1) fetchBookmarks();
 		}
 	};
+
+	if (error.show) {
+		return (
+			<div className="flex w-full h-full items-center justify-center">
+				<div className="flex items-center gap-x-4">
+					<div>
+						<ExclamationTriangleIcon className="h-20 w-20 text-warning" />
+					</div>
+					<div>
+						<p>Algo de errado ocorreu :C </p>
+						<p>{error.message}</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div
@@ -106,9 +145,15 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			onScroll={handleScroll}
 		>
 			<div className="w-full flex items-center flex-col mt-[calc(50vh-200px)]">
-				<UserCard user={user} onUpdate={fetchUser} />
+				<UserCard
+					user={user}
+					onUpdate={fetchUser}
+					onLoad={() => setCardLoaded(true)}
+				/>
 				<Tabs
-					className={`my-14 ${user.id !== "" ? "" : "hidden"}`}
+					className={`my-14 ${user.id !== "" ? "" : "hidden"} ${
+						cardLoaded ? "opacity-1" : "opacity-0"
+					} transition-opacity duration-200`}
 					classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
 					variant="light"
 					color="primary"
@@ -118,7 +163,11 @@ export default function UserPage({ params }: { params: { username: string } }) {
 					aria-label="User tabs"
 				>
 					<Tab title={<h3>Posts</h3>} aria-label="Posts">
-						<div className="flex flex-col gap-y-12">
+						<div
+							className={`flex flex-col gap-y-12 ${
+								cardLoaded ? "opacity-1" : "opacity-0"
+							} transition-opacity duration-200`}
+						>
 							{posts.map((i: any, _: number) => (
 								<PostCard
 									post={i}
@@ -129,9 +178,11 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						</div>
 						{posts.length < 1 ? (
 							<h2
-								className={`opacity-[30%] text-center ${
+								className={`text-center ${
 									user.id !== "" ? "" : "hidden"
-								}`}
+								} ${
+									cardLoaded ? "opacity-[30%]" : "opacity-0"
+								} transition-opacity duration-200`}
 							>
 								Nenhum post
 							</h2>
@@ -141,7 +192,9 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						<div
 							className={`my-10 w-[1000px] flex items-center justify-center ${
 								loading ? "opacity-1" : "opacity-0"
-							}`}
+							} ${
+								cardLoaded ? "opacity-1" : "opacity-0"
+							} transition-opacity duration-200`}
 						>
 							<CircularProgress size="lg" />
 						</div>
@@ -158,12 +211,27 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							))}
 						</div>
 						{bookmarks.length < 1 ? (
-							<h2 className="opacity-[30%] text-center">
+							<h2
+								className={`text-center ${
+									user.id !== "" ? "" : "hidden"
+								} ${
+									cardLoaded ? "opacity-[30%]" : "opacity-0"
+								} transition-opacity duration-200`}
+							>
 								Nada salvo
 							</h2>
 						) : (
 							""
 						)}
+						<div
+							className={`my-10 w-[1000px] flex items-center justify-center ${
+								loading ? "opacity-1" : "opacity-0"
+							} ${
+								cardLoaded ? "opacity-1" : "opacity-0"
+							} transition-opacity duration-200`}
+						>
+							<CircularProgress size="lg" />
+						</div>
 					</Tab>
 					<Tab title={<h3>Grupos</h3>} aria-label="Grupos">
 						{ownedGroups.length >= 1 ? (
@@ -176,7 +244,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 											: `Grupos de ${user.username}`}
 									</h1>
 								</div>
-								<div className="gap-y-12">
+								<div className="gap-y-12 flex flex-col">
 									{ownedGroups.map((i: any, _: number) => (
 										<LightGroupCard
 											key={_}
@@ -201,7 +269,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							))}
 						</div>
 						{ownedGroups.length < 1 && userGroups.length < 1 ? (
-							<h2 className="opacity-[30%] text-center">
+							<h2
+								className={` text-center ${
+									user.id !== "" ? "" : "hidden"
+								} ${
+									cardLoaded ? "opacity-[30%]" : "opacity-0"
+								} transition-opacity duration-200`}
+							>
 								Nenhum grupo
 							</h2>
 						) : (

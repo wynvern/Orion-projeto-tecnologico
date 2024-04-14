@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { db } from "@/lib/db";
-import { processAnyImage, processSquareImage } from "@/util/processSquareImage";
+import { processSquareImage } from "@/util/processSquareImage";
 
 export const GET = async (
 	req: Request,

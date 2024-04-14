@@ -59,7 +59,7 @@ export const POST = async (req: Request) => {
 				dataToUpdate.logo = await processSquareImage(imageBase64);
 			}
 
-			const groupProfilePictures = await db.groupProfilePics.upsert({
+			await db.groupProfilePics.upsert({
 				where: { groupId: newGroup.id },
 				update: dataToUpdate,
 				create: {

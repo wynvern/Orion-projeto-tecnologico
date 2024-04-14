@@ -34,7 +34,7 @@ export default function ImagePreview({
 			backdrop="blur"
 		>
 			<ModalContent className="bg-transparent shadow-none relative overflow-y-hidden flex justify-center items-center">
-				{(onClose) => (
+				{() => (
 					<>
 						<div
 							className="fixed inset-0"

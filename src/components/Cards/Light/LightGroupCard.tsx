@@ -1,17 +1,6 @@
 "use client";
 
-import {
-	Button,
-	CircularProgress,
-	Image,
-	Link,
-	Progress,
-} from "@nextui-org/react";
-import {
-	EllipsisHorizontalIcon,
-	PencilIcon,
-	UserPlusIcon,
-} from "@heroicons/react/24/outline";
+import { CircularProgress, Image, Link } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { UserGroupIcon } from "@heroicons/react/24/solid";
@@ -20,7 +9,6 @@ import EnterGroupButton from "../../group/EnterGroupButton";
 export default function LightGroupCard({ group }: { group: any }) {
 	const session = useSession();
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0);
-	const [customizeGroup, setCustomizeGroup] = useState(false);
 	const [loaded, setLoaded] = useState(false);
 
 	function handleComponentLoaded() {
@@ -28,7 +16,10 @@ export default function LightGroupCard({ group }: { group: any }) {
 	}
 
 	useEffect(() => {
-		const amountToLoad = session.data?.user.id == group.ownerId ? 2 : 3;
+		const amountToLoad =
+			1 +
+			(session.data?.user.id == group.ownerId ? 0 : 1) +
+			(group.banner ? 1 : 0);
 		if (imagesLoaded == amountToLoad) {
 			setLoaded(true);
 		} // 3 is the amount of components in wait for load
@@ -54,17 +45,19 @@ export default function LightGroupCard({ group }: { group: any }) {
 					<div
 						className={`rounded-large  w-[750px] h-[300px] flex object-contain relative bg-neutral-900`}
 					>
-						<Image
-							className={`absolute w-[700px] h-[300px] rounded-large right-0 ${
-								loaded ? "" : "!opacity-0"
-							}`}
-							src={group.banner}
-							style={{ objectFit: "cover", opacity: "0.5" }}
-							removeWrapper={true}
-							alt="banner-group"
-							onLoad={handleComponentLoaded}
-							aria-label="Group Banner"
-						></Image>
+						{group.banner && (
+							<Image
+								className={`absolute w-[700px] h-[300px] rounded-large right-0 ${
+									loaded ? "" : "!opacity-0"
+								}`}
+								src={group.banner}
+								style={{ objectFit: "cover", opacity: "0.5" }}
+								removeWrapper={true}
+								alt="banner-group"
+								onLoad={handleComponentLoaded}
+								aria-label="Group Banner"
+							></Image>
+						)}
 						<div className="relative">
 							<div className="h-[300px] w-[300px]">
 								<Image

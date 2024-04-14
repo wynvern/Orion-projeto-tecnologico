@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import sendMail from "../../../../lib/mail";
-import { hash } from "bcrypt";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
 
 function generateRandomString(length: number): string {
 	let result = "";
@@ -17,30 +19,41 @@ function generateRandomString(length: number): string {
 
 export const POST = async (req: Request) => {
 	try {
-		const body = await req.json();
-		const { email } = body;
+		const session = await getServerSession(authOptions);
 
-		if (!email) {
-			return Response.json({ message: "email-missing" }, { status: 400 });
-		}
-
-		const user = await db.user.findFirst({ where: { email } });
-
-		if (!user) {
-			return Response.json(
-				{ message: "created" }, // anonymity
-				{ status: 200 }
+		if (!session) {
+			return NextResponse.json(
+				{
+					message: "missing-authorization",
+				},
+				{ status: 401 }
 			);
 		}
 
-		if (!user.password) {
-			return Response.json(
-				{ message: "different-oauth" },
+		const email = session.user.email;
+		if (!email) {
+			return NextResponse.json(
+				{
+					message: "missing-email",
+				},
 				{ status: 400 }
 			);
 		}
 
-		const existingCode = await db.codeReset.findFirst({
+		const user = await db.user.findFirst({
+			where: { email },
+		});
+
+		if (!user) {
+			return Response.json(
+				{ message: "user-does-not-exist" }, // anonymity
+				{ status: 404 }
+			);
+		}
+
+		// TODO: Users through oauth don't need this
+
+		const existingCode = await db.codeVerifyAccount.findFirst({
 			where: { email },
 		});
 
@@ -51,27 +64,23 @@ export const POST = async (req: Request) => {
 			);
 		}
 
-		const newCode = generateRandomString(50);
+		const newCode = generateRandomString(5);
 
 		const expiryTime = new Date().getTime() + 5 * 60 * 1000; // 5 minutes from now
 
-		await db.codeReset.create({
+		await db.codeVerifyAccount.create({
 			data: { code: newCode, email, expiry: new Date(expiryTime) },
 		});
-
-		const link = `${
-			process.env.NEXTAUTH_URL
-		}/new-password?verificationCode=${newCode}&expTime=${new Date().getTime()}`;
 
 		// Send the link to the user's email...
 
 		sendMail(
 			email,
-			"Atualize sua senha.",
+			"Confirmar seu email.",
 			`
-            <h1>Atualize sua senha.</h1>
-            <p>Clique no link abaixo para atualizar a sua senha. Sua requisição expira em 5 minutos.</p>
-            <a href="${link}">Atualizar senha</a>
+            <h1>Confirmar seu email.</h1>
+            <p>Utilize o código abaixo para verficar o seu email.</p>
+            <a>Seu código de verificação: ${newCode}</a>
          `
 		);
 
@@ -90,10 +99,21 @@ export const POST = async (req: Request) => {
 
 export const PATCH = async (req: Request) => {
 	try {
-		const body = await req.json();
-		const { newPassword, code } = body;
+		const session = await getServerSession(authOptions);
 
-		const codeEntry = await db.codeReset.findUnique({
+		if (!session) {
+			return NextResponse.json(
+				{
+					message: "missing-authorization",
+				},
+				{ status: 401 }
+			);
+		}
+
+		const body = await req.json();
+		const { code } = body;
+
+		const codeEntry = await db.codeVerifyAccount.findUnique({
 			where: { code },
 		});
 
@@ -102,20 +122,24 @@ export const PATCH = async (req: Request) => {
 		}
 
 		const { email, expiry } = codeEntry;
+
+		if (session.user.email !== email) {
+			return Response.json({ message: "invalid-email" }, { status: 400 });
+		}
+
 		const currentTime = new Date().getTime();
 
 		if (expiry.getTime() < currentTime) {
-			await db.codeReset.delete({ where: { code } });
+			await db.codeVerifyAccount.delete({ where: { code } });
 			return Response.json({ message: "code-expired" }, { status: 400 });
 		}
 
-		const hashedPassword = await hash(newPassword, 10);
 		await db.user.update({
 			where: { email },
-			data: { password: hashedPassword },
+			data: { emailVerified: new Date() },
 		});
 
-		await db.codeReset.delete({
+		await db.codeVerifyAccount.delete({
 			where: { code },
 		});
 

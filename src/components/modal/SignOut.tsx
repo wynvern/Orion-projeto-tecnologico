@@ -1,7 +1,4 @@
-import {
-	ArrowLeftStartOnRectangleIcon,
-	PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/outline";
 import {
 	Button,
 	Modal,
@@ -9,7 +6,6 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
-	Textarea,
 } from "@nextui-org/react";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
@@ -37,7 +33,7 @@ export default function SignOut({ isActive, setIsActive }: SignOutProps) {
 			backdrop="blur"
 		>
 			<ModalContent>
-				{(onClose) => (
+				{() => (
 					<>
 						<ModalHeader className="flex flex-col gap-1 pt-1">
 							Sair

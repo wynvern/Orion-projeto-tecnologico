@@ -31,6 +31,8 @@ export const GET = async (req: Request) => {
 
 		const preGroups = await db.group.findMany({
 			where: { name: { contains: search } },
+			skip,
+			take: 10,
 		});
 
 		const groups: any = [];

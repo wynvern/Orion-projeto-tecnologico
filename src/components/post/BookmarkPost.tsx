@@ -1,7 +1,7 @@
 import request from "@/util/api";
 import { BookmarkIcon as BookmarkIconSolid } from "@heroicons/react/24/outline";
 import { BookmarkIcon } from "@heroicons/react/24/solid";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
 export default function BookmarkPost({

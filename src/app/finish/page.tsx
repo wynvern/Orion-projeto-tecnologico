@@ -2,7 +2,7 @@
 
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { ArrowLongRightIcon, UserIcon } from "@heroicons/react/24/solid";
-import { Button, Input, Link, Image } from "@nextui-org/react";
+import { Button, Input, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,10 +24,11 @@ export default function Finish() {
 	}
 
 	useEffect(() => {
+		// TODO: Chech if this is going to work
 		if (session.data?.user.username) {
 			router.push("/");
 		}
-	}, [session]);
+	}, [session, router]);
 
 	async function handleFinish(e: React.FormEvent<HTMLFormElement>) {
 		setIsLoading(true);
@@ -115,7 +116,7 @@ export default function Finish() {
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
 					<Image
 						src="/brand/logo.svg"
-						className="h-16 w-16"
+						className="h-16 w-16 inverted-image"
 						alt="profile-picture"
 					/>
 					<h2 className="w-[280px]">
@@ -136,7 +137,7 @@ export default function Finish() {
 								<UserIcon className="h-6 text-neutral-500" />
 							</>
 						}
-						onValueChange={(e) => {
+						onValueChange={() => {
 							setInputValidation({
 								active: false,
 								message: "",

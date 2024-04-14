@@ -82,6 +82,9 @@ export const authOptions: NextAuthOptions = {
 				if (session.banner) {
 					token.banner = session.banner;
 				}
+				if (session.emailVerified) {
+					token.emailVerified = session.emailVerified;
+				}
 			}
 
 			return token;
@@ -92,7 +95,7 @@ export const authOptions: NextAuthOptions = {
 				session.user.role = token.role;
 				session.user.fullName = token.fullName as string;
 				session.user.id = token.id as string;
-
+				session.user.emailVerified = token.emailVerified as Date;
 				// Transfer username to the session
 				session.user.username = token.username as string;
 

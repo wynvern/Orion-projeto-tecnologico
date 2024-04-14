@@ -8,12 +8,10 @@ import {
 	DropdownTrigger,
 	Image,
 	Link,
-	Spinner,
 } from "@nextui-org/react";
 import {
 	EllipsisHorizontalIcon,
 	NoSymbolIcon,
-	PencilIcon,
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";

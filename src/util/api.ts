@@ -17,7 +17,8 @@ export default async function request(
 		if (response.ok) {
 			return await response.json();
 		} else {
-			throw new Error(await response.json());
+			const data = await response.json();
+			throw data.message || response.statusText;
 		}
 	} catch (e: any) {
 		throw new Error(e);

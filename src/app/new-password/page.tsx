@@ -107,7 +107,11 @@ export default function UpdatePassword() {
 		<div className="flex w-full h-full items-center justify-center">
 			<div className="flex flex-col gap-y-6 lg:w-[400px] md:w-[400px] sm:w-[300px]">
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
-					<Image src="/brand/logo.svg" className="h-16" alt="logo" />
+					<Image
+						src="/brand/logo.svg"
+						className="h-16 inverted-image"
+						alt="logo"
+					/>
 					<div>
 						<h1 className="max-w-[200px]">Nova Senha</h1>
 						<p className="max-w-[200px]">Escolha uma nova senha.</p>

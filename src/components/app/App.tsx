@@ -19,6 +19,8 @@ export default function RootLayout({
 		"/finish",
 		"/forgot-password",
 		"/new-password",
+		"/verify-email",
+		"/not-found",
 	];
 
 	return (

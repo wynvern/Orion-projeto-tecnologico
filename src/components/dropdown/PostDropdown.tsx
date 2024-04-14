@@ -1,10 +1,5 @@
 import request from "@/util/api";
 import {
-	SunIcon,
-	MoonIcon,
-	UserIcon,
-	InformationCircleIcon,
-	ArrowLeftEndOnRectangleIcon,
 	EllipsisHorizontalIcon,
 	TrashIcon,
 	ShareIcon,
@@ -30,7 +25,7 @@ export default function PostDropdown({
 	const session = useSession();
 
 	async function deltePost() {
-		const data = await request(`/api/post/${post.id}`, "DELETE");
+		await request(`/api/post/${post.id}`, "DELETE");
 		onDelete();
 	}
 

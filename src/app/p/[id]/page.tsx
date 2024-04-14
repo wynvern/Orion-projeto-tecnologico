@@ -7,11 +7,9 @@ import BookmarkPost from "@/components/post/BookmarkPost";
 import request from "@/util/api";
 import { prettyDateTime } from "@/util/prettyDateTime";
 import {
-	BookmarkIcon,
 	ChatBubbleLeftIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	EllipsisHorizontalIcon,
 	PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -20,7 +18,6 @@ import {
 	Input,
 	Button,
 	ScrollShadow,
-	image,
 	CircularProgress,
 	Chip,
 } from "@nextui-org/react";
@@ -45,7 +42,7 @@ export default function Post({ params }: { params: { id: string } }) {
 
 	useEffect(() => {
 		fetchPost();
-	}, []);
+	}, []); // TODO: Load the posts in the background
 
 	useEffect(() => {
 		if (post.id) {

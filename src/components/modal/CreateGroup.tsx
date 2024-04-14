@@ -20,7 +20,6 @@ import {
 	Textarea,
 	Autocomplete,
 	AutocompleteItem,
-	Tooltip,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -47,8 +46,6 @@ export default function CreateGroup({
 		categories: "",
 		description: "",
 	});
-
-	const [inputCategory, setInputCategory] = useState("");
 	const [categories, setCategories]: any = useState([]);
 	const [categoriesServer, setCategoriesServer] = useState([]);
 	const [logo, setLogo] = useState({ base64: "", preview: "" });
@@ -82,12 +79,9 @@ export default function CreateGroup({
 			const trimmedValue = inputValue.trim();
 			if (trimmedValue.length > 0 && !categories.includes(trimmedValue)) {
 				setCategories([...categories, trimmedValue]);
-				setInputCategory("");
 			}
-		} else {
-			setInputCategory(inputValue);
 		}
-		if (categories.length == 5) {
+		if (inputValue.includes(" ") && categories.length >= 5) {
 			setInputErrors({
 				...inputErrors,
 				categories: "Somente até 5 categorias podem ser escolhidas.",
@@ -228,7 +222,7 @@ export default function CreateGroup({
 			backdrop="blur"
 		>
 			<ModalContent>
-				{(onClose) => (
+				{() => (
 					<>
 						<ModalHeader className="flex flex-col gap-1 pt-1">
 							Criar Grupo

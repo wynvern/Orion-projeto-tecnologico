@@ -1,15 +1,12 @@
 import sharp from "sharp";
 
-export const processSquareImage = async (
-	buffer: Buffer,
-	maxSize: number = 500
-): Promise<string> => {
+export async function processSquareImage(buffer: Buffer): Promise<string> {
 	try {
 		const metadata = await sharp(buffer).metadata();
 
 		if (metadata.width && metadata.height) {
 			const processedImage = await sharp(buffer)
-				.png({ quality: 40, compressionLevel: 5 }) // Convert to PNG format
+				.png({ compressionLevel: 9 }) // Convert to PNG format
 				.withMetadata() // Keep image metadata (e.g., orientation)
 				.resize({
 					width: 500,
@@ -28,15 +25,15 @@ export const processSquareImage = async (
 		console.error("Error processing image:", error);
 		throw error;
 	}
-};
+}
 
-export const processAnyImage = async (buffer: Buffer): Promise<string> => {
+export async function processAnyImage(buffer: Buffer): Promise<string> {
 	try {
 		const metadata = await sharp(buffer).metadata();
 
 		if (metadata.width && metadata.height) {
 			const processedImage = await sharp(buffer)
-				.png({ quality: 40, compressionLevel: 8 }) // Convert to PNG format
+				.png({ compressionLevel: 9 }) // Convert to PNG format
 				.withMetadata() // Keep image metadata (e.g., orientation)
 				.toBuffer();
 
@@ -49,4 +46,4 @@ export const processAnyImage = async (buffer: Buffer): Promise<string> => {
 		console.error("Error processing image:", error);
 		throw error;
 	}
-};
+}

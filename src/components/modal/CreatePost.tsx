@@ -250,7 +250,7 @@ export default function CreatePost({
 			aria-labelledby="create-post-modal-title"
 		>
 			<ModalContent>
-				{(onClose) => (
+				{() => (
 					<>
 						<ModalHeader className="gap-x-4 flex gap-1 pt-1">
 							<div className="flex gap-x-2">

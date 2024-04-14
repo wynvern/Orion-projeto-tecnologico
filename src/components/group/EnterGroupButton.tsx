@@ -1,5 +1,5 @@
 import { UserMinusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
 export default function EnterGroupButton({

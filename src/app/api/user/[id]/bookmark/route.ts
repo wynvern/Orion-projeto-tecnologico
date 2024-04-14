@@ -37,11 +37,19 @@ export const GET = async (
 						author: {
 							select: { id: true, image: true, username: true },
 						},
+						group: {
+							select: {
+								id: true,
+								logo: true,
+								name: true,
+							},
+						},
 					},
 				},
 			},
 			skip,
 			take: 10,
+			orderBy: { createdAt: "desc" },
 		});
 
 		return NextResponse.json({ bookmarks }, { status: 201 });

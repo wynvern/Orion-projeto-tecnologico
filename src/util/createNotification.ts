@@ -8,7 +8,7 @@ interface NotificationData {
 	link?: string;
 }
 
-export const createNotification = async (data: NotificationData) => {
+export async function createNotification(data: NotificationData) {
 	try {
 		const { userId, title, description, image, link } = data;
 
@@ -27,4 +27,4 @@ export const createNotification = async (data: NotificationData) => {
 		console.error("Error creating notification:", error);
 		throw error;
 	}
-};
+}

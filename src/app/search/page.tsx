@@ -4,9 +4,9 @@ import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 import LightUserCard from "@/components/Cards/Light/LightUserCard";
 import PostCard from "@/components/Cards/PostCard";
 import request from "@/util/api";
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Button, CircularProgress, Input, Tab, Tabs } from "@nextui-org/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { CircularProgress, Input, Tab, Tabs } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Search() {
 	const [selected, setSelected] = useState(0);
@@ -34,12 +34,6 @@ export default function Search() {
 		);
 		setRetrievedUsers(retrievedUsers.concat(data.users));
 		if (data.users.length < 1) setNoResults(true);
-	}
-
-	async function handleFetch(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-
-		handleFetchType();
 	}
 
 	function clearSearch() {
