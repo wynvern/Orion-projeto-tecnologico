@@ -14,8 +14,8 @@ import {
 	DropdownItem,
 	DropdownMenu,
 	DropdownTrigger,
-	Image,
 } from "@nextui-org/react";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import SignOut from "../modal/SignOut";
@@ -66,7 +66,7 @@ export default function ProfileDropdown() {
 				<DropdownTrigger>
 					<Button
 						isIconOnly={true}
-						className="!p-0 bg-transparent w-8 h-8"
+						className="!p-0 bg-transparent"
 						aria-label="Toggle Dropdown"
 					>
 						<Image
@@ -74,9 +74,10 @@ export default function ProfileDropdown() {
 								session.data?.user.image ??
 								"/brand/default-user.svg"
 							}
-							removeWrapper={true}
 							alt="avatar-user"
-							className={`w-8 h-8 rounded-full ${
+							width={34}
+							height={34}
+							className={`rounded-full ${
 								pathname.includes(
 									`/u/${session.data?.user.username}`
 								)

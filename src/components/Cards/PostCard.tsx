@@ -1,5 +1,5 @@
 import { prettyDateTime } from "@/util/prettyDateTime";
-import { Image, Link } from "@nextui-org/react";
+import { Chip, Image, Link } from "@nextui-org/react";
 import BookmarkPost from "../post/BookmarkPost";
 import PostDropdown from "../dropdown/PostDropdown";
 
@@ -20,26 +20,57 @@ export default function PostCard({ post, update }: { post: any; update: any }) {
 					className="flex justify-between items-center w-full"
 					aria-label="post-header"
 				>
-					<Link
-						className="flex items-center gap-x-2 w-full text-foreground"
-						href={`/u/${post.author.username}`}
-						aria-label={`author-link-${post.author.username}`}
-					>
-						<Image
-							src={post.author.image || "/brand/default-user.svg"}
-							className="h-8 w-8 rounded-full"
-							alt="avatar-user"
-						></Image>
-						<div className="flex gap-x-1">
-							<p>
-								<b>@{post.author.username}</b>
-							</p>
-							<p className="text-foreground">•</p>
-							<p className="text-foreground">
-								{prettyDateTime(post.createdAt)}
-							</p>
+					<div className="flex items-center gap-x-4 w-full text-foreground">
+						<Link href={`/u/${post.author.username}`}>
+							<Image
+								src={
+									post.author.image ||
+									"/brand/default-user.svg"
+								}
+								className="h-10 w-10 rounded-full"
+								alt="avatar-user"
+							></Image>
+						</Link>
+						<div className="flex gap-y-2 flex-col">
+							<div className="flex gap-x-1">
+								<Link
+									href={`/u/${post.author.username}`}
+									className="text-foreground"
+								>
+									<p>
+										<b>{post.author.username}</b>
+									</p>
+								</Link>
+								<p className="text-foreground">•</p>
+								<p className="text-foreground">
+									{prettyDateTime(post.createdAt)}
+								</p>
+							</div>
+							<div className="flex gap-x-2">
+								{post.group ? (
+									<Link href={`/g/${post.group.name}`}>
+										<Chip
+											className="pl-[2px] flex justify-center"
+											startContent={
+												<Image
+													src={
+														post.group.logo ||
+														"/brand/default-group.svg"
+													}
+													removeWrapper={true}
+													className="h-6 w-6 object-cover mr-[2px]"
+												/>
+											}
+										>
+											{post.group.name}
+										</Chip>
+									</Link>
+								) : (
+									""
+								)}
+							</div>
 						</div>
-					</Link>
+					</div>
 					<div>
 						<div
 							className="flex items-center gap-x-4"
@@ -51,7 +82,7 @@ export default function PostCard({ post, update }: { post: any; update: any }) {
 					</div>
 				</div>
 				<Link
-					className="pl-10 relative flex flex-col items-start text-foreground"
+					className="pl-14 relative flex flex-col items-start text-foreground"
 					href={`/p/${post.id}`}
 					aria-label={`post-link-${post.id}`}
 				>
