@@ -20,6 +20,7 @@ import {
 	ScrollShadow,
 	CircularProgress,
 	Chip,
+	Textarea,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -86,7 +87,7 @@ export default function Post({ params }: { params: { id: string } }) {
 
 	// TODO: Use arrow keys to navigate image
 	return (
-		<div className="w-full h-full relative">
+		<div className="w-full h-full relative overflow">
 			<div
 				className={`absolute w-full h-full flex items-center justify-center transition-opacity ${
 					loaded ? "opacity-0" : ""
@@ -96,7 +97,7 @@ export default function Post({ params }: { params: { id: string } }) {
 			</div>
 			{post.id ? (
 				<div
-					className={`flex w-full h-full transition-opacity ${
+					className={`flex w-full h-full transition-opacity overflow-y-scroll ${
 						loaded ? "opacity-1" : "opacity-0"
 					}`}
 				>
@@ -181,11 +182,11 @@ export default function Post({ params }: { params: { id: string } }) {
 								onSubmit={postComment}
 							>
 								{/* TODO: Change to an actual working texarea */}
-								<Input
+								<Textarea
 									placeholder="Comentar"
 									variant="bordered"
 									name="text"
-									maxLength={200}
+									max={200}
 									classNames={{
 										inputWrapper: "h-14 border-none",
 									}}
@@ -195,7 +196,7 @@ export default function Post({ params }: { params: { id: string } }) {
 									isDisabled={commentLoading}
 									value={text}
 									onValueChange={(e) => setText(e)}
-								></Input>
+								/>
 								<Button
 									className="h-14 w-14 text-foreground flex items-center justify-center border-none"
 									type="submit"
@@ -211,11 +212,11 @@ export default function Post({ params }: { params: { id: string } }) {
 								</Button>
 							</form>
 						</div>
-						<ScrollShadow className="gap-y-6 pl-16 mt-6 flex flex-col overflow-y-scroll grow">
+						<div className="gap-y-6 pl-16 mt-6 flex flex-col">
 							{comments.map((i: number, _: number) => (
 								<CommentCard key={_} comment={i} />
 							))}
-						</ScrollShadow>
+						</div>
 					</div>
 					{/* Part for the Image */}
 					{post.media.length < 1 ? (

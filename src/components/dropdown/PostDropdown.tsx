@@ -51,7 +51,7 @@ export default function PostDropdown({
 				>
 					<DropdownItem
 						onClick={() =>
-							navigator.clipboard.writeText(window.location.href)
+							navigator.clipboard.writeText(`/p/${post.id}`)
 						}
 						key="share-post"
 						className="h-10 gap-2 border-radius-sys pl-3"

@@ -130,7 +130,7 @@ export default function Search() {
 					<form className="w-[750px] h-fit flex items-center p-8">
 						<Input
 							type="text"
-							placeholder="Título do Grupo"
+							placeholder="Digite algo para pesquisar..."
 							name="search"
 							classNames={{ inputWrapper: "h-14" }}
 							startContent={

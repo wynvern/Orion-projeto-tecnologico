@@ -64,6 +64,25 @@ export default function Groups() {
 						Crie e explore grupos temáticos e junte-se àqueles que
 						mais combinam com seus interesses de estudo.
 					</p>
+					<h2 className="pl-40 mt-20">Recentes</h2>
+					<p className="pl-40">
+						Veja os grupos que você visualizou recentemente.
+					</p>
+					<ScrollShadow
+						orientation="horizontal"
+						className="flex mt-14 overflow-y-hidden h-[310px]"
+					>
+						<div>
+							<div className="w-40"></div>
+						</div>
+						<div className="gap-x-6 flex h-full">
+							{groups.map((i: any, _: number) => (
+								<div key={_}>
+									<LightGroupCard group={i} />
+								</div>
+							))}
+						</div>
+					</ScrollShadow>
 					<ScrollShadow
 						className="flex flex-row items-center mt-14"
 						orientation="horizontal"
@@ -122,26 +141,6 @@ export default function Groups() {
 							))}
 						</div>
 					</ScrollShadow>
-					<h2 className="pl-40 mt-20">Recentes</h2>
-					<p className="pl-40">
-						Veja os grupos que você visualizou recentemente.
-					</p>
-					<ScrollShadow
-						orientation="horizontal"
-						className="flex mt-14 overflow-y-hidden h-[310px]"
-					>
-						<div>
-							<div className="w-40"></div>
-						</div>
-						<div className="gap-x-6 flex h-full">
-							{groups.map((i: any, _: number) => (
-								<div key={_}>
-									<LightGroupCard group={i} />
-								</div>
-							))}
-						</div>
-					</ScrollShadow>
-
 					<div className="h-[200px]"></div>
 				</div>
 			</div>
