@@ -35,6 +35,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 	const [loading, setLoading] = useState(true);
 	const [sortingType, setSortingType] = useState(new Set(["createdAt"]));
 	const [cardLoaded, setCardLoaded] = useState(false);
+	const [noMorePosts, setNoMorePosts] = useState(false);
 
 	async function viewGroup() {
 		if (group.id) {
@@ -88,6 +89,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		);
 		setPosts(posts.concat(data.posts));
 		if (data.posts.length > 0) setSkip(skip + 10);
+		if (data.posts.length < 10) setNoMorePosts(true);
 		setLoading(false);
 	}
 
@@ -96,7 +98,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 			Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
 			e.target.scrollHeight;
 		if (bottom) {
-			fetchPosts();
+			if (noMorePosts == false) fetchPosts();
 		}
 	};
 
