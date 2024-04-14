@@ -139,8 +139,8 @@ model Comment {
    text      String
    author    User           @relation(fields: [authorId], references: [id])
    authorId  String
-   post      Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
-   postId    String
+   post      Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
+   postId    String?
    createdAt DateTime       @default(now())
    children  Comment[]      @relation("CommentToComment")
    parent    Comment?       @relation("CommentToComment", fields: [parentId], references: [id])

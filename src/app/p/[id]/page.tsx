@@ -53,6 +53,7 @@ export default function Post({ params }: { params: { id: string } }) {
 
 	async function fetchComments() {
 		const data = await request(`/api/post/${post.id}/comment`);
+		console.log(data.comments);
 		setComments(data.comments);
 	}
 
@@ -105,7 +106,7 @@ export default function Post({ params }: { params: { id: string } }) {
 					<div
 						className={`h-full flex flex-col ${
 							post.media.length < 1
-								? "w-full pt-20 px-20"
+								? "w-full pt-20 px-60"
 								: "w-1/2  pl-14 pt-20 pr-8"
 						}`}
 					>
@@ -178,10 +179,9 @@ export default function Post({ params }: { params: { id: string } }) {
 						</div>
 						<div className="pl-16 pt-6">
 							<form
-								className="flex gap-x-4"
+								className="flex gap-x-4 bg-default-100 rounded-large p-4"
 								onSubmit={postComment}
 							>
-								{/* TODO: Change to an actual working texarea */}
 								<Textarea
 									placeholder="Comentar"
 									variant="bordered"
@@ -198,10 +198,11 @@ export default function Post({ params }: { params: { id: string } }) {
 									onValueChange={(e) => setText(e)}
 								/>
 								<Button
-									className="h-14 w-14 text-foreground flex items-center justify-center border-none"
+									className="text-foreground flex items-center justify-center p-2 text-white"
 									type="submit"
+									color="primary"
 									isDisabled={commentLoading}
-									variant="bordered"
+									isIconOnly={true}
 									isLoading={commentLoading}
 								>
 									{commentLoading ? (
@@ -212,9 +213,13 @@ export default function Post({ params }: { params: { id: string } }) {
 								</Button>
 							</form>
 						</div>
-						<div className="gap-y-6 pl-16 mt-6 flex flex-col">
+						<div className="gap-y-8 pl-16 mt-6 flex flex-col">
 							{comments.map((i: number, _: number) => (
-								<CommentCard key={_} comment={i} />
+								<CommentCard
+									key={_}
+									comment={i}
+									isLast={_ === comments.length - 1}
+								/>
 							))}
 						</div>
 					</div>

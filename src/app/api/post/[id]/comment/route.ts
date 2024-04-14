@@ -70,6 +70,42 @@ export const POST = async (
 	}
 };
 
+// Fetch top-level comments from a post
+async function fetchPostComments(postId: string): Promise<any> {
+	const comments: any = await db.comment.findMany({
+		where: { postId: postId },
+		include: {
+			author: { select: { username: true, id: true, image: true } },
+		},
+		orderBy: { createdAt: "desc" },
+	});
+
+	for (let i = 0; i < comments.length; i++) {
+		const childComments = await fetchCommentReplies(comments[i].id);
+		comments[i].childComments = childComments;
+	}
+
+	return comments;
+}
+
+// Fetch replies to a comment
+async function fetchCommentReplies(parentId: string): Promise<any> {
+	const comments: any = await db.comment.findMany({
+		where: { parentId: parentId },
+		include: {
+			author: { select: { username: true, id: true, image: true } },
+		},
+		orderBy: { createdAt: "desc" },
+	});
+
+	for (let i = 0; i < comments.length; i++) {
+		const childComments = await fetchCommentReplies(comments[i].id);
+		comments[i].childComments = childComments;
+	}
+
+	return comments;
+}
+
 export const GET = async (
 	req: Request,
 	{ params }: { params: { id: string } }
@@ -94,13 +130,7 @@ export const GET = async (
 			);
 		}
 
-		const comments = await db.comment.findMany({
-			where: { postId },
-			include: {
-				author: { select: { username: true, id: true, image: true } },
-			},
-			orderBy: { createdAt: "desc" },
-		});
+		const comments = await fetchPostComments(postId);
 
 		return NextResponse.json({ comments }, { status: 201 });
 	} catch (e) {
