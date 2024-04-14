@@ -9,6 +9,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import {
+	Button,
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
@@ -57,31 +58,38 @@ export default function ProfileDropdown() {
 	// TODO: Fix the error message that shows on terminal that comes from here, but don't know what is causing it, plus error with keyframes
 	return (
 		<>
-			<Dropdown placement="right" className="text-foreground">
+			<Dropdown
+				placement="right"
+				className="text-foreground"
+				aria-label="Profile Dropdown"
+			>
 				<DropdownTrigger>
-					<div className="h-8 w-8 transition-dropdown">
+					<Button
+						isIconOnly={true}
+						className="!p-0 bg-transparent w-8 h-8"
+						aria-label="Toggle Dropdown"
+					>
 						<Image
 							src={
 								session.data?.user.image ??
 								"/brand/default-user.svg"
 							}
-							classNames={{ img: "h-8 rounded-full" }}
 							removeWrapper={true}
 							alt="avatar-user"
-							className={`${
+							className={`w-8 h-8 rounded-full ${
 								pathname.includes(
 									`/u/${session.data?.user.username}`
 								)
 									? "border-2 border-white"
 									: ""
 							}`}
-						></Image>
-					</div>
+						/>
+					</Button>
 				</DropdownTrigger>
 				<DropdownMenu aria-label="User Actions" variant="flat">
 					<DropdownItem
-						key="info_user"
-						className="h-10 gap-2 border-radius-sys pl-3"
+						className="h-10 gap-2 pl-3"
+						aria-label="Username"
 					>
 						<p className="font-bold">
 							<b>@{session.data?.user.username}</b>
@@ -91,53 +99,75 @@ export default function ProfileDropdown() {
 						onClick={toggleDarkMode}
 						startContent={
 							isDarkMode ? (
-								<SunIcon className="h-8" />
+								<SunIcon
+									className="h-8"
+									aria-label="Light Mode"
+								/>
 							) : (
-								<MoonIcon className="h-7 p-[0.5px]" />
+								<MoonIcon
+									className="h-7 p-[0.5px]"
+									aria-label="Dark Mode"
+								/>
 							)
 						}
 						description="Troque para outro tema"
+						aria-label="Toggle Dark Mode"
 					>
 						Modo {isDarkMode ? "claro" : "escuro"}
 					</DropdownItem>
 					<DropdownItem
-						key="profile"
 						description="Veja o seu perfil"
 						className="border-radius-sys"
-						startContent={<UserIcon className="h-8" />}
+						startContent={
+							<UserIcon className="h-8" aria-label="Profile" />
+						}
 						onClick={() =>
 							router.push(`/u/${session.data?.user.username}`)
 						}
+						aria-label="Go to Profile"
 					>
 						Perfil
 					</DropdownItem>
 					<DropdownItem
-						key="notifications"
 						description="Veja as suas notificações"
 						className="border-radius-sys"
-						startContent={<BellIcon className="h-8" />}
+						startContent={
+							<BellIcon
+								className="h-8"
+								aria-label="Notifications"
+							/>
+						}
 						onClick={() => setNotificationsModal(true)}
+						aria-label="Toggle Notifications"
 					>
 						Notificações
 					</DropdownItem>
 					<DropdownItem
-						key="info"
 						description="Veja guias e contribua"
 						className="border-radius-sys"
-						startContent={<InformationCircleIcon className="h-8" />}
+						startContent={
+							<InformationCircleIcon
+								className="h-8"
+								aria-label="Help and Feedback"
+							/>
+						}
+						aria-label="Help and Feedback"
 					>
 						Ajuda e Feedback
 					</DropdownItem>
 					<DropdownItem
-						key="exit"
 						description="Desconecte-se de sua conta"
 						className="border-radius-sys text-danger"
 						onClick={() => {
 							setSignOutModal(true);
 						}}
 						startContent={
-							<ArrowLeftEndOnRectangleIcon className="h-8" />
+							<ArrowLeftEndOnRectangleIcon
+								className="h-8"
+								aria-label="Sign Out"
+							/>
 						}
+						aria-label="Sign Out"
 					>
 						Sair
 					</DropdownItem>

@@ -40,6 +40,7 @@ export default function BookmarkPost({
 			size="lg"
 			variant="bordered"
 			onClick={handleButtonClick}
+			aria-label="Bookmark Post"
 		>
 			{isBookmarked ? (
 				<BookmarkIcon className="h-8" />

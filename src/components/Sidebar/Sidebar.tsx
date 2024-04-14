@@ -23,7 +23,7 @@ export default function Sidebar() {
 					<Image src="/brand/logo.svg" className="h-8" alt="logo" />
 				</Link>
 			</div>
-			<div className="gap-y-12 flex flex-col">
+			<div className="gap-y-12 flex flex-col items-center">
 				<Link className="text-foreground" href="/search">
 					<MagnifyingGlassIcon className="h-8" />
 				</Link>

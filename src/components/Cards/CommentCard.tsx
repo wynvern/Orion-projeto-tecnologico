@@ -24,7 +24,10 @@ export default function CommentCard({ comment }: { comment: any }) {
 						href={`/u/${comment.author.username}`}
 					>
 						<Image
-							src={comment.author.image}
+							src={
+								comment.author.image ||
+								"/brand/default-user.svg"
+							}
 							className="h-8 w-8 rounded-full"
 							alt="avatar-user"
 						></Image>
@@ -32,8 +35,8 @@ export default function CommentCard({ comment }: { comment: any }) {
 							<p>
 								<b>@{comment.author.username}</b>
 							</p>
-							<p className="text-default-200">•</p>
-							<p className="text-default-200">
+							<p className="text-foreground">•</p>
+							<p className="text-foreground">
 								{prettyDateTime(comment.createdAt)}
 							</p>
 						</div>

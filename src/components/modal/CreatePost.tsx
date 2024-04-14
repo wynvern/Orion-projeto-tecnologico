@@ -246,6 +246,8 @@ export default function CreatePost({
 					},
 				},
 			}}
+			aria-label="Create Post Modal"
+			aria-labelledby="create-post-modal-title"
 		>
 			<ModalContent>
 				{(onClose) => (
@@ -257,7 +259,10 @@ export default function CreatePost({
 									className="pl-[2px] flex justify-center"
 									startContent={
 										<Image
-											src={group.logo}
+											src={
+												group.logo ||
+												"/brand/default-group.svg"
+											}
 											removeWrapper={true}
 											className="h-6 w-6 object-cover mr-[2px]"
 										/>

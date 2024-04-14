@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import UserCard from "@/components/Cards/UserCard";
 import PostCard from "@/components/Cards/PostCard";
 import { CircularProgress, Link, Tab, Tabs } from "@nextui-org/react";
@@ -26,6 +26,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 	const [ownedGroups, setOwnedGroups] = useState([]);
 	const session = useSession();
 	const [bookmarks, setBookmarks] = useState([]);
+	const [loading, setLoading] = useState(false);
 
 	async function fetchUser() {
 		const data = await request(
@@ -50,11 +51,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchPosts() {
 		if (user.id) {
+			setLoading(true);
 			const data = await request(
 				`/api/user/${user.id}/post?skip=${skip}`
 			);
 			setPosts(posts.concat(data.posts));
 			setSkip(skip + 10);
+			setLoading(false);
 		}
 	}
 
@@ -105,13 +108,16 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			<div className="w-full flex items-center flex-col mt-[calc(50vh-200px)]">
 				<UserCard user={user} onUpdate={fetchUser} />
 				<Tabs
-					className="my-14"
+					className={`my-14 ${user.id !== "" ? "" : "hidden"}`}
 					classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
 					variant="light"
 					color="primary"
-					onSelectionChange={(e: any) => setCurrentTab(e)}
+					onSelectionChange={(e: any) =>
+						setCurrentTab(e.split(".")[1])
+					}
+					aria-label="User tabs"
 				>
-					<Tab title={<h3>Posts</h3>}>
+					<Tab title={<h3>Posts</h3>} aria-label="Posts">
 						<div className="flex flex-col gap-y-12">
 							{posts.map((i: any, _: number) => (
 								<PostCard
@@ -122,12 +128,25 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							))}
 						</div>
 						{posts.length < 1 ? (
-							<h2 className="opacity-[30%]">Nenhum post</h2>
+							<h2
+								className={`opacity-[30%] ${
+									user.id !== "" ? "" : "hidden"
+								}`}
+							>
+								Nenhum post
+							</h2>
 						) : (
 							""
 						)}
+						<div
+							className={`my-10 w-[1000px] flex items-center justify-center ${
+								loading ? "opacity-1" : "opacity-0"
+							}`}
+						>
+							<CircularProgress size="lg" />
+						</div>
 					</Tab>
-					<Tab title={<h3>Salvos</h3>}>
+					<Tab title={<h3>Salvos</h3>} aria-label="Salvos">
 						{" "}
 						<div className="flex flex-col gap-y-12">
 							{bookmarks.map((i: any, _: number) => (
@@ -144,7 +163,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							""
 						)}
 					</Tab>
-					<Tab title={<h3>Grupos</h3>}>
+					<Tab title={<h3>Grupos</h3>} aria-label="Grupos">
 						{ownedGroups.length >= 1 ? (
 							<div className="bg-primary p-14 gap-y-10 flex flex-col rounded-large text-white">
 								<div className="flex gap-x-2 items-center">
@@ -152,7 +171,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 									<h1>
 										{session.data?.user.id === user.id
 											? "Seus grupos"
-											: `Grupos de ${user.name}`}
+											: `Grupos de ${user.username}`}
 									</h1>
 								</div>
 								<div className="gap-y-12">
@@ -167,11 +186,15 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						) : (
 							""
 						)}
-						<div className="gap-y-12 mt-12">
+						<div
+							className={`gap-y-12 ${
+								ownedGroups.length >= 1 ? "mt-12" : ""
+							}`}
+						>
 							{userGroups.map((i: any, _: number) => (
 								<LightGroupCard
 									key={_}
-									group={i.group}
+									group={i}
 								></LightGroupCard>
 							))}
 						</div>
@@ -182,7 +205,6 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						)}
 					</Tab>
 				</Tabs>
-				<div className="h-60"></div>
 			</div>
 		</div>
 	);

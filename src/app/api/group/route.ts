@@ -48,7 +48,7 @@ export const POST = async (req: Request) => {
 			data: { name, description, ownerId, categories, groupName },
 		});
 
-		if (banner !== undefined || logo !== undefined) {
+		if (banner || logo) {
 			const dataToUpdate: any = {};
 			if (banner !== undefined) {
 				const imageBase64 = Buffer.from(banner, "base64");

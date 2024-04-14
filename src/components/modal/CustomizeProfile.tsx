@@ -159,11 +159,16 @@ export default function CustomizeProfile({
 				setIsActive(false);
 			}}
 			backdrop="blur"
+			aria-label="Customize Profile Modal"
+			aria-labelledby="customize-profile-title"
 		>
 			<ModalContent>
 				{(onClose) => (
 					<>
-						<ModalHeader className="flex flex-col gap-1 pt-1">
+						<ModalHeader
+							className="flex flex-col gap-1 pt-1"
+							id="customize-profile-title"
+						>
 							Personalizar Perfil
 						</ModalHeader>
 						<form onSubmit={handleCustomizeProfile}>
@@ -187,6 +192,7 @@ export default function CustomizeProfile({
 												className="flex z-50 opacity-70"
 												isIconOnly={true}
 												isDisabled={loading}
+												aria-label="aaaaaa"
 											>
 												<PhotoIcon className="h-6" />
 											</Button>
@@ -208,6 +214,7 @@ export default function CustomizeProfile({
 												className="flex z-10 opacity-70"
 												isIconOnly={true}
 												isDisabled={loading}
+												aria-label="aaaaaa"
 											>
 												<PhotoIcon className="h-6" />
 											</Button>
@@ -218,6 +225,7 @@ export default function CustomizeProfile({
 									type="text"
 									placeholder="Nome Completo"
 									name="name"
+									aria-label="Nome Completo"
 									classNames={{ inputWrapper: "h-14" }}
 									startContent={
 										<UserIcon className="h-6 text-neutral-500" />
@@ -262,6 +270,7 @@ export default function CustomizeProfile({
 									style={{ lineHeight: "1.5" }}
 									isLoading={loading}
 									isDisabled={loading}
+									aria-label="aaaaaa"
 									startContent={
 										loading ? (
 											""

@@ -67,6 +67,7 @@ img {
 /* Handle */
 ::-webkit-scrollbar-thumb {
 	background: #222222;
+	opacity: 50%;
 	border-radius: 100px;
 }
 

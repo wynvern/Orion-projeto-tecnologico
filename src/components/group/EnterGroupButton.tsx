@@ -43,6 +43,7 @@ export default function EnterGroupButton({
 			size="lg"
 			color={isIn ? "default" : "primary"}
 			onClick={handleButtonClick}
+			aria-label={isIn ? "Remove from group" : "Add to group"}
 		>
 			{isIn ? (
 				<UserMinusIcon className="h-6" />

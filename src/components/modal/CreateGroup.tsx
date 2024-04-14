@@ -180,8 +180,8 @@ export default function CreateGroup({
 					name,
 					description,
 					categories: selectedCategories,
-					logo: logo.base64,
-					banner: banner.base64,
+					logo: logo && logo.base64,
+					banner: banner && banner.base64,
 					groupName,
 				}),
 			});

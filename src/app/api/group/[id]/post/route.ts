@@ -115,7 +115,23 @@ export const GET = async (
 		const group = await db.group.findUnique({ where: { id: groupId } });
 		const url = new URL(req.url);
 		const skip = Number(url.searchParams.get("skip"));
-		const orderBy = { [`${url.searchParams.get("orderBy")}`]: "desc" };
+		const sortValue = url.searchParams.get("sortBy");
+		var order: "asc" | "desc" = "asc";
+		console.log("sortValue", sortValue);
+
+		switch (sortValue) {
+			case "createdAt":
+				order = "desc";
+				break;
+			case "createdAt_asc":
+				order = "asc";
+				break;
+			default:
+				order = "asc";
+				break;
+		}
+
+		console.log("order", order);
 
 		if (!group) {
 			return NextResponse.json(
@@ -127,7 +143,7 @@ export const GET = async (
 		const posts = await db.post.findMany({
 			where: { groupId },
 			include: { author: true },
-			orderBy,
+			orderBy: { createdAt: order },
 			take: 10,
 			skip,
 		});

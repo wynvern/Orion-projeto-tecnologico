@@ -18,15 +18,7 @@ export default function Search() {
 	const [noResults, setNoResults] = useState(false);
 	const [retreiving, setRetreiving] = useState(false);
 
-	async function fetchPosts(search: string) {
-		setRetreiving(true);
-		const data = await request(
-			`/api/search/post?search=${search}&skip=${skipped}`
-		);
-		setRetrievedPosts(retrievedPosts.concat(data.posts));
-		if (data.posts.length < 1) setNoResults(true);
-		setRetreiving(false);
-	}
+	const loadingRef = useRef(null);
 
 	async function fetchGroups(search: string) {
 		const data = await request(
@@ -94,7 +86,41 @@ export default function Search() {
 		return () => clearTimeout(timer);
 	}, [searchTerm]);
 
-	// TODO: not update when typed because its too heavy on the server
+	async function fetchPosts(search: string) {
+		setRetreiving(true);
+		const data = await request(
+			`/api/search/post?search=${search}&skip=${skipped}`
+		);
+		setRetrievedPosts(retrievedPosts.concat(data.posts));
+		if (data.posts.length < 1) setNoResults(true);
+		setRetreiving(false);
+	}
+
+	useEffect(() => {
+		const options = {
+			root: null,
+			rootMargin: "0px",
+			threshold: 1.0,
+		};
+
+		const observer = new IntersectionObserver((entries) => {
+			const target = entries[0];
+			if (target.isIntersecting) {
+				handleFetchType();
+			}
+		}, options);
+
+		if (loadingRef.current) {
+			observer.observe(loadingRef.current);
+		}
+
+		return () => {
+			if (loadingRef.current) {
+				observer.unobserve(loadingRef.current);
+			}
+		};
+	}, [loadingRef]);
+
 	return (
 		<div
 			className="w-full h-full relative overflow-y-scroll"
@@ -160,6 +186,7 @@ export default function Search() {
 						>
 							<CircularProgress size="lg" />
 						</div>
+						<div ref={loadingRef}></div>
 					</Tab>
 					<Tab title={<h3>Usuários</h3>}>
 						<div className="w-full gap-y-12 flex flex-col pt-10">
@@ -174,6 +201,7 @@ export default function Search() {
 						>
 							<h2>Sem mais resultados</h2>
 						</div>
+						<div ref={loadingRef}></div>
 					</Tab>
 					<Tab title={<h3>Grupos</h3>}>
 						<div className="w-full gap-y-12 flex flex-col pt-10">
@@ -188,6 +216,7 @@ export default function Search() {
 						>
 							<h2>Sem mais resultados</h2>
 						</div>
+						<div ref={loadingRef}></div>
 					</Tab>
 				</Tabs>
 			</div>

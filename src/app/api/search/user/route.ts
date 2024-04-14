@@ -29,11 +29,40 @@ export const GET = async (req: Request) => {
 			);
 		}
 
-		const users = await db.user.findMany({
+		const preUsers = await db.user.findMany({
 			where: { username: { contains: search, mode: "insensitive" } },
 			skip,
 			take: 10,
 		});
+
+		const users: any = [];
+
+		for (var i = 0; i < preUsers.length; i++) {
+			var userC = await db.user.findFirst({
+				where: { id: preUsers[i].id },
+				select: {
+					id: true,
+					name: true,
+					banner: true,
+					username: true,
+					bio: true,
+					image: true,
+					_count: {
+						select: {
+							posts: {
+								where: { author: { id: preUsers[i].id } },
+							},
+							bookmarks: {
+								where: { user: { id: preUsers[i].id } },
+							},
+							groups: { where: { user: { id: preUsers[i].id } } },
+						},
+					},
+				},
+			});
+			users.push(userC);
+			console.log(userC);
+		}
 
 		return NextResponse.json(
 			{ users, message: "users retreived succsessfully" },

@@ -35,6 +35,7 @@ export default function Post({ params }: { params: { id: string } }) {
 	const [loaded, setLoaded] = useState(false);
 	const [comments, setComments] = useState([]);
 	const router = useRouter();
+	const [text, setText] = useState("");
 
 	async function fetchPost() {
 		const data = await request(`/api/post/${params.id}`);
@@ -61,9 +62,6 @@ export default function Post({ params }: { params: { id: string } }) {
 		e.preventDefault();
 
 		setCommentLoading(true);
-		const formData = new FormData(e.currentTarget);
-		const text: string = formData.get("text") as string;
-
 		if (!text || text.length > 300) return false;
 
 		try {
@@ -80,6 +78,7 @@ export default function Post({ params }: { params: { id: string } }) {
 				console.error(data);
 			} else {
 				fetchComments();
+				setText("");
 			}
 		} catch (e: any) {
 			console.error("Error:", e.message); //mudar
@@ -116,7 +115,10 @@ export default function Post({ params }: { params: { id: string } }) {
 							<div className="flex items-center gap-x-4 w-full text-foreground">
 								<Link href={`/u/${post.author.username}`}>
 									<Image
-										src={post.author.image}
+										src={
+											post.author.image ||
+											"/brand/default-user.svg"
+										}
 										className="h-12 w-12 rounded-full"
 										alt="avatar-user"
 									></Image>
@@ -131,8 +133,8 @@ export default function Post({ params }: { params: { id: string } }) {
 												<b>{post.author.username}</b>
 											</p>
 										</Link>
-										<p className="text-default-200">•</p>
-										<p className="text-default-200">
+										<p className="text-foreground">•</p>
+										<p className="text-foreground">
 											{prettyDateTime(post.createdAt)}
 										</p>
 									</div>
@@ -142,7 +144,10 @@ export default function Post({ params }: { params: { id: string } }) {
 												className="pl-[2px] flex justify-center"
 												startContent={
 													<Image
-														src={post.group.logo}
+														src={
+															post.group.logo ||
+															"/brand/default-group.svg"
+														}
 														removeWrapper={true}
 														className="h-6 w-6 object-cover mr-[2px]"
 													/>
@@ -159,7 +164,7 @@ export default function Post({ params }: { params: { id: string } }) {
 									<BookmarkPost post={post} />
 									<PostDropdown
 										post={post}
-										onDelete={router.back()}
+										onDelete={() => router.back()}
 									/>
 								</div>
 							</div>
@@ -191,6 +196,8 @@ export default function Post({ params }: { params: { id: string } }) {
 										<ChatBubbleLeftIcon className="h-6 mr-1 text-neutral-500" />
 									}
 									isDisabled={commentLoading}
+									value={text}
+									onValueChange={(e) => setText(e)}
 								></Input>
 								<Button
 									className="h-14 w-14 text-foreground flex items-center justify-center border-none"

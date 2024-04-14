@@ -63,6 +63,7 @@ export default function LightGroupCard({ group }: { group: any }) {
 							removeWrapper={true}
 							alt="banner-group"
 							onLoad={handleComponentLoaded}
+							aria-label="Group Banner"
 						></Image>
 						<div className="relative">
 							<div className="h-[300px] w-[300px]">
@@ -74,6 +75,7 @@ export default function LightGroupCard({ group }: { group: any }) {
 									className="h-[300px] w-[300px] object-cover z-50"
 									alt="banner-group"
 									onLoad={handleComponentLoaded}
+									aria-label="Group Logo"
 								/>
 							</div>
 							<div className="absolute h-[300px] w-[300px] bg-neutral-900 rounded-large top-0 z-20"></div>
@@ -85,21 +87,16 @@ export default function LightGroupCard({ group }: { group: any }) {
 										<div className="flex items-center gap-x-4 grow">
 											<div className="flex items-end grow">
 												<div className="flex items-center gap-x-2">
-													<UserGroupIcon className="h-10" />
+													<UserGroupIcon
+														className="h-10"
+														aria-label="Group Icon"
+													/>
 													<h2>{group.name}</h2>
 												</div>
 											</div>
 										</div>
 									</div>
-									<div>
-										<Link
-											className={`text-white ${
-												loaded ? "" : "opacity-0"
-											}`}
-										>
-											<EllipsisHorizontalIcon className="h-10"></EllipsisHorizontalIcon>
-										</Link>
-									</div>
+									<div></div>
 								</div>
 								<div className=" max-w-60 ml-12">
 									<h3 className="max-w-60">
@@ -139,6 +136,7 @@ export default function LightGroupCard({ group }: { group: any }) {
 											<EnterGroupButton
 												group={group}
 												onLoad={handleComponentLoaded}
+												aria-label="Enter Group Button"
 											/>
 										</div>
 									)}
@@ -150,7 +148,10 @@ export default function LightGroupCard({ group }: { group: any }) {
 			</div>
 
 			<div className={`absolute loader-container`}>
-				<CircularProgress size="lg"></CircularProgress>
+				<CircularProgress
+					size="lg"
+					aria-label="Loading"
+				></CircularProgress>
 			</div>
 		</div>
 	);

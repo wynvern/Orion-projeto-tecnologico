@@ -29,11 +29,47 @@ export const GET = async (req: Request) => {
 			);
 		}
 
-		const groups = await db.group.findMany({
-			where: { name: { contains: search, mode: "insensitive" } },
-			take: 10,
-			skip,
+		const preGroups = await db.group.findMany({
+			where: { name: { contains: search } },
 		});
+
+		const groups: any = [];
+
+		for (var i = 0; i < preGroups.length; i++) {
+			var groupC = await db.group.findFirst({
+				where: { id: preGroups[i].id },
+				select: {
+					name: true,
+					groupName: true,
+					banner: true,
+					logo: true,
+					description: true,
+					categories: true,
+					id: true,
+					ownerId: true,
+					_count: {
+						select: {
+							groupViews: {
+								where: {
+									group: { id: preGroups[i].id },
+								},
+							},
+							members: {
+								where: {
+									group: { id: preGroups[i].id },
+								},
+							},
+							posts: {
+								where: {
+									group: { id: preGroups[i].id },
+								},
+							},
+						},
+					},
+				},
+			});
+			groups.push(groupC);
+		}
 
 		return NextResponse.json(
 			{ groups, message: "groups retreived succsessfully" },

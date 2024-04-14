@@ -27,10 +27,47 @@ export const GET = async (
 			);
 		}
 
-		const groups = await db.inGroups.findMany({
+		const preGroups = await db.inGroups.findMany({
 			where: { userId },
-			include: { group: true },
 		});
+
+		const groups: any = [];
+
+		for (var i = 0; i < preGroups.length; i++) {
+			var groupC = await db.group.findFirst({
+				where: { id: preGroups[i].groupId },
+				select: {
+					name: true,
+					groupName: true,
+					banner: true,
+					logo: true,
+					description: true,
+					categories: true,
+					id: true,
+					ownerId: true,
+					_count: {
+						select: {
+							groupViews: {
+								where: {
+									group: { id: preGroups[i].groupId },
+								},
+							},
+							members: {
+								where: {
+									group: { id: preGroups[i].groupId },
+								},
+							},
+							posts: {
+								where: {
+									group: { id: preGroups[i].groupId },
+								},
+							},
+						},
+					},
+				},
+			});
+			groups.push(groupC);
+		}
 
 		const ownedGroups = await db.group.findMany({
 			where: { ownerId: userId },

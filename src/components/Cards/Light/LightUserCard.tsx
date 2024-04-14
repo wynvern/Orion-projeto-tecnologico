@@ -64,9 +64,7 @@ export default function LightUserCard({ user }: { user: any }) {
 			<Link href={`/u/${user.username}`} className="text-white">
 				{user.id ? (
 					<div
-						className={`rounded-large  w-[750px] h-[300px] flex object-contain relative content-container ${
-							user.banner ? "" : "bg-default-100"
-						}`}
+						className={`rounded-large  w-[750px] h-[300px] flex object-contain relative content-container bg-neutral-900`}
 					>
 						<Image
 							className="absolute w-[700px] h-[300px] rounded-large right-0"
@@ -150,13 +148,16 @@ export default function LightUserCard({ user }: { user: any }) {
 							</div>
 							<div className="flex gap-x-4">
 								<p>
-									<b>Posts </b>0
+									<b>Posts </b>
+									{user._count.posts}
 								</p>
 								<p>
-									<b>Salvos </b>0
+									<b>Salvos </b>
+									{user._count.bookmarks}
 								</p>
 								<p>
-									<b>Grupos </b>0
+									<b>Grupos </b>
+									{user._count.groups}
 								</p>
 							</div>
 						</div>

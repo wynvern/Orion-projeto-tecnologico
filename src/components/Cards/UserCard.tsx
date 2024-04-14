@@ -71,9 +71,7 @@ export default function UserCard({
 
 			{user.id ? (
 				<div
-					className={`rounded-large  w-[1000px] h-[400px] flex text-white object-contain relative content-container ${
-						user.banner ? "" : "bg-default-100"
-					}`}
+					className={`rounded-large  w-[1000px] h-[400px] flex text-white object-contain relative content-container bg-neutral-900`}
 				>
 					<Image
 						className="absolute w-[700px] h-[400px] rounded-large right-0"

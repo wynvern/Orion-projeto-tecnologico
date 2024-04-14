@@ -36,7 +36,10 @@ export default function GroupCard({
 	}
 
 	useEffect(() => {
-		const amountToLoad = session.data?.user.id == group.ownerId ? 2 : 3;
+		const amountToLoad =
+			(session.data?.user.id == group.ownerId ? 0 : 1) +
+			(group.logo ? 1 : 0) +
+			(group.banner ? 1 : 0);
 		if (imagesLoaded == amountToLoad) {
 			setLoaded(true);
 		} // 3 is the amount of components in wait for load

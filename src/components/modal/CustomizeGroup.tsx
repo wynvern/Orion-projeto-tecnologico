@@ -174,7 +174,7 @@ export default function CustomizeGroup({
 											src={
 												logo.preview ||
 												group.logo ||
-												"/brand/default-user.svg"
+												"/brand/default-group.svg"
 											}
 											removeWrapper={true}
 											className="h-40 w-40 object-cover z-50 absolute rounded-xl"

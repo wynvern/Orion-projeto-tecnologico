@@ -16,7 +16,6 @@ import {
 	DropdownMenu,
 	DropdownTrigger,
 } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
 import ConfirmationModal from "../modal/ConfirmClose";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -28,7 +27,6 @@ export default function PostDropdown({
 	post: any;
 	onDelete: any;
 }) {
-	const router = useRouter();
 	const session = useSession();
 
 	async function deltePost() {
@@ -47,6 +45,7 @@ export default function PostDropdown({
 						isIconOnly={true}
 						variant="bordered"
 						className="border-none"
+						aria-label="Post Configuration"
 					>
 						<EllipsisHorizontalIcon className="h-10" />
 					</Button>
@@ -63,6 +62,7 @@ export default function PostDropdown({
 						className="h-10 gap-2 border-radius-sys pl-3"
 						description="Compartilhe este post"
 						startContent={<ShareIcon className="h-8" />}
+						aria-label="Share Post"
 					>
 						<p className="">Compartilhar</p>
 					</DropdownItem>
@@ -76,6 +76,7 @@ export default function PostDropdown({
 							startContent={
 								<TrashIcon className="h-8 text-danger" />
 							}
+							aria-label="Delete Post"
 						>
 							<p className="text-danger">Deletar post</p>
 						</DropdownItem>
@@ -94,6 +95,7 @@ export default function PostDropdown({
 					setConfirmModal(false);
 				}}
 				onClose={() => setConfirmModal(false)}
+				aria-label="Confirmation Modal"
 			/>
 		</>
 	);

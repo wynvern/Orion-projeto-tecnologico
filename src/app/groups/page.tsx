@@ -129,12 +129,12 @@ export default function Groups() {
 					</p>
 					<ScrollShadow
 						orientation="horizontal"
-						className="flex mt-14 "
+						className="flex mt-14 overflow-y-hidden h-[310px]"
 					>
 						<div>
 							<div className="w-40"></div>
 						</div>
-						<div className="gap-x-6 flex">
+						<div className="gap-x-6 flex h-full">
 							{groups.map((i: any, _: number) => (
 								<div key={_}>
 									<LightGroupCard group={i} />
