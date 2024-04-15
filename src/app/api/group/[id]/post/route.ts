@@ -142,7 +142,27 @@ export const GET = async (
 
 		const posts = await db.post.findMany({
 			where: { groupId },
-			include: { author: true },
+			include: {
+				author: true,
+				comments: {
+					take: 3,
+					distinct: ["authorId"],
+					include: {
+						author: {
+							select: {
+								id: true,
+								username: true,
+								image: true,
+							},
+						},
+					},
+				},
+				_count: {
+					select: {
+						comments: { where: { post: { groupId } } },
+					},
+				},
+			},
 			orderBy: { createdAt: order },
 			take: 10,
 			skip,

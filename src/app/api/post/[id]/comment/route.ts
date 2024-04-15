@@ -1,6 +1,7 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createNotification } from "@/util/createNotification";
+import { processAnyImage } from "@/util/processSquareImage";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -19,7 +20,7 @@ export const POST = async (
 		}
 
 		const body = await req.json();
-		const { text } = body;
+		const { text, image } = body;
 		const postId = params.id;
 
 		const post = await db.post.findUnique({ where: { id: postId } });
@@ -42,6 +43,9 @@ export const POST = async (
 
 		const comment = await db.comment.create({
 			data: { text, authorId: session.user.id, postId },
+			include: {
+				author: { select: { username: true, image: true, id: true } },
+			},
 		});
 
 		console.log(session.user);
@@ -57,8 +61,36 @@ export const POST = async (
 			});
 		}
 
+		if (image) {
+			const base64Image = Buffer.from(image, "base64");
+			const compressedImage = await processAnyImage(base64Image);
+			await db.commentMedia.create({
+				data: {
+					image: compressedImage,
+					commentId: comment.id,
+					index: 0,
+				},
+			});
+			await db.comment.update({
+				where: { id: comment.id },
+				data: {
+					medias: [
+						`${process.env.NEXTAUTH_URL}/api/comment/${comment.id}/media/0`,
+					],
+				},
+			});
+		}
+
 		return NextResponse.json(
-			{ message: "Comment created succsessfully" },
+			{
+				message: "Comment created succsessfully",
+				comment: {
+					...comment,
+					medias: [
+						`${process.env.NEXTAUTH_URL}/api/comment/${comment.id}/media/0`,
+					],
+				},
+			},
 			{ status: 201 }
 		);
 	} catch (e) {

@@ -1,5 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { createNotification } from "@/util/createNotification";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -22,6 +23,18 @@ export const POST = async (
 		const userId = session.user.id;
 		const groupId = params.id;
 
+		const group = await db.group.findFirst({
+			where: { id: groupId },
+			select: { name: true, ownerId: true },
+		});
+
+		if (!group) {
+			return NextResponse.json(
+				{ message: "group-not-found" },
+				{ status: 404 }
+			);
+		}
+
 		const linkExists = await db.inGroups.findFirst({
 			where: { groupId, userId },
 		});
@@ -29,6 +42,14 @@ export const POST = async (
 		if (!linkExists) {
 			await db.inGroups.create({ data: { groupId, userId } });
 		}
+
+		await createNotification({
+			title: `${session.user.username} na sua comunidade ${group.name}`,
+			userId: group.ownerId,
+			link: `${process.env.NEXTAUTH_URL}/g/${group.name}?tab=participants`,
+			image: `${session.user.image}`,
+			description: `O usuário ${session.user.username} em ${group.name}`,
+		});
 
 		return NextResponse.json(
 			{ message: "Entered the group succsessfully if not already" },

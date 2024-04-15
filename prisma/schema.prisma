@@ -93,20 +93,19 @@ model UserProfilePictures {
 }
 
 model Post {
-   id           String         @id @default(cuid())
-   title        String
-   content      String
-   author       User           @relation(fields: [authorId], references: [id])
-   authorId     String
-   media        String[]       @default([])
-   comments     Comment[]
-   bookmarks    Bookmark[]
-   postMedia    PostMedia[]
-   postViews    PostViews[]
-   group        Group          @relation(fields: [groupId], references: [id])
-   groupId      String
-   createdAt    DateTime       @default(now())
-   CommentMedia CommentMedia[]
+   id        String      @id @default(cuid())
+   title     String
+   content   String
+   author    User        @relation(fields: [authorId], references: [id])
+   authorId  String
+   media     String[]    @default([])
+   comments  Comment[]
+   bookmarks Bookmark[]
+   postMedia PostMedia[]
+   postViews PostViews[]
+   group     Group       @relation(fields: [groupId], references: [id])
+   groupId   String
+   createdAt DateTime    @default(now())
 
    @@map("posts")
 }
@@ -146,17 +145,18 @@ model Comment {
    parent    Comment?       @relation("CommentToComment", fields: [parentId], references: [id])
    parentId  String?
    media     CommentMedia[]
+   medias    String[]       @default([])
 
    @@map("comments")
 }
 
 model CommentMedia {
-   id        String  @id @default(cuid())
-   comment   Post    @relation(fields: [commentId], references: [id], onDelete: Cascade, map: "comment_media_post")
-   commentId String
+   id String @id @default(cuid())
+
    image     String
    index     Int
-   Comment   Comment @relation(fields: [commentId], references: [id], map: "comment_media_comment")
+   commentId String
+   Comment   Comment @relation(fields: [commentId], references: [id])
 
    @@map("comment_media")
 }

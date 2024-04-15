@@ -97,6 +97,31 @@ export default function PostCard({ post, update }: { post: any; update: any }) {
 					</p>
 					<div className="under-box-shadow w-full h-[150px] absolute top-0"></div>
 				</Link>
+				{post.comments.length > 0 ? (
+					<div className="!flex !p-1 pl-0 ml-12 mt-4">
+						<div className="flex items-center">
+							<div className="flex">
+								{post.comments.map((i: any) => (
+									<Image
+										src={i.author.image}
+										removeWrapper={true}
+										className="h-8 first:ml-0 -ml-2 rounded-full"
+									/>
+								))}
+							</div>
+							<div className="ml-2">
+								<i>
+									{post._count.comments > 3 ? "+" : ""}{" "}
+									{post._count.comments -
+										post.comments.length}{" "}
+									comentaram
+								</i>
+							</div>
+						</div>
+					</div>
+				) : (
+					""
+				)}
 			</div>
 			{/* Image */}
 			{post.media[0] ? (

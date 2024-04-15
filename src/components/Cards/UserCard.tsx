@@ -37,11 +37,13 @@ export default function UserCard({
 
 	function handleComponentLoaded() {
 		setImagesLoaded((prev) => prev + 1);
+		console.log("loaded");
 	}
 
 	useEffect(() => {
 		if (user.id) {
-			const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0);
+			const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0); // Bug if image hasn't loaded before
+			console.log(count, imagesLoaded, user.banner, user.image);
 			if (imagesLoaded == count) onImageLoad(); // amount of images to load before showing
 		}
 	}, [imagesLoaded, user.banner, user.image]);

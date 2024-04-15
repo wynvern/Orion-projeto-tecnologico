@@ -1,4 +1,5 @@
 import request from "@/util/api";
+import getFileBase64 from "@/util/getFile";
 import { prettyDateTime } from "@/util/prettyDateTime";
 import {
 	ChatBubbleBottomCenterIcon,
@@ -6,9 +7,10 @@ import {
 	EllipsisHorizontalIcon,
 	MinusCircleIcon,
 	PaperAirplaneIcon,
+	PhotoIcon,
 	PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Image, Link, Textarea } from "@nextui-org/react";
+import { Button, Image, Link, Textarea, image } from "@nextui-org/react";
 import { useState } from "react";
 import { text } from "stream/consumers";
 
@@ -24,6 +26,10 @@ export default function CommentCard({
 	const [commentVisible, setCommentVisible] = useState(false);
 	const [comments, setComments]: any = useState(comment.childComments || []);
 	const [hideComments, setHideComments] = useState(false);
+	const [commentImage, setCommentImage] = useState({
+		base64: "",
+		preview: "",
+	});
 
 	function truncateString(input: string, maxLength: number): string {
 		if (input.length > maxLength) {
@@ -37,14 +43,26 @@ export default function CommentCard({
 		e.preventDefault();
 		console.log("Post comment:", text);
 
+		if (!text || text.length < 1 || text.length > 200) {
+			return false;
+		}
+
 		const data = await request(
 			`/api/comment/${comment.id}`,
 			"POST",
 			{},
-			{ text }
+			{ text, image: commentImage.base64 }
 		);
-		setComments([...comments, data.comment]);
+
+		setComments([data.comment, ...comments]);
 		setCommentVisible(false);
+		setText("");
+		setCommentImage({ base64: "", preview: "" });
+	}
+
+	async function handleUploadImage() {
+		const file = await getFileBase64(["png", "jpeg", "jpg", "gif", "svg"]);
+		setCommentImage(file);
 	}
 
 	return (
@@ -56,16 +74,15 @@ export default function CommentCard({
 						comments.length < 1 || hideComments ? "opacity-0" : ""
 					}`}
 				></div>
-				{comments.length > 0 && isLast && (
-					<div className="absolute w-10 h-full bg-black -left-12 top-10" />
+				{isLast && (
+					<div className="absolute w-10 h-full bg-background -left-12 top-10" />
 				)}
 				<Button
-					className={`absolute border-none z-50 -left-14 ml-[7px] rounded-full bg-background ${
-						comments.length < 1 ? "hidden" : ""
-					}`}
+					className={`absolute border-none z-50 bg-background -left-14 ml-[7px] rounded-full bg-background`}
 					isIconOnly={true}
 					onClick={() => setHideComments(!hideComments)}
 					variant="bordered"
+					isDisabled={comments.length < 1}
 				>
 					{hideComments ? (
 						<MinusCircleIcon className="h-6" />
@@ -122,26 +139,42 @@ export default function CommentCard({
 							className="flex gap-x-4 bg-default-100 rounded-large p-4"
 							onSubmit={postComment}
 						>
-							<Textarea
-								placeholder="Comentar"
+							<div className="flex flex-col grow">
+								<Textarea
+									placeholder="Comentar"
+									variant="bordered"
+									name="text"
+									max={200}
+									classNames={{
+										inputWrapper: "h-14 border-none",
+									}}
+									startContent={
+										<ChatBubbleLeftIcon className="h-6 mr-1 text-neutral-500" />
+									}
+									isDisabled={commentLoading}
+									value={text}
+									onValueChange={(e) => setText(e)}
+								/>
+								<div className="ml-10 mt-4">
+									<Image
+										src={commentImage.preview}
+										className="max-h-[200px] max-w-[200px]"
+									></Image>
+								</div>
+							</div>
+							<Button
 								variant="bordered"
-								name="text"
-								max={200}
-								classNames={{
-									inputWrapper: "h-14 border-none",
-								}}
-								startContent={
-									<ChatBubbleLeftIcon className="h-6 mr-1 text-neutral-500" />
-								}
-								isDisabled={commentLoading}
-								value={text}
-								onValueChange={(e) => setText(e)}
-							/>
+								className="border-none"
+								isIconOnly={true}
+								onClick={() => handleUploadImage()}
+							>
+								<PhotoIcon className="h-6" />
+							</Button>
 							<Button
 								className="text-foreground flex items-center justify-center p-2 text-white"
 								type="submit"
 								color="primary"
-								isDisabled={commentLoading}
+								isDisabled={commentLoading || !text}
 								isIconOnly={true}
 								isLoading={commentLoading}
 							>
@@ -174,6 +207,16 @@ export default function CommentCard({
 					</div>
 				</div>
 			</div>
+			{/* Image */}
+
+			{comment.medias.length >= 1 && (
+				<div
+					className="ml-10 w-40 relative shrink-0"
+					aria-label="post-image"
+				>
+					<Image src={comment.medias[0]}></Image>
+				</div>
+			)}
 		</div>
 	);
 }

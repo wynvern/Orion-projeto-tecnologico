@@ -5,12 +5,14 @@ import PostDropdown from "@/components/dropdown/PostDropdown";
 import ImagePreview from "@/components/modal/ImagePreview";
 import BookmarkPost from "@/components/post/BookmarkPost";
 import request from "@/util/api";
+import getFileBase64 from "@/util/getFile";
 import { prettyDateTime } from "@/util/prettyDateTime";
 import {
 	ChatBubbleLeftIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	PaperAirplaneIcon,
+	PhotoIcon,
 } from "@heroicons/react/24/outline";
 import {
 	Link,
@@ -31,9 +33,13 @@ export default function Post({ params }: { params: { id: string } }) {
 	const [imagePos, setImagePost] = useState(0);
 	const [previewImages, setPreviewImages] = useState(false);
 	const [loaded, setLoaded] = useState(false);
-	const [comments, setComments] = useState([]);
+	const [comments, setComments]: any = useState([]);
 	const router = useRouter();
 	const [text, setText] = useState("");
+	const [commentImage, setCommentImage] = useState({
+		base64: "",
+		preview: "",
+	});
 
 	async function fetchPost() {
 		const data = await request(`/api/post/${params.id}`);
@@ -63,27 +69,21 @@ export default function Post({ params }: { params: { id: string } }) {
 		setCommentLoading(true);
 		if (!text || text.length > 300) return false;
 
-		try {
-			const response = await fetch(`/api/post/${params.id}/comment`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ text }),
-			});
+		const data = await request(
+			`/api/post/${params.id}/comment`,
+			"POST",
+			{},
+			{ text, image: commentImage.base64 }
+		);
 
-			if (!response.ok) {
-				const data = await response.json();
-				console.error(data);
-			} else {
-				fetchComments();
-				setText("");
-			}
-		} catch (e: any) {
-			console.error("Error:", e.message); //mudar
-		} finally {
-			setCommentLoading(false);
-		}
+		setComments([data.comment, ...comments]);
+
+		setCommentLoading(false);
+	}
+
+	async function handleUploadImage() {
+		const file = await getFileBase64(["png", "jpeg", "jpg", "gif", "svg"]);
+		setCommentImage(file);
 	}
 
 	// TODO: Use arrow keys to navigate image
@@ -182,26 +182,42 @@ export default function Post({ params }: { params: { id: string } }) {
 								className="flex gap-x-4 bg-default-100 rounded-large p-4"
 								onSubmit={postComment}
 							>
-								<Textarea
-									placeholder="Comentar"
+								<div className="flex flex-col grow">
+									<Textarea
+										placeholder="Comentar"
+										variant="bordered"
+										name="text"
+										max={200}
+										classNames={{
+											inputWrapper: "h-14 border-none",
+										}}
+										startContent={
+											<ChatBubbleLeftIcon className="h-6 mr-1 text-neutral-500" />
+										}
+										isDisabled={commentLoading}
+										value={text}
+										onValueChange={(e) => setText(e)}
+									/>
+									<div className="ml-10 mt-4">
+										<Image
+											src={commentImage.preview}
+											className="max-h-[200px] max-w-[200px]"
+										></Image>
+									</div>
+								</div>
+								<Button
 									variant="bordered"
-									name="text"
-									max={200}
-									classNames={{
-										inputWrapper: "h-14 border-none",
-									}}
-									startContent={
-										<ChatBubbleLeftIcon className="h-6 mr-1 text-neutral-500" />
-									}
-									isDisabled={commentLoading}
-									value={text}
-									onValueChange={(e) => setText(e)}
-								/>
+									className="border-none"
+									isIconOnly={true}
+									onClick={() => handleUploadImage()}
+								>
+									<PhotoIcon className="h-6" />
+								</Button>
 								<Button
 									className="text-foreground flex items-center justify-center p-2 text-white"
 									type="submit"
 									color="primary"
-									isDisabled={commentLoading}
+									isDisabled={commentLoading || !text}
 									isIconOnly={true}
 									isLoading={commentLoading}
 								>
