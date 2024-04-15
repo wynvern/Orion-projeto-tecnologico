@@ -12,7 +12,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Image, Link, Textarea, image } from "@nextui-org/react";
 import { useState } from "react";
-import { text } from "stream/consumers";
 
 export default function CommentCard({
 	comment,
@@ -51,9 +50,16 @@ export default function CommentCard({
 			`/api/comment/${comment.id}`,
 			"POST",
 			{},
-			{ text, image: commentImage.base64 }
+			{
+				text,
+				image:
+					commentImage.base64 !== ""
+						? commentImage.base64
+						: undefined,
+			}
 		);
 
+		console.log(data);
 		setComments([data.comment, ...comments]);
 		setCommentVisible(false);
 		setText("");

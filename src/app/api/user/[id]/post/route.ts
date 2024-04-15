@@ -33,17 +33,29 @@ export const GET = async (
 			where: { authorId: userId },
 			include: {
 				author: true,
-				group: {
+				group: { select: { name: true, logo: true, id: true } },
+				comments: {
+					take: 3,
+					distinct: ["authorId"],
+					include: {
+						author: {
+							select: {
+								id: true,
+								username: true,
+								image: true,
+							},
+						},
+					},
+				},
+				_count: {
 					select: {
-						id: true,
-						logo: true,
-						name: true,
+						comments: { where: { post: { authorId: userId } } },
 					},
 				},
 			},
 			orderBy: { createdAt: "desc" },
-			skip,
 			take: 10,
+			skip,
 		});
 
 		return NextResponse.json({ posts: posts }, { status: 201 });

@@ -2,8 +2,15 @@ import { prettyDateTime } from "@/util/prettyDateTime";
 import { Chip, Image, Link } from "@nextui-org/react";
 import BookmarkPost from "../post/BookmarkPost";
 import PostDropdown from "../dropdown/PostDropdown";
+import { Post } from "@/types/Post";
 
-export default function PostCard({ post, update }: { post: any; update: any }) {
+export default function PostCard({
+	post,
+	update,
+}: {
+	post: Post;
+	update: any;
+}) {
 	function truncateString(input: string, maxLength: number): string {
 		if (input.length > maxLength) {
 			return input.substring(0, maxLength) + "...";
@@ -13,7 +20,7 @@ export default function PostCard({ post, update }: { post: any; update: any }) {
 	}
 
 	return (
-		<div className="w-[1000px] flex" aria-label="post-card">
+		<div className="w-full flex" aria-label="post-card">
 			{/* Content */}
 			<div className="flex flex-col flex-grow">
 				<div
@@ -47,27 +54,23 @@ export default function PostCard({ post, update }: { post: any; update: any }) {
 								</p>
 							</div>
 							<div className="flex gap-x-2">
-								{post.group ? (
-									<Link href={`/g/${post.group.name}`}>
-										<Chip
-											className="pl-[2px] flex justify-center"
-											startContent={
-												<Image
-													src={
-														post.group.logo ||
-														"/brand/default-group.svg"
-													}
-													removeWrapper={true}
-													className="h-6 w-6 object-cover mr-[2px]"
-												/>
-											}
-										>
-											{post.group.name}
-										</Chip>
-									</Link>
-								) : (
-									""
-								)}
+								<Link href={`/g/${post.group.name}`}>
+									<Chip
+										className="pl-[2px] flex justify-center"
+										startContent={
+											<Image
+												src={
+													post.group.logo ||
+													"/brand/default-group.svg"
+												}
+												removeWrapper={true}
+												className="h-6 w-6 object-cover mr-[2px]"
+											/>
+										}
+									>
+										{post.group.name}
+									</Chip>
+								</Link>
 							</div>
 						</div>
 					</div>

@@ -30,7 +30,7 @@ export default function RootLayout({
 					<div
 						className={`w-full h-full  text-foreground bg-background ${
 							!notVisibleSidebarPages.includes(pathname) &&
-							"pl-20"
+							"sm:pl-20 pb-20 sm:pb-0"
 						}`}
 					>
 						{children}

@@ -11,6 +11,7 @@ import {
 	ExclamationTriangleIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/solid";
+import { Post } from "@/types/Post";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState({
@@ -21,13 +22,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		bio: "",
 		banner: "",
 	});
-	const [posts, setPosts] = useState([]);
+	const [posts, setPosts] = useState<Post[]>([]);
 	const [userGroups, setUserGroups] = useState([]);
 	const [skip, setSkip] = useState(0);
 	const [currentTab, setCurrentTab] = useState(0);
 	const [ownedGroups, setOwnedGroups] = useState([]);
 	const session = useSession();
-	const [bookmarks, setBookmarks] = useState([]);
+	const [bookmarks, setBookmarks] = useState<Post[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState({ message: "", show: false });
 	const [cardLoaded, setCardLoaded] = useState(false);
@@ -54,7 +55,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 					: fetchedUser.banner,
 			});
 		} catch (error) {
-			setError({ message: "Erro ao buscar usuário", show: true });
+			setError({ message: "Erro ao buscar o usuário.", show: true });
 		}
 	}
 
@@ -70,7 +71,10 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				setLoading(false);
 			}
 		} catch (error) {
-			setError({ message: "Erro ao buscar posts", show: true });
+			setError({
+				message: "Erro ao buscar posts do usuário.",
+				show: true,
+			});
 		}
 	}
 
@@ -86,7 +90,10 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				setLoading(false);
 			}
 		} catch (error) {
-			setError({ message: "Erro ao buscar bookmarks", show: true });
+			setError({
+				message: "Erro ao buscar salvos do usuário.",
+				show: true,
+			});
 		}
 	}
 
@@ -99,7 +106,10 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				setOwnedGroups(data.ownedGroups);
 			}
 		} catch (error) {
-			setError({ message: "Erro ao buscar grupos", show: true });
+			setError({
+				message: "Erro ao buscar grupos do usuário.",
+				show: true,
+			});
 		}
 	}
 
@@ -131,7 +141,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						<ExclamationTriangleIcon className="h-20 w-20 text-warning" />
 					</div>
 					<div>
-						<p>Algo de errado ocorreu :C </p>
+						<h2>Algo de errado ocorreu :(</h2>
 						<p>{error.message}</p>
 					</div>
 				</div>
@@ -164,7 +174,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				>
 					<Tab title={<h3>Posts</h3>} aria-label="Posts">
 						<div
-							className={`flex flex-col gap-y-12 ${
+							className={`flex flex-col gap-y-12 max-w-[1000px] w-full ${
 								cardLoaded ? "opacity-1" : "opacity-0"
 							} transition-opacity duration-200`}
 						>

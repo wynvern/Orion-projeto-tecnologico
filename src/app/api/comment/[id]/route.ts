@@ -81,14 +81,36 @@ export const POST = async (
 			});
 		}
 
+		if (image) {
+			const base64Image = Buffer.from(image, "base64");
+			const compressedImage = await processAnyImage(base64Image);
+			await db.commentMedia.create({
+				data: {
+					image: compressedImage,
+					commentId: comment.id,
+					index: 0,
+				},
+			});
+			await db.comment.update({
+				where: { id: comment.id },
+				data: {
+					medias: [
+						`${process.env.NEXTAUTH_URL}/api/comment/${comment.id}/media/0`,
+					],
+				},
+			});
+		}
+
 		return NextResponse.json(
 			{
 				message: "Comment created succsessfully",
 				comment: {
 					...comment,
-					medias: [
-						`${process.env.NEXTAUTH_URL}/api/comment/${comment.id}/media/0`,
-					],
+					medias: image
+						? [
+								`${process.env.NEXTAUTH_URL}/api/comment/${comment.id}/media/0`,
+						  ]
+						: [],
 				},
 			},
 			{ status: 201 }

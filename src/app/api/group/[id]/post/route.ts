@@ -1,6 +1,7 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { processAnyImage } from "@/util/processSquareImage";
+import { select } from "@nextui-org/react";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -143,6 +144,7 @@ export const GET = async (
 		const posts = await db.post.findMany({
 			where: { groupId },
 			include: {
+				group: { select: { name: true, logo: true, id: true } },
 				author: true,
 				comments: {
 					take: 3,

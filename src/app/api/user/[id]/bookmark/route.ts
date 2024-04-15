@@ -34,22 +34,34 @@ export const GET = async (
 			include: {
 				post: {
 					include: {
-						author: {
-							select: { id: true, image: true, username: true },
+						group: { select: { name: true, logo: true, id: true } },
+						author: true,
+						comments: {
+							take: 3,
+							distinct: ["authorId"],
+							include: {
+								author: {
+									select: {
+										id: true,
+										username: true,
+										image: true,
+									},
+								},
+							},
 						},
-						group: {
+						_count: {
 							select: {
-								id: true,
-								logo: true,
-								name: true,
+								comments: {
+									where: { post: { authorId: userId } },
+								},
 							},
 						},
 					},
 				},
 			},
-			skip,
-			take: 10,
 			orderBy: { createdAt: "desc" },
+			take: 10,
+			skip,
 		});
 
 		return NextResponse.json({ bookmarks }, { status: 201 });
