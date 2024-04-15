@@ -101,8 +101,9 @@ export default function PostCard({ post, update }: { post: any; update: any }) {
 					<div className="!flex !p-1 pl-0 ml-12 mt-4">
 						<div className="flex items-center">
 							<div className="flex">
-								{post.comments.map((i: any) => (
+								{post.comments.map((i: any, _: number) => (
 									<Image
+										key={_}
 										src={i.author.image}
 										removeWrapper={true}
 										className="h-8 first:ml-0 -ml-2 rounded-full"

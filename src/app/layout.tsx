@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 import App from "../components/app/App";
 import { useEffect, useState } from "react";
 
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -42,6 +45,8 @@ export default function RootLayout({
 				<body
 					className={`dark ${inter.className} w-screen h-[calc(100dvh)]`}
 				>
+					<Analytics />
+					<SpeedInsights />
 					<App>{children}</App>
 				</body>
 			</html>
