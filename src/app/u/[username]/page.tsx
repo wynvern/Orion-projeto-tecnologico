@@ -33,6 +33,11 @@ export default function UserPage({ params }: { params: { username: string } }) {
 	const [error, setError] = useState({ message: "", show: false });
 	const [cardLoaded, setCardLoaded] = useState(false);
 	const [bookmarkSkip, setBookmarkSkip] = useState(0);
+	const [loadedAll, setLoadedAll] = useState({
+		posts: false,
+		bookmarks: false,
+		groups: false,
+	});
 
 	async function fetchUser() {
 		try {
@@ -61,11 +66,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchPosts() {
 		try {
-			if (user.id) {
+			if (user.id && !loadedAll.posts) {
 				setLoading(true);
 				const data = await request(
 					`/api/user/${user.id}/post?skip=${skip}`
 				);
+				if (data.posts.length < 10)
+					setLoadedAll({ ...loadedAll, posts: true });
 				setPosts(posts.concat(data.posts));
 				setSkip(skip + 10);
 				setLoading(false);
@@ -80,11 +87,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchBookmarks() {
 		try {
-			if (user.id) {
+			if (user.id && !loadedAll.bookmarks) {
 				setLoading(true);
 				const data = await request(
 					`/api/user/${user.id}/bookmark?skip=${bookmarkSkip}`
 				);
+				if (data.bookmarks.length < 10)
+					setLoadedAll({ ...loadedAll, bookmarks: true });
 				setBookmarks(bookmarks.concat(data.bookmarks));
 				setBookmarkSkip(bookmarkSkip + 10);
 				setLoading(false);
@@ -99,11 +108,15 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchGroups() {
 		try {
-			if (user.id) {
+			if (user.id && !loadedAll.groups) {
+				setLoading(true);
 				const data = await request(`/api/user/${user.id}/group`);
 
+				if (data.groups.length < 10)
+					setLoadedAll({ ...loadedAll, groups: true });
 				setUserGroups(data.groups);
 				setOwnedGroups(data.ownedGroups);
+				setLoading(false);
 			}
 		} catch (error) {
 			setError({
@@ -200,7 +213,16 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							""
 						)}
 						<div
-							className={`my-10 w-[1000px] flex items-center justify-center ${
+							className={`mt-20 ${
+								loadedAll.posts ? "opacity-1" : "opacity-0"
+							}`}
+						>
+							<h2 className="text-neutral-500 w-full text-center">
+								Sem mais posts
+							</h2>
+						</div>
+						<div
+							className={`my-10 max-w-[1000px] flex items-center justify-center ${
 								loading ? "opacity-1" : "opacity-0"
 							} ${
 								cardLoaded ? "opacity-1" : "opacity-0"
@@ -209,9 +231,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							<CircularProgress size="lg" />
 						</div>
 					</Tab>
-					<Tab title={<h3>Salvos</h3>} aria-label="Salvos">
+					<Tab
+						title={<h3>Salvos</h3>}
+						aria-label="Salvos"
+						className="flex items-center flex-col"
+					>
 						{" "}
-						<div className="flex flex-col gap-y-12">
+						<div className="flex flex-col gap-y-12 items-center max-w-[1000px]">
 							{bookmarks.map((i: any, _: number) => (
 								<PostCard
 									post={i.post}
@@ -233,6 +259,15 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						) : (
 							""
 						)}
+						<div
+							className={`mt-20 ${
+								loadedAll.bookmarks ? "opacity-1" : "opacity-0"
+							}`}
+						>
+							<h2 className="text-neutral-500 w-full text-center">
+								Sem mais salvos
+							</h2>
+						</div>
 						<div
 							className={`my-10 w-[1000px] flex items-center justify-center ${
 								loading ? "opacity-1" : "opacity-0"
@@ -267,7 +302,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 							""
 						)}
 						<div
-							className={`flex flex-col gap-y-12 ${
+							className={`flex flex-col gap-y-12 justify-center items-center ${
 								ownedGroups.length >= 1 ? "mt-12" : ""
 							}`}
 						>
@@ -291,6 +326,24 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						) : (
 							""
 						)}
+						<div
+							className={`mt-20 ${
+								loadedAll.posts ? "opacity-1" : "opacity-0"
+							}`}
+						>
+							<h2 className="text-neutral-500 w-full text-center">
+								Sem mais grupos
+							</h2>
+						</div>
+						<div
+							className={`my-10 w-[1000px] flex items-center justify-center ${
+								loading ? "opacity-1" : "opacity-0"
+							} ${
+								cardLoaded ? "opacity-1" : "opacity-0"
+							} transition-opacity duration-200`}
+						>
+							<CircularProgress size="lg" />
+						</div>
 					</Tab>
 				</Tabs>
 			</div>

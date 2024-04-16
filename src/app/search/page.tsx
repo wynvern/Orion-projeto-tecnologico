@@ -127,7 +127,7 @@ export default function Search() {
 					}`}
 				>
 					<h1>Pesquisa</h1>
-					<form className="w-[750px] h-fit flex items-center p-8">
+					<div className="w-[750px] h-fit flex items-center p-8">
 						<Input
 							type="text"
 							placeholder="Digite algo para pesquisar..."
@@ -142,8 +142,9 @@ export default function Search() {
 								setNoResults(false);
 							}}
 							value={searchTerm}
+							autoFocus={true}
 						/>
-					</form>
+					</div>
 				</div>
 				<Tabs
 					className="mt-1"

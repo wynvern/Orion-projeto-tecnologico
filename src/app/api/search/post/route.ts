@@ -31,10 +31,40 @@ export const GET = async (req: Request) => {
 
 		const posts = await db.post.findMany({
 			where: { title: { contains: search, mode: "insensitive" } },
-			include: { author: true },
-			skip,
-			take: 10,
+			include: {
+				group: { select: { name: true, logo: true, id: true } },
+				author: true,
+				comments: {
+					take: 3,
+					distinct: ["authorId"],
+					include: {
+						author: {
+							select: {
+								id: true,
+								username: true,
+								image: true,
+							},
+						},
+					},
+				},
+				_count: {
+					select: {
+						comments: {
+							where: {
+								post: {
+									title: {
+										contains: search,
+										mode: "insensitive",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			orderBy: { createdAt: "desc" },
+			take: 10,
+			skip,
 		});
 
 		return NextResponse.json(

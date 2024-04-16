@@ -77,7 +77,8 @@ export default function Post({ params }: { params: { id: string } }) {
 		);
 
 		setComments([data.comment, ...comments]);
-
+		setText("");
+		setCommentImage({ base64: "", preview: "" });
 		setCommentLoading(false);
 	}
 

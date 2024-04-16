@@ -40,7 +40,7 @@ export default function LightUserCard({ user }: { user: any }) {
 	}
 
 	return (
-		<div className="flex w-[750px] h-[300px] items-center justify-center">
+		<div className="flex w-[750px] h-[300px] items-center justify-center relative">
 			<style jsx>{`
 				.loader-container {
 					opacity: ${loading ? 1 : 0};
@@ -55,7 +55,7 @@ export default function LightUserCard({ user }: { user: any }) {
 				}
 			`}</style>
 
-			<div className="loader-container fixed">
+			<div className="loader-container absolute">
 				<CircularProgress size="lg" />
 			</div>
 
