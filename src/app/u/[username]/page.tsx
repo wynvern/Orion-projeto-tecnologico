@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import UserCard from "@/components/Cards/UserCard";
 import PostCard from "@/components/Cards/PostCard";
-import { Link, Tab, Tabs } from "@nextui-org/react";
+import { CircularProgress, Link, Tab, Tabs } from "@nextui-org/react";
 import request from "@/util/api";
 import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 import { useSession } from "next-auth/react";
@@ -11,37 +11,41 @@ import {
 	ExclamationTriangleIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/solid";
-import { Post } from "@/types/Post";
 import TabContent from "./TabContent";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import User from "@/types/User";
 
 export default function UserPage({ params }: { params: { username: string } }) {
-	const [user, setUser] = useState({
-		username: "",
-		name: "",
-		image: "",
-		id: "",
-		bio: "",
-		banner: "",
+	const [user, setUser] = useState<User | null>(null);
+	const [posts, setPosts] = useState({
+		items: [],
+		skip: 0,
+		loadedAll: false,
 	});
-	const [posts, setPosts] = useState<Post[]>([]);
-	const [bookmarks, setBookmarks] = useState<Post[]>([]);
-	const [userGroups, setUserGroups] = useState([]);
-	const [ownedGroups, setOwnedGroups] = useState([]);
 
-	const [skip, setSkip] = useState({ bookmark: 0, post: 0 });
+	const [bookmarks, setBookmarks] = useState({
+		items: [],
+		skip: 0,
+		loadedAll: false,
+	});
+
+	const [userGroups, setUserGroups] = useState({
+		items: [],
+		loadedAll: false,
+	});
+
+	const [ownedGroups, setOwnedGroups] = useState({
+		items: [],
+		loadedAll: false,
+	});
+
 	const [currentTab, setCurrentTab] = useState(0);
 
 	const session = useSession();
 
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState({ message: "", show: false });
-	const [cardLoaded, setCardLoaded] = useState(false);
-	const [loadedAll, setLoadedAll] = useState({
-		posts: false,
-		bookmarks: false,
-		groups: false,
-	});
+	const [pageLoaded, setPageLoaded] = useState(false);
 
 	async function fetchUser() {
 		try {
@@ -70,15 +74,18 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchPosts() {
 		try {
-			if (user.id && !loadedAll.posts) {
+			if (user && !posts.loadedAll) {
 				setLoading(true);
-				const data = await request(
-					`/api/user/${user.id}/post?skip=${skip.post}`
+				const response: any = await request(
+					`/api/user/${user.id}/post?skip=${posts.skip}`
 				);
-				if (data.posts.length < 10)
-					setLoadedAll({ ...loadedAll, posts: true });
-				setPosts(posts.concat(data.posts));
-				setSkip({ ...skip, post: skip.post + 10 });
+				console.log(response.posts);
+				setPosts({
+					...posts,
+					items: posts.items.concat(response.posts),
+					loadedAll: response.posts.length < 10,
+					skip: posts.skip + 10,
+				});
 				setLoading(false);
 			}
 		} catch (error) {
@@ -91,20 +98,22 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchBookmarks() {
 		try {
-			if (user.id && !loadedAll.bookmarks) {
+			if (user && !bookmarks.loadedAll) {
 				setLoading(true);
-				const data = await request(
-					`/api/user/${user.id}/bookmark?skip=${skip.bookmark}`
+				const response: any = await request(
+					`/api/user/${user.id}/bookmark?skip=${bookmarks.skip}`
 				);
-				if (data.bookmarks.length < 10)
-					setLoadedAll({ ...loadedAll, bookmarks: true });
-				setBookmarks(bookmarks.concat(data.bookmarks));
-				setSkip({ ...skip, bookmark: skip.bookmark + 10 });
+				setBookmarks({
+					...bookmarks,
+					items: response.bookmarks,
+					skip: bookmarks.skip + 10,
+					loadedAll: response.bookmarks.length < 10,
+				});
 				setLoading(false);
 			}
 		} catch (error) {
 			setError({
-				message: "Erro ao buscar salvos do usuário.",
+				message: "Error while fetching user's bookmarks.",
 				show: true,
 			});
 		}
@@ -112,29 +121,40 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	async function fetchGroups() {
 		try {
-			if (user.id && !loadedAll.groups) {
+			if (user && !userGroups.loadedAll && !ownedGroups.loadedAll) {
 				setLoading(true);
-				const data = await request(`/api/user/${user.id}/group`);
-
-				if (data.groups.length < 10)
-					setLoadedAll({ ...loadedAll, groups: true });
-				setUserGroups(data.groups);
-				setOwnedGroups(data.ownedGroups);
+				const response: any = await request(
+					`/api/user/${user.id}/group`
+				);
+				console.log(response);
+				setOwnedGroups({
+					...ownedGroups,
+					items: response.ownedGroups,
+					loadedAll: response.ownedGroups.length < 10,
+				});
+				setUserGroups({
+					...userGroups,
+					items: response.groups,
+					loadedAll: response.groups.length < 10,
+				});
 				setLoading(false);
 			}
 		} catch (error) {
 			setError({
-				message: "Erro ao buscar grupos do usuário.",
+				message: "Error while fetching user's groups.",
 				show: true,
 			});
+			console.error(error);
 		}
 	}
 
 	useEffect(() => {
-		fetchPosts();
-		fetchGroups();
-		fetchBookmarks();
-	}, [user.id]);
+		if (user) {
+			fetchPosts();
+			fetchGroups();
+			fetchBookmarks();
+		}
+	}, [user]);
 
 	useEffect(() => {
 		fetchUser();
@@ -171,151 +191,139 @@ export default function UserPage({ params }: { params: { username: string } }) {
 	}
 
 	return (
-		<div
-			className="w-full h-full overflow-y-scroll"
-			onScroll={handleScroll}
-		>
-			<div className="w-full flex items-center flex-col mt-[calc(50vh-200px)]">
-				<UserCard
-					user={user}
-					onUpdate={fetchUser}
-					onLoad={() => setCardLoaded(true)}
-				/>
-				<Tabs
-					className={`my-14 ${user.id !== "" ? "" : "hidden"} ${
-						cardLoaded ? "opacity-1" : "opacity-0"
-					} transition-opacity duration-200`}
-					classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
-					variant="light"
-					color="primary"
-					onSelectionChange={(e: any) =>
-						setCurrentTab(e.split(".")[1])
-					}
-					aria-label="User tabs"
-				>
-					<Tab title={<h3>Posts</h3>} aria-label="Posts">
-						<TabContent
-							loading={loading}
-							noData={posts.length < 1}
-							noDataMessage={"Nenhum post."}
-						>
-							{posts.map((i: any, _: number) => (
-								<PostCard
-									post={i}
-									key={_}
-									update={fetchPosts}
-								/>
-							))}
-						</div>
-						{posts.length < 1 ? (
-							<h2
-								className={`text-center ${
-									user.id !== "" ? "" : "hidden"
-								} ${
-									cardLoaded ? "opacity-[30%]" : "opacity-0"
-								} transition-opacity duration-200`}
-							>
-								Nenhum post
-							</h2>
-						) : (
-							""
-						)}
-						<div
-							className={`my-10 w-[1000px] flex items-center justify-center ${
-								loading ? "opacity-1" : "opacity-0"
-							} ${
-								cardLoaded ? "opacity-1" : "opacity-0"
-							} transition-opacity duration-200`}
-						>
-							<CircularProgress size="lg" />
-						</div>
-					</Tab>
-					<Tab title={<h3>Salvos</h3>} aria-label="Salvos">
-						<TabContent
-							loading={loading}
-							noData={posts.length < 1}
-							noDataMessage={"Nenhum post."}
-						>
-							{bookmarks.map((i: any, _: number) => (
-								<PostCard
-									post={i.post}
-									key={_}
-									update={fetchPosts}
-								/>
-							))}
-						</div>
-						{bookmarks.length < 1 ? (
-							<h2
-								className={`text-center ${
-									user.id !== "" ? "" : "hidden"
-								} ${
-									cardLoaded ? "opacity-[30%]" : "opacity-0"
-								} transition-opacity duration-200`}
-							>
-								Nada salvo
-							</h2>
-						) : (
-							""
-						)}
-						<div
-							className={`my-10 w-[1000px] flex items-center justify-center ${
-								loading ? "opacity-1" : "opacity-0"
-							} ${
-								cardLoaded ? "opacity-1" : "opacity-0"
-							} transition-opacity duration-200`}
-						>
-							<CircularProgress size="lg" />
-						</div>
-					</Tab>
-					<Tab title={<h3>Grupos</h3>} aria-label="Grupos">
-						<TabContent
-							loading={loading}
-							noData={posts.length < 1}
-							noDataMessage={"Nenhum post."}
-						>
-							<>
-								{ownedGroups.length >= 1 ? (
-									<div className="bg-primary p-14 gap-y-10 flex flex-col rounded-large text-white">
-										<div className="flex gap-x-2 items-center">
-											<UserGroupIcon className="h-12" />
-											<h1>
-												{session.data?.user.id ===
-												user.id
-													? "Seus grupos"
-													: `Grupos de ${user.username}`}
-											</h1>
-										</div>
-										<div className="gap-y-12 flex flex-col">
-											{ownedGroups.map(
-												(i: any, _: number) => (
-													<LightGroupCard
-														key={_}
-														group={i}
-													></LightGroupCard>
-												)
-											)}
-										</div>
-									</div>
-								) : (
-									""
-								)}
-								<div
-									className={`flex flex-col gap-y-12 ${
-										ownedGroups.length >= 1 ? "mt-12" : ""
-									}`}
-								>
-									{userGroups.map((i: any, _: number) => (
-										<LightGroupCard
-											key={_}
-											group={i}
-										></LightGroupCard>
-									))}
-								</div>
-							</>
-						</TabContent>
-					</Tab>
-				</Tabs>
+		<>
+			<div
+				className={`fixed w-full h-full flex items-center justify-center transition-opacity duration-300 ${
+					pageLoaded ? "opacity-0" : "opacity-1"
+				}`}
+			>
+				<CircularProgress size="lg" />
 			</div>
-		</div>
+			<div
+				className={`w-full h-full overflow-y-scroll transition-opacity px-5 duration-300 ${
+					pageLoaded ? "opacity-1" : "opacity-0"
+				}`}
+				onScroll={handleScroll}
+			>
+				<div
+					className={`w-full flex items-center flex-col mt-[calc(50vh-200px)]`}
+				>
+					{user ? (
+						<UserCard
+							user={user}
+							onUpdate={fetchUser}
+							onLoad={() => setPageLoaded(true)}
+						/>
+					) : (
+						""
+					)}
+					<Tabs
+						className={`my-14`}
+						classNames={{
+							tabList: "max-w-[500px] h-14",
+							tab: "h-10",
+						}}
+						variant="light"
+						color="primary"
+						onSelectionChange={(e: any) =>
+							setCurrentTab(e.split(".")[1])
+						}
+						aria-label="User tabs"
+					>
+						<Tab title={<h3>Posts</h3>} aria-label="Posts">
+							<TabContent
+								loadedAll={posts.loadedAll}
+								loading={loading}
+								noData={posts.items.length < 1}
+								noDataMessage={"Nenhum post."}
+							>
+								{posts.items.map((i: any, _: number) => (
+									<PostCard
+										post={i}
+										key={_}
+										update={fetchPosts}
+									/>
+								))}
+							</TabContent>
+						</Tab>
+						<Tab title={<h3>Salvos</h3>} aria-label="Salvos">
+							<TabContent
+								loadedAll={bookmarks.loadedAll}
+								loading={loading}
+								noData={bookmarks.items.length < 1}
+								noDataMessage={"Nada salvo."}
+							>
+								{bookmarks.items.map((i: any, _: number) => (
+									<PostCard
+										post={i.post}
+										key={_}
+										update={fetchPosts}
+									/>
+								))}
+							</TabContent>
+						</Tab>
+						<Tab title={<h3>Grupos</h3>} aria-label="Grupos">
+							<TabContent
+								loadedAll={
+									userGroups.loadedAll &&
+									ownedGroups.loadedAll
+								}
+								loading={loading}
+								noData={
+									userGroups.items.length +
+										ownedGroups.items.length <
+									1
+								}
+								noDataMessage={"Nenhum post."}
+							>
+								<>
+									{ownedGroups.items.length >= 1 ? (
+										<div className="bg-primary p-14 gap-y-10 flex flex-col rounded-large text-white">
+											<div className="flex gap-x-2 items-center">
+												<UserGroupIcon className="h-12" />
+												<h1>
+													{session.data?.user?.id ===
+													user?.id
+														? "Seus grupos"
+														: `Grupos de ${user?.username}`}
+												</h1>
+											</div>
+											<div className="gap-y-12 flex flex-col">
+												{ownedGroups.items.map(
+													(i: any, _: number) => (
+														<LightGroupCard
+															key={_}
+															group={i}
+														></LightGroupCard>
+													)
+												)}
+											</div>
+										</div>
+									) : (
+										""
+									)}
+									<div
+										className={`flex flex-col gap-y-12 ${
+											userGroups.items.length >= 1
+												? "mt-12"
+												: ""
+										}`}
+									>
+										{userGroups.items.map(
+											(i: any, _: number) => (
+												<LightGroupCard
+													key={_}
+													group={i}
+												></LightGroupCard>
+											)
+										)}
+									</div>
+								</>
+							</TabContent>
+						</Tab>
+					</Tabs>
+				</div>
+			</div>
+		</>
 	);
 }

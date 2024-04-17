@@ -19,6 +19,8 @@ export default function PostCard({
 		}
 	}
 
+	console.log(post);
+
 	return (
 		<div className="w-full flex" aria-label="post-card">
 			{/* Content */}

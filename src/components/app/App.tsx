@@ -28,7 +28,7 @@ export default function RootLayout({
 				<Suspense>
 					{!notVisibleSidebarPages.includes(pathname) && <Sidebar />}
 					<div
-						className={`w-full h-full  text-foreground bg-background ${
+						className={`w-full h-full text-foreground bg-background ${
 							!notVisibleSidebarPages.includes(pathname) &&
 							"sm:pl-20 pb-20 sm:pb-0"
 						}`}

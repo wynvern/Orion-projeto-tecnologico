@@ -89,7 +89,7 @@ export default function Login() {
 
 	return (
 		<div className="flex w-full h-full items-center justify-center">
-			<div className="flex flex-col gap-y-6 lg:w-[400px] md:w-[400px] sm:w-[300px]">
+			<div className="flex flex-col gap-y-6 w-full max-w-[400px] px-4">
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
 					<Image
 						src="/brand/logo.svg"
@@ -137,8 +137,9 @@ export default function Login() {
 
 						<div className="mt-4">
 							<p className="text-center">
-								Esqueceu sua senha?{" "}
-								<Link href="/forgot-password">Recuperar</Link>
+								<Link href="/forgot-password">
+									Esqueceu sua senha?
+								</Link>
 							</p>
 						</div>
 					</div>
@@ -184,7 +185,7 @@ export default function Login() {
 				</div>
 				<div>
 					<p className="text-center">
-						Não tem uma conta? <Link href="/signup">Crie uma</Link>
+						<Link href="/signup">Crie uma conta</Link>
 					</p>
 				</div>
 			</div>

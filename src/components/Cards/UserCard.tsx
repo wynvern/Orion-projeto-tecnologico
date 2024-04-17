@@ -32,7 +32,6 @@ export default function UserCard({
 	const session = useSession();
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0);
 	const [customizeProfileModal, setCustomizeProfileModal] = useState(false);
-	const [loading, setLoading] = useState(true);
 	const [reportModal, setReportModal] = useState(false);
 
 	function handleComponentLoaded() {
@@ -41,152 +40,122 @@ export default function UserCard({
 	}
 
 	useEffect(() => {
-		if (user.id) {
-			const count = (user.banner ? 1 : 0) + (user.image ? 1 : 0); // Bug if image hasn't loaded before
-			console.log(count, imagesLoaded, user.banner, user.image);
-			if (imagesLoaded == count) onImageLoad(); // amount of images to load before showing
+		if (imagesLoaded === 2) {
+			onLoad();
 		}
-	}, [imagesLoaded, user.banner, user.image]);
-
-	function onImageLoad() {
-		setLoading(false);
-		onLoad();
-	}
+	}, [imagesLoaded]);
 
 	return (
-		<div className="flex w-[1000px] h-[400px] items-center justify-center relative">
-			<style jsx>{`
-				.loader-container {
-					opacity: ${loading ? 1 : 0};
-
-					transition: opacity 0.2s ease-in-out;
-				}
-
-				.content-container {
-					opacity: ${loading ? 0 : 1};
-					transform: scale(${loading ? "1.1" : "1"});
-					transition: all 0.2s ease-in-out;
-				}
-			`}</style>
-
-			<div className="loader-container absolute">
-				<CircularProgress size="lg" />
-			</div>
-
-			{user.id ? (
-				<div
-					className={`rounded-large  w-[1000px] h-[400px] flex text-white object-contain relative content-container bg-neutral-900`}
-				>
+		<div className="flex w-full max-w-[1000px] h-full items-center justify-center relative">
+			<div
+				className={`rounded-large  w-full h-full flex text-white object-contain relative content-container bg-neutral-900`}
+			>
+				<Image
+					className="absolute w-full h-full rounded-large right-0"
+					src={user.banner}
+					style={{
+						objectFit: "cover",
+						filter: "brightness(0.4)",
+						visibility: user.banner ? "visible" : "hidden",
+					}}
+					removeWrapper={true}
+					onLoad={handleComponentLoaded}
+					alt="user-banner"
+				></Image>
+				<div>
 					<Image
-						className="absolute w-[700px] h-[400px] rounded-large right-0"
-						src={user.banner}
-						style={{
-							objectFit: "cover",
-							filter: "brightness(0.4)",
-							visibility: user.banner ? "visible" : "hidden",
-						}}
-						removeWrapper={true}
+						draggable={false}
+						src={user.image ?? "/brand/default-user.svg"}
+						className="h-[400px] w-[400px] object-cover z-50"
 						onLoad={handleComponentLoaded}
-						alt="user-banner"
-					></Image>
+						alt="avatar-user"
+					/>
+				</div>
+				<div className="flex-grow p-10 flex flex-col z-10 justify-between">
 					<div>
-						<Image
-							draggable={false}
-							src={user.image ?? "/brand/default-user.svg"}
-							className="h-[400px] w-[400px] object-cover z-50"
-							onLoad={handleComponentLoaded}
-							alt="avatar-user"
-						/>
-					</div>
-					<div className="flex-grow p-10 flex flex-col z-10 justify-between">
-						<div>
-							<div className="flex justify-between">
-								<div>
-									<div className="flex items-center gap-x-2">
-										<div className="">
-											<UserIcon className="h-10 w-10" />
-										</div>
-										{session.data?.user.id == user.id ? (
-											<Link
-												className="text-white"
-												onClick={() => {
-													setCustomizeProfileModal(
-														!customizeProfileModal
-													);
-												}}
-											>
-												<div className="flex items-end gap-x-2">
-													<h1>{user.username}</h1>
-													<PencilIcon className="h-6"></PencilIcon>
-												</div>
-											</Link>
-										) : (
+						<div className="flex justify-between">
+							<div>
+								<div className="flex items-center gap-x-2">
+									<div className="">
+										<UserIcon className="h-10 w-10" />
+									</div>
+									{session.data?.user.id === user.id ? (
+										<Link
+											className="text-white"
+											onClick={() => {
+												setCustomizeProfileModal(
+													!customizeProfileModal
+												);
+											}}
+										>
 											<div className="flex items-end gap-x-2">
 												<h1>{user.username}</h1>
+												<PencilIcon className="h-6"></PencilIcon>
 											</div>
-										)}
-									</div>
+										</Link>
+									) : (
+										<div className="flex items-end gap-x-2">
+											<h1>{user.username}</h1>
+										</div>
+									)}
 								</div>
-								<div>
-									<Dropdown
-										placement="bottom"
-										className="text-foreground"
-									>
-										<DropdownTrigger>
-											<EllipsisHorizontalIcon className="h-10 transition-dropdown"></EllipsisHorizontalIcon>
-										</DropdownTrigger>
-										<DropdownMenu
-											aria-label="User Actions"
-											variant="flat"
-										>
-											{session.data?.user.id ===
-											user.id ? (
-												<DropdownItem title="Nenhuma ação" />
-											) : (
-												<DropdownItem
-													key="exit"
-													description="Reportar o usuário."
-													className="border-radius-sys text-danger"
-													onClick={() => {
-														setReportModal(true);
-													}}
-													startContent={
-														<NoSymbolIcon className="h-8" />
-													}
-												>
-													Reportar @{user.username}
-												</DropdownItem>
-											)}
-										</DropdownMenu>
-									</Dropdown>
-								</div>
-							</div>
-							<div className="ml-12 mt-2">
-								<h3>{user.name}</h3>
 							</div>
 							<div>
-								<p className="max-w-[400px] mt-4">{user.bio}</p>
+								<Dropdown
+									placement="bottom"
+									className="text-foreground"
+								>
+									<DropdownTrigger>
+										<EllipsisHorizontalIcon className="h-10 transition-dropdown"></EllipsisHorizontalIcon>
+									</DropdownTrigger>
+									<DropdownMenu
+										aria-label="User Actions"
+										variant="flat"
+									>
+										{session.data?.user.id === user.id ? (
+											<DropdownItem title="Nenhuma ação" />
+										) : (
+											<DropdownItem
+												key="exit"
+												description="Reportar o usuário."
+												className="border-radius-sys text-danger"
+												onClick={() => {
+													setReportModal(true);
+												}}
+												startContent={
+													<NoSymbolIcon className="h-8" />
+												}
+											>
+												Reportar @{user.username}
+											</DropdownItem>
+										)}
+									</DropdownMenu>
+								</Dropdown>
 							</div>
 						</div>
-						<div className="flex gap-x-4">
-							<p>
-								<b>Posts </b>
-								{user._count.posts}
-							</p>
-							<p>
-								<b>Salvos </b>
-								{user._count.bookmarks}
-							</p>
-							<p>
-								<b>Grupos </b>
-								{user._count.groups}
-							</p>
+						<div className="ml-12 mt-2">
+							<h3>{user.name}</h3>
+						</div>
+						<div>
+							<p className="max-w-[400px] mt-4">{user.bio}</p>
 						</div>
 					</div>
+					<div className="flex gap-x-4">
+						<p>
+							<b>Posts </b>
+							{user._count.posts}
+						</p>
+						<p>
+							<b>Salvos </b>
+							{user._count.bookmarks}
+						</p>
+						<p>
+							<b>Grupos </b>
+							{user._count.groups}
+						</p>
+					</div>
 				</div>
-			) : (
-				""
-			)}
+			</div>
 
 			<ReportUser
 				isActive={reportModal}

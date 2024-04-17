@@ -6,6 +6,7 @@ interface TabContentProps {
 	loading: boolean;
 	noData: boolean;
 	noDataMessage: string;
+	loadedAll: boolean;
 }
 
 const TabContent: React.FC<TabContentProps> = ({
@@ -13,6 +14,7 @@ const TabContent: React.FC<TabContentProps> = ({
 	loading,
 	noData,
 	noDataMessage,
+	loadedAll,
 }) => {
 	return (
 		<div>
@@ -34,8 +36,13 @@ const TabContent: React.FC<TabContentProps> = ({
 			) : (
 				""
 			)}
+			{loadedAll && !noData ? (
+				<h2 className="text-center my-20">Fim da lista</h2>
+			) : (
+				""
+			)}
 			<div
-				className={`my-10 w-[1000px] flex items-center justify-center ${
+				className={`my-10 max-w-[1000px] flex items-center justify-center ${
 					loading ? "opacity-1" : "opacity-0"
 				} transition-opacity duration-200`}
 			>

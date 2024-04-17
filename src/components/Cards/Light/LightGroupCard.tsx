@@ -26,7 +26,7 @@ export default function LightGroupCard({ group }: { group: any }) {
 	}, [imagesLoaded]);
 
 	return (
-		<div className="flex items-center justify-center w-[750px] h-[300px] relative">
+		<div className="flex items-center justify-center max-w-[750px] max-h-[300px] relative">
 			<style jsx>{`
 				.loader-container {
 					opacity: ${loaded ? 0 : 1};
@@ -40,14 +40,14 @@ export default function LightGroupCard({ group }: { group: any }) {
 				}
 			`}</style>
 
-			<div className="content-container opacity-0">
+			<div className="content-container opacity-0 w-full h-full">
 				<Link href={`/g/${group.name}`} className="text-white">
 					<div
-						className={`rounded-large  w-[750px] h-[300px] flex object-contain relative bg-neutral-900`}
+						className={`rounded-large  w-full h-full flex object-contain relative bg-neutral-900`}
 					>
 						{group.banner && (
 							<Image
-								className={`absolute w-[700px] h-[300px] rounded-large right-0 ${
+								className={`absolute w-full h-full rounded-large right-0 ${
 									loaded ? "" : "!opacity-0"
 								}`}
 								src={group.banner}
@@ -59,19 +59,18 @@ export default function LightGroupCard({ group }: { group: any }) {
 							></Image>
 						)}
 						<div className="relative">
-							<div className="h-[300px] w-[300px]">
+							<div className="h-full aspect-square">
 								<Image
 									draggable={false}
 									src={
 										group.logo ?? "/brand/default-group.svg"
 									}
-									className="h-[300px] w-[300px] object-cover z-50"
+									className="w-full h-full object-cover z-50"
 									alt="banner-group"
 									onLoad={handleComponentLoaded}
 									aria-label="Group Logo"
 								/>
 							</div>
-							<div className="absolute h-[300px] w-[300px] bg-neutral-900 rounded-large top-0 z-20"></div>
 						</div>
 						<div className="flex-grow p-10 flex flex-col justify-between z-10">
 							<div>
