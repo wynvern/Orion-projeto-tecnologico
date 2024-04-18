@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import UserCard from "@/components/Cards/UserCard";
 import PostCard from "@/components/Cards/PostCard";
 import { CircularProgress, Link, Tab, Tabs } from "@nextui-org/react";
 import request from "@/util/api";
@@ -15,6 +14,8 @@ import TabContent from "./TabContent";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import type User from "@/types/User";
 import UserHeader from "./UserHeader";
+import type { Post } from "@/types/Post";
+import type { Group } from "@/types/Group";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState<User | null>(null);
@@ -46,7 +47,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState({ message: "", show: false });
-	const [pageLoaded, setPageLoaded] = useState(true);
+	const [pageLoaded, setPageLoaded] = useState(false);
 
 	async function fetchUser() {
 		try {
@@ -211,21 +212,23 @@ export default function UserPage({ params }: { params: { username: string } }) {
 					{user ? (
 						<UserHeader
 							user={user}
-							onUpdate={() => console.log("nothing")}
+							onLoad={() => setPageLoaded(true)}
+							onUpdate={() => fetchUser()}
 						/>
 					) : (
 						""
 					)}
 					<Tabs
-						className={"my-10 px-4 w-full"}
+						className={"my-8 px-4 w-full"}
 						classNames={{
-							tabList: "w-full max-w-[600px] h-14",
+							tabList: "w-full max-w-[400px] h-14 ",
+							base: "flex items-center justify-center",
 							tab: "h-10",
 						}}
 						variant="underlined"
 						color="primary"
-						onSelectionChange={(e: any) =>
-							setCurrentTab(e.split(".")[1])
+						onSelectionChange={(e: unknown) =>
+							setCurrentTab(Number(String(e).split(".")[1]))
 						}
 						aria-label="User tabs"
 					>
@@ -244,10 +247,10 @@ export default function UserPage({ params }: { params: { username: string } }) {
 								noData={posts.items.length < 1}
 								noDataMessage={"Nenhum post."}
 							>
-								{posts.items.map((i: any, _: number) => (
+								{posts.items.map((i: Post) => (
 									<PostCard
 										post={i}
-										key={_}
+										key={i.id}
 										update={fetchPosts}
 									/>
 								))}
@@ -268,10 +271,10 @@ export default function UserPage({ params }: { params: { username: string } }) {
 								noData={bookmarks.items.length < 1}
 								noDataMessage={"Nada salvo."}
 							>
-								{bookmarks.items.map((i: any, _: number) => (
+								{bookmarks.items.map((i: { post: Post }) => (
 									<PostCard
 										post={i.post}
-										key={_}
+										key={i.post.id}
 										update={fetchPosts}
 									/>
 								))}
@@ -313,9 +316,9 @@ export default function UserPage({ params }: { params: { username: string } }) {
 											</div>
 											<div className="gap-y-12 flex flex-col">
 												{ownedGroups.items.map(
-													(i: any, _: number) => (
+													(i: Group) => (
 														<LightGroupCard
-															key={_}
+															key={i.id}
 															group={i}
 														/>
 													)
@@ -332,14 +335,12 @@ export default function UserPage({ params }: { params: { username: string } }) {
 												: ""
 										}`}
 									>
-										{userGroups.items.map(
-											(i: any, _: number) => (
-												<LightGroupCard
-													key={_}
-													group={i}
-												/>
-											)
-										)}
+										{userGroups.items.map((i: Group) => (
+											<LightGroupCard
+												key={i.id}
+												group={i}
+											/>
+										))}
 									</div>
 								</>
 							</TabContent>

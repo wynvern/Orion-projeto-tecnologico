@@ -22,7 +22,11 @@ import SignOut from "../modal/SignOut";
 import { useEffect, useState } from "react";
 import Notifications from "../modal/Notifications";
 
-export default function ProfileDropdown() {
+export default function ProfileDropdown({
+	position,
+}: {
+	position?: "top" | "right";
+}) {
 	const router = useRouter();
 	const session = useSession();
 	const [signOutModal, setSignOutModal] = useState(false);
@@ -40,13 +44,11 @@ export default function ProfileDropdown() {
 		setTriggerDarkmode("yes");
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (toggleDarkmode == "yes") {
-			const newDarkModeValue = (
-				localStorage.getItem("darkMode") == "1" ? true : false
-			)
-				? "0"
-				: "1";
+		if (toggleDarkmode === "yes") {
+			const newDarkModeValue =
+				localStorage.getItem("darkMode") === "1" ? "0" : "1";
 
 			localStorage.setItem("darkMode", newDarkModeValue);
 			setIsDarkMode(!isDarkMode);
@@ -59,7 +61,7 @@ export default function ProfileDropdown() {
 	return (
 		<>
 			<Dropdown
-				placement="right"
+				placement={position}
 				className="text-foreground"
 				aria-label="Profile Dropdown"
 				style={{ zIndex: 9999999999 }}

@@ -2,21 +2,20 @@ import { prettyDateTime } from "@/util/prettyDateTime";
 import { Chip, Image, Link } from "@nextui-org/react";
 import BookmarkPost from "../post/BookmarkPost";
 import PostDropdown from "../dropdown/PostDropdown";
-import { Post } from "@/types/Post";
+import type { Post } from "@/types/Post";
 
 export default function PostCard({
 	post,
 	update,
 }: {
 	post: Post;
-	update: any;
+	update: () => void;
 }) {
 	function truncateString(input: string, maxLength: number): string {
 		if (input.length > maxLength) {
-			return input.substring(0, maxLength) + "...";
-		} else {
-			return input;
+			return `${input.substring(0, maxLength)}...`;
 		}
+		return input;
 	}
 
 	console.log(post);
@@ -38,7 +37,7 @@ export default function PostCard({
 								}
 								className="h-10 w-10 rounded-full"
 								alt="avatar-user"
-							></Image>
+							/>
 						</Link>
 						<div className="flex gap-y-2 flex-col">
 							<div className="flex gap-x-1">
@@ -78,7 +77,7 @@ export default function PostCard({
 					</div>
 					<div>
 						<div
-							className="flex items-center gap-x-4"
+							className="flex items-center "
 							aria-label="post-actions"
 						>
 							<BookmarkPost post={post} />
@@ -91,7 +90,7 @@ export default function PostCard({
 					href={`/p/${post.id}`}
 					aria-label={`post-link-${post.id}`}
 				>
-					<h2 className="mt-4 break-all	" aria-label="post-title">
+					<h2 className="mt-4 break-all" aria-label="post-title">
 						<b>{post.title}</b>
 					</h2>
 					<p

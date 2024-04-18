@@ -19,7 +19,7 @@ const TabContent: FC<TabContentProps> = ({
 	return (
 		<div>
 			<div
-				className={`flex flex-col gap-y-12 max-w-[1000px] w-full ${
+				className={`flex flex-col gap-y-12 px-4 sm:px-10 w-full ${
 					loading ? "opacity-0" : "opacity-1"
 				} transition-opacity duration-200`}
 			>
@@ -37,13 +37,15 @@ const TabContent: FC<TabContentProps> = ({
 				""
 			)}
 			{loadedAll && !noData ? (
-				<h2 className="text-center mt-10">Fim da lista</h2>
+				<h3 className="text-center mt-10 text-default-500">
+					Nada mais
+				</h3>
 			) : (
 				""
 			)}
 			<div
 				className={`mb-10 max-w-[1000px] flex items-center justify-center ${
-					loading ? "opacity-1" : "opacity-0"
+					loading ? "" : "hidden"
 				} transition-opacity duration-200`}
 			>
 				<CircularProgress size="lg" />

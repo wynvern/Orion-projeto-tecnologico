@@ -2,6 +2,7 @@ import type User from "@/types/User";
 import {
 	EllipsisHorizontalIcon,
 	NoSymbolIcon,
+	PencilIcon,
 } from "@heroicons/react/24/outline";
 import {
 	Dropdown,
@@ -15,9 +16,11 @@ import { useSession } from "next-auth/react";
 export default function DropdownUser({
 	user,
 	setReportModal,
+	setCustomizeProfileModal,
 }: {
 	user: User;
 	setReportModal: (value: boolean) => void;
+	setCustomizeProfileModal: (value: boolean) => void;
 }) {
 	const session = useSession();
 
@@ -28,7 +31,17 @@ export default function DropdownUser({
 			</DropdownTrigger>
 			<DropdownMenu aria-label="User Actions" variant="flat">
 				{session.data?.user.id === user.id ? (
-					<DropdownItem title="Nenhuma ação" />
+					<DropdownItem
+						key="customize"
+						description="Personalize seu perfil."
+						className="border-radius-sys"
+						onClick={() => {
+							setCustomizeProfileModal(true);
+						}}
+						startContent={<PencilIcon className="h-8" />}
+					>
+						Personalizar perfil
+					</DropdownItem>
 				) : (
 					<DropdownItem
 						key="exit"
@@ -37,7 +50,9 @@ export default function DropdownUser({
 						onClick={() => {
 							setReportModal(true);
 						}}
-						startContent={<NoSymbolIcon className="h-8" />}
+						startContent={
+							<NoSymbolIcon className="h-8 text-danger" />
+						}
 					>
 						Reportar @{user.username}
 					</DropdownItem>

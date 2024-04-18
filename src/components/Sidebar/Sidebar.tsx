@@ -35,42 +35,6 @@ export default function Sidebar() {
 					<Link className="text-foreground" href="/search">
 						<MagnifyingGlassIcon className="h-8" />
 					</Link>
-					<Link href="/bookmarks" className="text-foreground">
-						{url == "/bookmarks" ? (
-							<SolidBookmarkIcon className="h-8" />
-						) : (
-							<BookmarkIcon className="h-8" />
-						)}
-					</Link>
-					<Link href="/groups" className="text-foreground">
-						{url == "/groups" ? (
-							<SolidUserGroupIcon className="h-8" />
-						) : (
-							<UserGroupIcon className="h-8" />
-						)}
-					</Link>
-					<ProfileDropdown />
-				</div>
-				<div>
-					<Cog6ToothIcon className="h-8 text-foreground" />
-				</div>
-			</div>
-
-			<div
-				className="fixed w-full h-16 items-center justify-between flex flex-row py-6 px-4 bottom-0 sm:hidden flex bg-background"
-				style={{ zIndex: 9999999 }}
-			>
-				<div className="gap-x-12 flex flex-row items-center justify-center grow">
-					<Link className="text-foreground" href="/search">
-						<MagnifyingGlassIcon className="h-8" />
-					</Link>
-					<Link href="/bookmarks" className="text-foreground">
-						{url === "/bookmarks" ? (
-							<SolidBookmarkIcon className="h-8" />
-						) : (
-							<BookmarkIcon className="h-8" />
-						)}
-					</Link>
 					<Link href="/groups" className="text-foreground">
 						{url === "/groups" ? (
 							<SolidUserGroupIcon className="h-8" />
@@ -78,7 +42,30 @@ export default function Sidebar() {
 							<UserGroupIcon className="h-8" />
 						)}
 					</Link>
-					<ProfileDropdown />
+					<ProfileDropdown position="right" />
+				</div>
+				<div>
+					<Cog6ToothIcon className="h-8 text-foreground" />
+				</div>
+			</div>
+
+			<div
+				style={{ zIndex: "50" }}
+				className="fixed w-full h-16 items-center justify-between flex flex-row py-6 px-4 bottom-0 sm:hidden flex bg-background"
+			>
+				<div className="gap-x-12 flex flex-row items-center justify-center grow">
+					<Link className="text-foreground" href="/search">
+						<MagnifyingGlassIcon className="h-8" />
+					</Link>
+
+					<Link href="/groups" className="text-foreground">
+						{url === "/groups" ? (
+							<SolidUserGroupIcon className="h-8" />
+						) : (
+							<UserGroupIcon className="h-8" />
+						)}
+					</Link>
+					<ProfileDropdown position="top" />
 				</div>
 			</div>
 		</>
