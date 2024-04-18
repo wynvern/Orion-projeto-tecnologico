@@ -14,6 +14,7 @@ import {
 import TabContent from "./TabContent";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import type User from "@/types/User";
+import UserHeader from "./UserHeader";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState<User | null>(null);
@@ -45,7 +46,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState({ message: "", show: false });
-	const [pageLoaded, setPageLoaded] = useState(false);
+	const [pageLoaded, setPageLoaded] = useState(true);
 
 	async function fetchUser() {
 		try {
@@ -206,20 +207,8 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				}`}
 				onScroll={handleScroll}
 			>
-				<div
-					className={
-						"w-full flex items-center flex-col sm:mt-[calc(50vh-200px)] mt-6"
-					}
-				>
-					{user ? (
-						<UserCard
-							user={user}
-							onUpdate={fetchUser}
-							onLoad={() => setPageLoaded(true)}
-						/>
-					) : (
-						""
-					)}
+				<div className={"w-full flex items-center flex-col"}>
+					{user ? <UserHeader user={user} /> : ""}
 					<Tabs
 						className={"my-14"}
 						classNames={{
