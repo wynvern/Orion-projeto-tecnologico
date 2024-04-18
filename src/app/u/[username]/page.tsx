@@ -202,7 +202,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				<CircularProgress size="lg" />
 			</div>
 			<div
-				className={`w-full h-full transition-opacity px-5 duration-300 ${
+				className={`w-full h-full transition-opacity sm:px-4 duration-300 ${
 					pageLoaded ? "opacity-1" : "opacity-0"
 				}`}
 				onScroll={handleScroll}
@@ -217,19 +217,27 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						""
 					)}
 					<Tabs
-						className={"my-14"}
+						className={"my-10 px-4 w-full"}
 						classNames={{
-							tabList: "max-w-[500px] h-14",
+							tabList: "w-full max-w-[600px] h-14",
 							tab: "h-10",
 						}}
-						variant="light"
+						variant="underlined"
 						color="primary"
 						onSelectionChange={(e: any) =>
 							setCurrentTab(e.split(".")[1])
 						}
 						aria-label="User tabs"
 					>
-						<Tab title={<h3>Posts</h3>} aria-label="Posts">
+						<Tab
+							title={
+								<h3>
+									<b>Posts </b>
+									{user?._count.posts}
+								</h3>
+							}
+							aria-label="Posts"
+						>
 							<TabContent
 								loadedAll={posts.loadedAll}
 								loading={loading}
@@ -245,7 +253,15 @@ export default function UserPage({ params }: { params: { username: string } }) {
 								))}
 							</TabContent>
 						</Tab>
-						<Tab title={<h3>Salvos</h3>} aria-label="Salvos">
+						<Tab
+							title={
+								<h3>
+									<b>Salvos </b>
+									{user?._count.bookmarks}
+								</h3>
+							}
+							aria-label="Salvos"
+						>
 							<TabContent
 								loadedAll={bookmarks.loadedAll}
 								loading={loading}
@@ -261,7 +277,15 @@ export default function UserPage({ params }: { params: { username: string } }) {
 								))}
 							</TabContent>
 						</Tab>
-						<Tab title={<h3>Grupos</h3>} aria-label="Grupos">
+						<Tab
+							title={
+								<h3>
+									<b>Grupos </b>
+									{user?._count.groups}
+								</h3>
+							}
+							aria-label="Grupos"
+						>
 							<TabContent
 								loadedAll={
 									userGroups.loadedAll &&

@@ -37,12 +37,12 @@ const TabContent: FC<TabContentProps> = ({
 				""
 			)}
 			{loadedAll && !noData ? (
-				<h2 className="text-center my-20">Fim da lista</h2>
+				<h2 className="text-center mt-10">Fim da lista</h2>
 			) : (
 				""
 			)}
 			<div
-				className={`my-10 max-w-[1000px] flex items-center justify-center ${
+				className={`mb-10 max-w-[1000px] flex items-center justify-center ${
 					loading ? "opacity-1" : "opacity-0"
 				} transition-opacity duration-200`}
 			>

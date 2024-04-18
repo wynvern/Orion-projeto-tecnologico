@@ -32,6 +32,7 @@ export default function RootLayout({
 							!notVisibleSidebarPages.includes(pathname) &&
 							"sm:pl-20 pb-20 sm:pb-0"
 						}`}
+						style={{ scrollbarWidth: "none" }}
 					>
 						{children}
 					</div>

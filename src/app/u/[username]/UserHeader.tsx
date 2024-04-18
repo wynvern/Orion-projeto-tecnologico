@@ -24,11 +24,11 @@ export default function UserHeader({
 				<Image
 					src={user.banner}
 					removeWrapper={true}
-					className="max-h-[300px] w-full object-cover rounded-t-none"
+					className="max-h-[330px] w-full object-cover rounded-t-none rounded-none sm:rounded-large"
 				/>
 			</div>
 			{/* This is the user's profile picture */}
-			<div className="absolute top-40 left-10">
+			<div className="absolute top-48 left-4 sm:left-10">
 				<Image
 					src={user.image || "/brand/default-avatar.svg"}
 					removeWrapper={true}
@@ -36,7 +36,7 @@ export default function UserHeader({
 				/>
 			</div>
 			{/* This is the user's data */}
-			<div className="mt-20 pl-10 flex flex-col gap-y-2">
+			<div className="mt-20 pl-4 sm:pl-10 flex flex-col gap-y-2">
 				<div className="w-full justify-between flex">
 					{user.name ? (
 						session.data?.user.id === user.id ? (
