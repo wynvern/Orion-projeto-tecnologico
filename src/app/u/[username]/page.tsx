@@ -208,7 +208,14 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				onScroll={handleScroll}
 			>
 				<div className={"w-full flex items-center flex-col"}>
-					{user ? <UserHeader user={user} /> : ""}
+					{user ? (
+						<UserHeader
+							user={user}
+							onUpdate={() => console.log("nothing")}
+						/>
+					) : (
+						""
+					)}
 					<Tabs
 						className={"my-14"}
 						classNames={{

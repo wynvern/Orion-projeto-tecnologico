@@ -41,6 +41,7 @@ export default function RootLayout({
 						type="image/x-icon"
 					/>
 					<title>Orion</title>
+					<link rel="manifest" href="/manifest.json" />
 				</head>
 				<body
 					className={`dark ${inter.className} w-screen h-[calc(100dvh)]`}

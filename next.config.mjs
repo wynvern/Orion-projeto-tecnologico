@@ -1,5 +1,17 @@
+import { default as withPWA } from "@ducanh2912/next-pwa";
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+const nextConfig = withPWA({
+	dest: "public",
+	cacheOnFrontEndNav: true,
+	aggressiveFrontEndNavCaching: true,
+	reloadOnOnline: true,
+	swcMinify: true,
+	disable: process.env.NODE_ENV === "development",
+	workboxOptions: {
+		disableDevLogs: true,
+	},
 	images: {
 		domains: [
 			"localhost",
@@ -7,6 +19,7 @@ const nextConfig = {
 			"orion-iei.vercel.app",
 		],
 	},
-};
+	// ... other options you like
+});
 
-export default nextConfig;
+export default withPWA(nextConfig);
