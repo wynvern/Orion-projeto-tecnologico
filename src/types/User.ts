@@ -5,4 +5,9 @@ export default interface User {
 	id: string;
 	bio: string;
 	banner: string;
+	_count: {
+		posts: number;
+		bookmarks: number;
+		groups: number;
+	};
 }

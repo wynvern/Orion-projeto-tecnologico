@@ -3,10 +3,13 @@
 import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 import LightUserCard from "@/components/Cards/Light/LightUserCard";
 import PostCard from "@/components/Cards/PostCard";
+import type { Group } from "@/types/Group";
+import type { Post } from "@/types/Post";
+import type User from "@/types/User";
 import request from "@/util/api";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { CircularProgress, Input, Tab, Tabs } from "@nextui-org/react";
-import { useEffect, useRef, useState } from "react";
+import { type Key, useEffect, useRef, useState } from "react";
 
 export default function Search() {
 	const [selected, setSelected] = useState(0);
@@ -49,29 +52,33 @@ export default function Search() {
 			return false;
 		}
 
-		if (selected == 0) {
+		if (selected === 0) {
 			fetchPosts(searchTerm);
-		} else if (selected == 2) {
+		} else if (selected === 2) {
 			fetchGroups(searchTerm);
-		} else if (selected == 1) {
+		} else if (selected === 1) {
 			fetchUser(searchTerm);
 		}
 		setSkipped(skipped + 10);
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		handleFetchType();
 	}, [selected]);
 
-	const handleScroll = (e: any) => {
-		const bottom =
-			Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
-			e.target.scrollHeight;
-		if (bottom) {
-			handleFetchType();
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+		if (e?.target && e.target instanceof HTMLElement) {
+			const bottom =
+				Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
+				e.target.scrollHeight;
+			if (bottom) {
+				handleFetchType();
+			}
 		}
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			handleFetchType();
@@ -90,6 +97,7 @@ export default function Search() {
 		setRetreiving(false);
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const options = {
 			root: null,
@@ -123,7 +131,7 @@ export default function Search() {
 			<div className="h-full w-full flex items-center flex-col h-fit">
 				<div
 					className={`w-full h-fit flex items-center flex-col rounded-large transition-all ${
-						searchTerm == "" ? "mt-[calc(50vh-100px)]" : "mt-10"
+						searchTerm === "" ? "mt-[calc(50vh-100px)]" : "mt-10"
 					}`}
 				>
 					<h1>Pesquisa</h1>
@@ -136,7 +144,7 @@ export default function Search() {
 							startContent={
 								<MagnifyingGlassIcon className="h-6 text-neutral-500" />
 							}
-							onValueChange={(e: any) => {
+							onValueChange={(e: string) => {
 								setSearchTerm(e);
 								clearSearch();
 								setNoResults(false);
@@ -151,18 +159,18 @@ export default function Search() {
 					classNames={{ tabList: "w-[500px] h-14", tab: "h-10" }}
 					variant="light"
 					color="primary"
-					onSelectionChange={(e: any) => {
-						setSelected(e.split(".")[1]);
+					onSelectionChange={(e: Key) => {
+						setSelected(Number(e.toString().split(".")[1]));
 						clearSearch();
 						setNoResults(false);
 					}}
 				>
 					<Tab title={<h3>Posts</h3>}>
 						<div className="w-full gap-y-12 flex flex-col pt-10">
-							{retrievedPosts.map((i: any, _: number) => (
+							{retrievedPosts.map((i: Post) => (
 								<PostCard
 									post={i}
-									key={_}
+									key={i.id}
 									update={fetchPosts}
 								/>
 							))}
@@ -181,12 +189,12 @@ export default function Search() {
 						>
 							<CircularProgress size="lg" />
 						</div>
-						<div ref={loadingRef}></div>
+						<div ref={loadingRef} />
 					</Tab>
 					<Tab title={<h3>Usuários</h3>}>
 						<div className="w-full gap-y-12 flex flex-col pt-10">
-							{retrievedUsers.map((i: any, _: number) => (
-								<LightUserCard user={i} key={_} />
+							{retrievedUsers.map((i: User) => (
+								<LightUserCard user={i} key={i.id} />
 							))}
 						</div>
 						<div
@@ -196,12 +204,12 @@ export default function Search() {
 						>
 							<h2>Sem mais resultados</h2>
 						</div>
-						<div ref={loadingRef}></div>
+						<div ref={loadingRef} />
 					</Tab>
 					<Tab title={<h3>Grupos</h3>}>
 						<div className="w-full gap-y-12 flex flex-col pt-10">
-							{retrievedGroups.map((i: any, _: number) => (
-								<LightGroupCard group={i} key={_} />
+							{retrievedGroups.map((i: Group) => (
+								<LightGroupCard group={i} key={i.id} />
 							))}
 						</div>
 						<div
@@ -211,7 +219,7 @@ export default function Search() {
 						>
 							<h2>Sem mais resultados</h2>
 						</div>
-						<div ref={loadingRef}></div>
+						<div ref={loadingRef} />
 					</Tab>
 				</Tabs>
 			</div>

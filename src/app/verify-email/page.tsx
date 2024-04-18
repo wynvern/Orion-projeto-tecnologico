@@ -6,15 +6,14 @@ import {
 	CheckIcon,
 	PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Input, Image, Link, divider } from "@nextui-org/react";
+import { Button, Input, Image, Link } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function VerifyEmail() {
 	const [loading, setLoading] = useState(false);
 	const [inputError, setInputError] = useState("");
-	const params = useSearchParams();
 	const router = useRouter();
 	const { update } = useSession();
 
@@ -42,6 +41,7 @@ export default function VerifyEmail() {
 		}, 1000);
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <Clears an input error when the code is sent>
 	useEffect(() => {
 		setInputError("");
 	}, [codeSent]);
@@ -62,10 +62,11 @@ export default function VerifyEmail() {
 			await request("/api/auth/verify-email", "PATCH", undefined, {
 				code: formCode,
 			});
-		} catch (e: any) {
+		} catch (e: unknown) {
 			setLoading(false);
-			console.log(e.message);
-			if (e.message == "invalid-code") setInputError("Código inválido.");
+			console.log((e as Error).message);
+			if ((e as Error).message === "invalid-code")
+				setInputError("Código inválido.");
 			return false;
 		}
 		update({ emailVerified: new Date() });
@@ -73,6 +74,7 @@ export default function VerifyEmail() {
 		setLoading(false);
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <router is not necessary>
 	useEffect(() => {
 		if (session.data?.user.emailVerified) {
 			router.push("/login");

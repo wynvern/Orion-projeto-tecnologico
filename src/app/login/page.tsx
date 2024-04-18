@@ -6,7 +6,7 @@ import {
 	KeyIcon,
 } from "@heroicons/react/24/outline";
 import { Button, Input, Link, Image } from "@nextui-org/react";
-import { signIn } from "next-auth/react";
+import { type SignInResponse, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -59,20 +59,27 @@ export default function Login() {
 			return false;
 		}
 
-		const signInResult: any = await signIn("credentials", {
-			email: formData.get("email"),
-			password: formData.get("password"),
-			redirect: false,
-		});
+		const signInResult: SignInResponse | undefined = await signIn(
+			"credentials",
+			{
+				email: formData.get("email"),
+				password: formData.get("password"),
+				redirect: false,
+			}
+		);
 
-		if (signInResult.error == "password-not-match") {
+		if (!signInResult) {
+			return false;
+		}
+
+		if (signInResult.error === "password-not-match") {
 			setInputPasswordVal({
 				message: "Senha incorreta.",
 				active: true,
 			});
 		}
 
-		if (signInResult.error == "email-not-found") {
+		if (signInResult.error === "email-not-found") {
 			setInputEmailVal({
 				message: "Email não encontrado.",
 				active: true,
@@ -115,7 +122,7 @@ export default function Login() {
 								active: false,
 							});
 						}}
-					></Input>
+					/>
 					<div>
 						<Input
 							placeholder="Senha"
@@ -133,7 +140,7 @@ export default function Login() {
 									active: false,
 								});
 							}}
-						></Input>
+						/>
 
 						<div className="mt-4">
 							<p className="text-center">

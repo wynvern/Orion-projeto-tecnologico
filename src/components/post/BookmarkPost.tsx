@@ -43,9 +43,9 @@ export default function BookmarkPost({
 			aria-label="Bookmark Post"
 		>
 			{isBookmarked ? (
-				<BookmarkIcon className="h-8" />
+				<BookmarkIcon className="h-6" />
 			) : (
-				<BookmarkIconSolid className="h-8" />
+				<BookmarkIconSolid className="h-6" />
 			)}
 		</Button>
 	);

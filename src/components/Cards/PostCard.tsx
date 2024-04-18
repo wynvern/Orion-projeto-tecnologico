@@ -100,7 +100,6 @@ export default function PostCard({
 					>
 						{truncateString(post.content, 250)}
 					</p>
-					<div className="under-box-shadow w-full h-[150px] absolute top-0"></div>
 				</Link>
 				{post.comments.length > 0 ? (
 					<div className="!flex !p-1 pl-0 ml-12 mt-4">

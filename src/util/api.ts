@@ -1,8 +1,8 @@
 export default async function request(
 	url: string,
-	method: string = "GET",
+	method = "GET",
 	headers: Record<string, string> = {},
-	body: any = undefined
+	body: unknown = undefined
 ) {
 	try {
 		const response = await fetch(url, {
@@ -16,11 +16,10 @@ export default async function request(
 
 		if (response.ok) {
 			return await response.json();
-		} else {
-			const data = await response.json();
-			throw data.message || response.statusText;
 		}
-	} catch (e: any) {
-		throw new Error(e);
+		const data = await response.json();
+		throw data.message || response.statusText;
+	} catch (e: unknown) {
+		throw new Error(e as string);
 	}
 }

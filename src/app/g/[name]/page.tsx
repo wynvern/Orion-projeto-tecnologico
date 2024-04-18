@@ -3,7 +3,8 @@
 import GroupCard from "@/components/Cards/GroupCard";
 import PostCard from "@/components/Cards/PostCard";
 import CreatePost from "@/components/modal/CreatePost";
-import { Group } from "@/types/Group";
+import type { Group } from "@/types/Group";
+import type { Post } from "@/types/Post";
 import request from "@/util/api";
 import { BarsArrowDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 import {
@@ -16,20 +17,10 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function GroupPage({ params }: { params: { name: string } }) {
-	const [group, setGroup] = useState<Group>({
-		groupName: "",
-		name: "",
-		description: "",
-		id: "",
-		image: "",
-		banner: "",
-		ownerId: "",
-		_count: { members: 0, posts: 0, groupViews: 0 },
-		categories: [],
-	});
+	const [group, setGroup] = useState<Group | null>(null);
 	const session = useSession();
 	const [createPostModal, setCreatePostModal] = useState(false);
-	const [posts, setPosts]: any[] = useState([]);
+	const [posts, setPosts] = useState<Post[]>([]);
 	const [isIn, setIsIn] = useState(false);
 	const [skip, setSkip] = useState(0);
 	const [loading, setLoading] = useState(true);
@@ -38,7 +29,7 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 	const [noMorePosts, setNoMorePosts] = useState(false);
 
 	async function viewGroup() {
-		if (group.id) {
+		if (group?.id) {
 			await request(`/api/group/${group.id}/view`, "PATCH");
 		}
 	}
@@ -49,40 +40,43 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		setGroup({
 			...updateGroup,
 			image: updateGroup.image
-				? updateGroup.image + `?timestamp=${new Date().getTime()}`
+				? `${updateGroup.image}?timestamp=${new Date().getTime()}`
 				: undefined,
 			banner: updateGroup.banner
-				? updateGroup.banner + `?timestamp=${new Date().getTime()}`
+				? `${updateGroup.banner}?timestamp=${new Date().getTime()}`
 				: undefined,
 		});
 	}
 
 	async function fetchIsIn() {
-		if (group.id) {
+		if (group?.id) {
 			const data = await request(`/api/group/${group.id}/in`);
-			setIsIn(data.message == "following" ? true : false);
+			setIsIn(data.message === "following");
 		}
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		fetchGroup();
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		viewGroup();
 	}, [group]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (group.id) {
+		if (group?.id) {
 			fetchPosts();
 			fetchIsIn();
 		}
-	}, [group.id]);
+	}, [group?.id]);
 
 	async function fetchPosts() {
 		setLoading(true);
 		const data = await request(
-			`/api/group/${group.id}/post?skip=${skip}&sortBy=${
+			`/api/group/${group?.id}/post?skip=${skip}&sortBy=${
 				Array.from(sortingType)[0]
 			}`,
 			"GET"
@@ -93,17 +87,20 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 		setLoading(false);
 	}
 
-	const handleScroll = (e: any) => {
-		const bottom =
-			Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
-			e.target.scrollHeight;
-		if (bottom) {
-			if (noMorePosts == false) fetchPosts();
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+		if (e?.target && e.target instanceof HTMLElement) {
+			const bottom =
+				Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
+				e.target.scrollHeight;
+			if (bottom) {
+				fetchPosts();
+			}
 		}
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (group.id) {
+		if (group?.id) {
 			setSkip(0);
 			setPosts([]);
 			fetchPosts();
@@ -119,12 +116,14 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 			>
 				<div className="flex items-center justify-center h-[400px] w-[1000px] mt-[calc(50vh-200px)]">
 					<div className="content-container">
-						<GroupCard
-							onLoad={() => setCardLoaded(true)}
-							group={group}
-							update={() => fetchGroup()}
-							aria-label="Group Card"
-						/>
+						{group && (
+							<GroupCard
+								onLoad={() => setCardLoaded(true)}
+								group={group}
+								update={() => fetchGroup()}
+								aria-label="Group Card"
+							/>
+						)}
 					</div>
 				</div>
 				<div
@@ -140,8 +139,9 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 						>
 							<Select
 								selectedKeys={sortingType}
-								onSelectionChange={(e: any) => {
-									if (e.size == 1) setSortingType(e);
+								onSelectionChange={(e: unknown) => {
+									if ((e as Set<string>).size === 1)
+										setSortingType(e as Set<string>);
 								}}
 								placeholder="Select sorting type"
 								variant="bordered"
@@ -165,9 +165,9 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 						</div>
 					</div>
 					<div className="flex flex-col gap-y-12">
-						{posts.map((i: any, _: number) => (
+						{posts.map((i: Post) => (
 							<PostCard
-								key={_}
+								key={i.id}
 								post={i}
 								update={() => fetchPosts()}
 								aria-label="Post Card"
@@ -180,32 +180,33 @@ export default function GroupPage({ params }: { params: { name: string } }) {
 				</div>
 			</div>
 
-			{isIn || session.data?.user.id == group.ownerId ? (
-				<>
-					<div className="fixed z-50 bottom-0 right-0 pr-12 pb-12">
-						<Button
-							size="lg"
-							color="primary"
-							isIconOnly={true}
-							className="w-14 h-14"
-							onClick={() => setCreatePostModal(!createPostModal)}
-							aria-label="Create Post Button"
-							aria-labelledby="create-post-button"
-						>
-							<PlusIcon className="h-6 w-6" />
-						</Button>
-					</div>
-					<CreatePost
-						update={() => fetchPosts()}
-						isActive={createPostModal}
-						setIsActive={setCreatePostModal}
-						group={group}
-						aria-label="Create Post Modal"
-					/>{" "}
-				</>
-			) : (
-				""
-			)}
+			{isIn ||
+				(session.data?.user.id === group?.ownerId && (
+					<>
+						<div className="fixed z-50 bottom-0 right-0 pr-12 pb-12">
+							<Button
+								size="lg"
+								color="primary"
+								isIconOnly={true}
+								className="w-14 h-14"
+								onClick={() =>
+									setCreatePostModal(!createPostModal)
+								}
+								aria-label="Create Post Button"
+								aria-labelledby="create-post-button"
+							>
+								<PlusIcon className="h-6 w-6" />
+							</Button>
+						</div>
+						<CreatePost
+							update={() => fetchPosts()}
+							isActive={createPostModal}
+							setIsActive={setCreatePostModal}
+							group={group}
+							aria-label="Create Post Modal"
+						/>
+					</>
+				))}
 		</div>
 	);
 }

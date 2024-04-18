@@ -19,13 +19,14 @@ import { useEffect, useState } from "react";
 import CustomizeProfile from "../modal/CustomizeProfile";
 import ReportUser from "../modal/ReportUser";
 import UserIcon from "@heroicons/react/24/solid/UserIcon";
+import type User from "@/types/User";
 
 export default function UserCard({
 	user,
 	onUpdate,
 	onLoad,
 }: {
-	user: any;
+	user: User;
 	onUpdate: () => void;
 	onLoad: () => void;
 }) {
@@ -39,6 +40,7 @@ export default function UserCard({
 		console.log("loaded");
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (imagesLoaded === 2) {
 			onLoad();
@@ -48,7 +50,9 @@ export default function UserCard({
 	return (
 		<div className="flex w-full max-w-[1000px] h-full items-center justify-center relative">
 			<div
-				className={`rounded-large  w-full h-full flex text-white object-contain relative content-container bg-neutral-900`}
+				className={
+					"rounded-large  w-full h-full flex text-white object-contain relative content-container bg-neutral-900"
+				}
 			>
 				<Image
 					className="absolute w-full h-full rounded-large right-0"
@@ -61,17 +65,17 @@ export default function UserCard({
 					removeWrapper={true}
 					onLoad={handleComponentLoaded}
 					alt="user-banner"
-				></Image>
+				/>
 				<div>
 					<Image
 						draggable={false}
 						src={user.image ?? "/brand/default-user.svg"}
-						className="h-[400px] w-[400px] object-cover z-50"
+						className="h-full aspect-square object-cover z-50"
 						onLoad={handleComponentLoaded}
 						alt="avatar-user"
 					/>
 				</div>
-				<div className="flex-grow p-10 flex flex-col z-10 justify-between">
+				<div className="flex-grow p-4 sm:p-10  flex flex-col z-10 justify-between">
 					<div>
 						<div className="flex justify-between">
 							<div>
@@ -90,7 +94,7 @@ export default function UserCard({
 										>
 											<div className="flex items-end gap-x-2">
 												<h1>{user.username}</h1>
-												<PencilIcon className="h-6"></PencilIcon>
+												<PencilIcon className="h-6" />
 											</div>
 										</Link>
 									) : (
@@ -106,7 +110,7 @@ export default function UserCard({
 									className="text-foreground"
 								>
 									<DropdownTrigger>
-										<EllipsisHorizontalIcon className="h-10 transition-dropdown"></EllipsisHorizontalIcon>
+										<EllipsisHorizontalIcon className="h-10 transition-dropdown" />
 									</DropdownTrigger>
 									<DropdownMenu
 										aria-label="User Actions"

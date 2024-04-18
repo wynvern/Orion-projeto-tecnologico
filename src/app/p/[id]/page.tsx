@@ -4,6 +4,8 @@ import CommentCard from "@/components/Cards/CommentCard";
 import PostDropdown from "@/components/dropdown/PostDropdown";
 import ImagePreview from "@/components/modal/ImagePreview";
 import BookmarkPost from "@/components/post/BookmarkPost";
+import type Comment from "@/types/Comment";
+import type { Post } from "@/types/Post";
 import request from "@/util/api";
 import getFileBase64 from "@/util/getFile";
 import { prettyDateTime } from "@/util/prettyDateTime";
@@ -17,9 +19,7 @@ import {
 import {
 	Link,
 	Image,
-	Input,
 	Button,
-	ScrollShadow,
 	CircularProgress,
 	Chip,
 	Textarea,
@@ -27,13 +27,13 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Post({ params }: { params: { id: string } }) {
-	const [post, setPost]: any = useState({ id: "" });
+export default function PostView({ params }: { params: { id: string } }) {
+	const [post, setPost] = useState<Post | null>(null);
 	const [commentLoading, setCommentLoading] = useState(false);
 	const [imagePos, setImagePost] = useState(0);
 	const [previewImages, setPreviewImages] = useState(false);
 	const [loaded, setLoaded] = useState(false);
-	const [comments, setComments]: any = useState([]);
+	const [comments, setComments] = useState<Comment[]>([]);
 	const router = useRouter();
 	const [text, setText] = useState("");
 	const [commentImage, setCommentImage] = useState({
@@ -47,18 +47,19 @@ export default function Post({ params }: { params: { id: string } }) {
 		setLoaded(true);
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		fetchPost();
 	}, []); // TODO: Load the posts in the background
 
 	useEffect(() => {
-		if (post.id) {
+		if (post?.id) {
 			fetchComments();
 		}
-	}, [post.id]);
+	}, [post?.id]);
 
 	async function fetchComments() {
-		const data = await request(`/api/post/${post.id}/comment`);
+		const data = await request(`/api/post/${post?.id}/comment`);
 		console.log(data.comments);
 		setComments(data.comments);
 	}
@@ -95,9 +96,9 @@ export default function Post({ params }: { params: { id: string } }) {
 					loaded ? "opacity-0" : ""
 				}`}
 			>
-				<CircularProgress size="lg"></CircularProgress>
+				<CircularProgress size="lg" />
 			</div>
-			{post.id ? (
+			{post?.id ? (
 				<div
 					className={`flex w-full h-full transition-opacity overflow-y-scroll ${
 						loaded ? "opacity-1" : "opacity-0"
@@ -121,7 +122,7 @@ export default function Post({ params }: { params: { id: string } }) {
 										}
 										className="h-12 w-12 rounded-full"
 										alt="avatar-user"
-									></Image>
+									/>
 								</Link>
 								<div className="flex gap-y-2 flex-col">
 									<div className="flex gap-x-1">
@@ -176,7 +177,6 @@ export default function Post({ params }: { params: { id: string } }) {
 							<p className="mt-2 relative break-all	">
 								{post.content}
 							</p>
-							<div className="under-box-shadow w-full h-[150px] absolute top-0"></div>
 						</div>
 						<div className="pl-16 pt-6">
 							<form
@@ -203,7 +203,7 @@ export default function Post({ params }: { params: { id: string } }) {
 										<Image
 											src={commentImage.preview}
 											className="max-h-[200px] max-w-[200px]"
-										></Image>
+										/>
 									</div>
 								</div>
 								<Button
@@ -231,9 +231,9 @@ export default function Post({ params }: { params: { id: string } }) {
 							</form>
 						</div>
 						<div className="gap-y-8 pl-16 mt-6 flex flex-col">
-							{comments.map((i: number, _: number) => (
+							{comments.map((i: Comment, _: number) => (
 								<CommentCard
-									key={_}
+									key={i.id}
 									comment={i}
 									isLast={_ === comments.length - 1}
 								/>
@@ -253,7 +253,7 @@ export default function Post({ params }: { params: { id: string } }) {
 											setImagePost(imagePos + 1)
 										}
 										isDisabled={
-											imagePos == post.media.length - 1
+											imagePos === post.media.length - 1
 										}
 									>
 										<ChevronRightIcon className="h-6" />
@@ -279,19 +279,24 @@ export default function Post({ params }: { params: { id: string } }) {
 									removeWrapper={true}
 									src={post.media[imagePos]}
 									onClick={() => setPreviewImages(true)}
-								></Image>
+								/>
 								<div className="fixed z-50 bottom-8 flex gap-x-2 w-[200px]">
-									{post.media.map((i: any, _: number) => (
+									{post.media.map((i: string, _: number) => (
 										<div
 											className={`h-2 flex-grow transition-colors duration-300 rounded-full bg-foreground ${
-												imagePos == _
+												imagePos === _
 													? "opacity-1"
 													: "opacity-[50%]"
 											}`}
-											key={_}
+											key={i}
 											onClick={() => setImagePost(_)}
 											aria-label={i}
-										></div>
+											onKeyUp={(event) => {
+												if (event.key === "ArrowLeft") {
+													setImagePost(imagePos - 1);
+												}
+											}}
+										/>
 									))}
 								</div>
 							</div>
@@ -302,12 +307,16 @@ export default function Post({ params }: { params: { id: string } }) {
 				""
 			)}
 
-			<ImagePreview
-				isActive={previewImages}
-				setIsActive={setPreviewImages}
-				images={post.media}
-				startIndex={imagePos}
-			/>
+			{post ? (
+				<ImagePreview
+					isActive={previewImages}
+					setIsActive={setPreviewImages}
+					images={post.media}
+					startIndex={imagePos}
+				/>
+			) : (
+				""
+			)}
 		</div>
 	);
 }

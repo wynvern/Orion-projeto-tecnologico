@@ -51,23 +51,24 @@ export default function RootLayout({
 				</body>
 			</html>
 		);
-	} else {
-		return (
-			<html lang="pt-BR">
-				<head>
-					<link
-						rel="shortcut icon"
-						href="/brand/logo.svg"
-						type="image/x-icon"
-					/>
-					<title>Orion</title>
-				</head>
-				<body
-					className={`invert-images ${inter.className} w-screen h-[calc(100dvh)] overflow-y-hidden`}
-				>
-					<App>{children}</App>
-				</body>
-			</html>
-		);
 	}
+	return (
+		<html lang="pt-BR">
+			<head>
+				<link
+					rel="shortcut icon"
+					href="/brand/logo.svg"
+					type="image/x-icon"
+				/>
+				<title>Orion</title>
+			</head>
+			<body
+				className={`invert-images ${inter.className} w-screen h-[calc(100dvh)] overflow-y-hidden`}
+			>
+				<Analytics />
+				<SpeedInsights />
+				<App>{children}</App>
+			</body>
+		</html>
+	);
 }

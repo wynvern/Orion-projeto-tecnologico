@@ -1,15 +1,15 @@
 import { CircularProgress } from "@nextui-org/react";
-import React from "react";
+import type { FC, ReactNode } from "react";
 
 interface TabContentProps {
-	children: React.ReactNode;
+	children: ReactNode;
 	loading: boolean;
 	noData: boolean;
 	noDataMessage: string;
 	loadedAll: boolean;
 }
 
-const TabContent: React.FC<TabContentProps> = ({
+const TabContent: FC<TabContentProps> = ({
 	children,
 	loading,
 	noData,

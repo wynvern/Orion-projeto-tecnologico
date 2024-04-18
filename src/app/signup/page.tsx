@@ -103,15 +103,15 @@ export default function SignUp() {
 			} else {
 				const data = await response.json();
 
-				if (data.message == "email-in-use") {
+				if (data.message === "email-in-use") {
 					setInputError({
 						...inputError,
 						email: "Este email já está em uso.",
 					});
 				}
 			}
-		} catch (e: any) {
-			console.error("Error:", e.message);
+		} catch (e: unknown) {
+			console.error("Error:", (e as Error).message);
 		} finally {
 			setLoading(false);
 		}
@@ -142,7 +142,7 @@ export default function SignUp() {
 						onValueChange={() => {
 							setInputError({ ...inputError, email: "" });
 						}}
-					></Input>
+					/>
 					<Input
 						placeholder="Senha"
 						type="password"
@@ -156,7 +156,7 @@ export default function SignUp() {
 						onValueChange={() => {
 							setInputError({ ...inputError, password: "" });
 						}}
-					></Input>
+					/>
 
 					<Button
 						type="submit"

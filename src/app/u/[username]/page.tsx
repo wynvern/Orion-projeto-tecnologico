@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/solid";
 import TabContent from "./TabContent";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import User from "@/types/User";
+import type User from "@/types/User";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [user, setUser] = useState<User | null>(null);
@@ -53,18 +53,17 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				`/api/query/user?username=${params.username}`
 			);
 			const fetchedUser = data.user;
-			const updatedImage =
-				fetchedUser.image && fetchedUser.image.includes("=s96-c")
-					? fetchedUser.image.replace("=s96-c", "=s1000-c")
-					: fetchedUser.image;
+			const updatedImage = fetchedUser.image?.includes("=s96-c")
+				? fetchedUser.image.replace("=s96-c", "=s1000-c")
+				: fetchedUser.image;
 
 			setUser({
 				...fetchedUser,
 				image: fetchedUser.image
-					? updatedImage + `?timestamp=${new Date().getTime()}`
+					? `${updatedImage}?timestamp=${new Date().getTime()}`
 					: fetchedUser.image,
 				banner: fetchedUser.banner
-					? fetchedUser.banner + `?timestamp=${new Date().getTime()}`
+					? `${fetchedUser.banner}?timestamp=${new Date().getTime()}`
 					: fetchedUser.banner,
 			});
 		} catch (error) {
@@ -76,7 +75,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		try {
 			if (user && !posts.loadedAll) {
 				setLoading(true);
-				const response: any = await request(
+				const response = await request(
 					`/api/user/${user.id}/post?skip=${posts.skip}`
 				);
 				console.log(response.posts);
@@ -100,7 +99,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		try {
 			if (user && !bookmarks.loadedAll) {
 				setLoading(true);
-				const response: any = await request(
+				const response = await request(
 					`/api/user/${user.id}/bookmark?skip=${bookmarks.skip}`
 				);
 				setBookmarks({
@@ -123,9 +122,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		try {
 			if (user && !userGroups.loadedAll && !ownedGroups.loadedAll) {
 				setLoading(true);
-				const response: any = await request(
-					`/api/user/${user.id}/group`
-				);
+				const response = await request(`/api/user/${user.id}/group`);
 				console.log(response);
 				setOwnedGroups({
 					...ownedGroups,
@@ -148,6 +145,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		}
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (user) {
 			fetchPosts();
@@ -156,17 +154,20 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		}
 	}, [user]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		fetchUser();
 	}, []);
 
-	const handleScroll = (e: any) => {
-		const bottom =
-			Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
-			e.target.scrollHeight;
-		if (bottom) {
-			if (currentTab == 0) fetchPosts();
-			if (currentTab == 1) fetchBookmarks();
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+		if (e?.target && e.target instanceof HTMLElement) {
+			const bottom =
+				Math.ceil(e.target.scrollTop) + e.target.clientHeight >=
+				e.target.scrollHeight;
+			if (bottom) {
+				if (currentTab === 0) fetchPosts();
+				if (currentTab === 1) fetchBookmarks();
+			}
 		}
 	};
 
@@ -200,13 +201,15 @@ export default function UserPage({ params }: { params: { username: string } }) {
 				<CircularProgress size="lg" />
 			</div>
 			<div
-				className={`w-full h-full overflow-y-scroll transition-opacity px-5 duration-300 ${
+				className={`w-full h-full transition-opacity px-5 duration-300 ${
 					pageLoaded ? "opacity-1" : "opacity-0"
 				}`}
 				onScroll={handleScroll}
 			>
 				<div
-					className={`w-full flex items-center flex-col mt-[calc(50vh-200px)]`}
+					className={
+						"w-full flex items-center flex-col sm:mt-[calc(50vh-200px)] mt-6"
+					}
 				>
 					{user ? (
 						<UserCard
@@ -218,7 +221,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 						""
 					)}
 					<Tabs
-						className={`my-14`}
+						className={"my-14"}
 						classNames={{
 							tabList: "max-w-[500px] h-14",
 							tab: "h-10",
@@ -294,7 +297,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 														<LightGroupCard
 															key={_}
 															group={i}
-														></LightGroupCard>
+														/>
 													)
 												)}
 											</div>
@@ -314,7 +317,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 												<LightGroupCard
 													key={_}
 													group={i}
-												></LightGroupCard>
+												/>
 											)
 										)}
 									</div>

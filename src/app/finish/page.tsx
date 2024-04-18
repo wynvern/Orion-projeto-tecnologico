@@ -98,15 +98,15 @@ export default function Finish() {
 			} else {
 				const data = await response.json();
 
-				if (data.message == "username-in-use") {
+				if (data.message === "username-in-use") {
 					setInputValidation({
 						message: "Este nome de usuário já está em uso.",
 						active: true,
 					});
 				}
 			}
-		} catch (e: any) {
-			console.error("Error:", e.message);
+		} catch (e: unknown) {
+			console.error("Error:", (e as Error).message);
 		}
 	}
 
@@ -143,7 +143,7 @@ export default function Finish() {
 								message: "",
 							});
 						}}
-					></Input>
+					/>
 
 					<Button
 						type="submit"

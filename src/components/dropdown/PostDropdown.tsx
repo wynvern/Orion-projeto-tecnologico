@@ -42,7 +42,7 @@ export default function PostDropdown({
 						className="border-none"
 						aria-label="Post Configuration"
 					>
-						<EllipsisHorizontalIcon className="h-10" />
+						<EllipsisHorizontalIcon className="h-8" />
 					</Button>
 				</DropdownTrigger>
 				<DropdownMenu

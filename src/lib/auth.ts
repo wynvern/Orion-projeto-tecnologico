@@ -1,4 +1,4 @@
-import { NextAuthOptions, User } from "next-auth";
+import type { NextAuthOptions, User } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { db } from "./db";
@@ -70,6 +70,7 @@ export const authOptions: NextAuthOptions = {
 				token.id = user.id;
 				token.image = user.image;
 				token.banner = user.banner;
+				token.emailVerified = user.emailVerified as Date;
 			}
 
 			if (trigger === "update") {
@@ -95,14 +96,13 @@ export const authOptions: NextAuthOptions = {
 				session.user.role = token.role;
 				session.user.fullName = token.fullName as string;
 				session.user.id = token.id as string;
-				session.user.emailVerified = token.emailVerified as Date;
+				session.user.emailVerified = token.emailVerified;
 				// Transfer username to the session
 				session.user.username = token.username as string;
 
 				session.user.image = token.image as string;
 				session.user.banner = token.banner as string;
 			}
-
 			return session;
 		},
 	},

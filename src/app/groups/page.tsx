@@ -2,6 +2,7 @@
 
 import LightGroupCard from "@/components/Cards/Light/LightGroupCard";
 import CreateGroup from "@/components/modal/CreateGroup";
+import type { Group } from "@/types/Group";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import UserGroupIcon from "@heroicons/react/24/solid/UserGroupIcon";
 import { Button, ScrollShadow } from "@nextui-org/react";
@@ -17,7 +18,7 @@ export default function Groups() {
 	const [groupModal, setGroupModal] = useState(false);
 
 	const [categoriesServer, setCategoriesServer] = useState([]);
-	const [groups, setGroups]: any[] = useState([]);
+	const [groups, setGroups] = useState<Group[]>([]);
 
 	async function fetchCategories() {
 		try {
@@ -45,6 +46,7 @@ export default function Groups() {
 		}
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		fetchCategories();
 		fetchGroups();
@@ -73,11 +75,11 @@ export default function Groups() {
 						className="flex mt-14 overflow-y-hidden h-[310px]"
 					>
 						<div>
-							<div className="w-40"></div>
+							<div className="w-40" />
 						</div>
 						<div className="gap-x-6 flex h-full">
-							{groups.map((i: any, _: number) => (
-								<div key={_}>
+							{groups.map((i: Group) => (
+								<div key={i.id}>
 									<LightGroupCard group={i} />
 								</div>
 							))}
@@ -88,7 +90,7 @@ export default function Groups() {
 						orientation="horizontal"
 					>
 						<div>
-							<div className="w-40"></div>
+							<div className="w-40" />
 						</div>
 						<div className="gap-x-6 flex">
 							<div
@@ -118,9 +120,9 @@ export default function Groups() {
 									</Button>
 								</div>
 							</div>
-							{categoriesServer.map((i: Category, _) => (
+							{categoriesServer.map((i: Category) => (
 								<div
-									key={_}
+									key={i.value}
 									className="bg-default-100 w-[300px] h-[300px] rounded-large"
 								>
 									<div className=" w-[300px] h-[300px] p-6 flex flex-col justify-between">
@@ -141,7 +143,6 @@ export default function Groups() {
 							))}
 						</div>
 					</ScrollShadow>
-					<div className="h-[200px]"></div>
 				</div>
 			</div>
 

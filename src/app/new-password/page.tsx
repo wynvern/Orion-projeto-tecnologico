@@ -1,5 +1,6 @@
 "use client";
 
+import request from "@/util/api";
 import {
 	CheckIcon,
 	KeyIcon,
@@ -66,30 +67,28 @@ export default function UpdatePassword() {
 		}
 
 		try {
-			const response = await fetch("/api/auth/forgot-password", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
+			const response = await request(
+				"/api/auth/forgot-password",
+				"PATCH",
+				{},
+				{
 					code: verificationCode,
 					newPassword: formPassword,
-				}),
-			});
-
-			if (response.ok) {
+				}
+			);
+			if (response) {
 				setSuccess(true);
 			} else {
 				const data = await response.json();
 
-				if (data.message == "invalid-code") {
+				if (data.message === "invalid-code") {
 					setInputPasswordval({
 						message: "Esta requisição expirou, tente novamente.",
 						active: true,
 					});
 				}
 
-				if (data.message == "different-oauth") {
+				if (data.message === "different-oauth") {
 					setInputPasswordval({
 						message: "Este email utiliza outra forma de login.",
 						active: true,
@@ -105,7 +104,7 @@ export default function UpdatePassword() {
 
 	return (
 		<div className="flex w-full h-full items-center justify-center">
-			<div className="flex flex-col gap-y-6 lg:w-[400px] md:w-[400px] sm:w-[300px]">
+			<div className="flex flex-col gap-y-6 w-full max-w-[400px] px-4">
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
 					<Image
 						src="/brand/logo.svg"
@@ -137,7 +136,7 @@ export default function UpdatePassword() {
 								active: false,
 							});
 						}}
-					></Input>
+					/>
 					<Input
 						placeholder="Repita a Senha"
 						type="password"
@@ -154,8 +153,7 @@ export default function UpdatePassword() {
 								active: false,
 							});
 						}}
-					></Input>
-
+					/>
 					<Button
 						type="submit"
 						color="primary"

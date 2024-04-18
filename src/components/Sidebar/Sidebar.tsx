@@ -56,20 +56,23 @@ export default function Sidebar() {
 				</div>
 			</div>
 
-			<div className="fixed w-full h-20 items-center justify-between flex flex-row py-6 px-4 bottom-0 sm:hidden flex">
+			<div
+				className="fixed w-full h-16 items-center justify-between flex flex-row py-6 px-4 bottom-0 sm:hidden flex bg-background"
+				style={{ zIndex: 9999999 }}
+			>
 				<div className="gap-x-12 flex flex-row items-center justify-center grow">
 					<Link className="text-foreground" href="/search">
 						<MagnifyingGlassIcon className="h-8" />
 					</Link>
 					<Link href="/bookmarks" className="text-foreground">
-						{url == "/bookmarks" ? (
+						{url === "/bookmarks" ? (
 							<SolidBookmarkIcon className="h-8" />
 						) : (
 							<BookmarkIcon className="h-8" />
 						)}
 					</Link>
 					<Link href="/groups" className="text-foreground">
-						{url == "/groups" ? (
+						{url === "/groups" ? (
 							<SolidUserGroupIcon className="h-8" />
 						) : (
 							<UserGroupIcon className="h-8" />
