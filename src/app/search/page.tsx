@@ -171,7 +171,7 @@ export default function Search() {
 								<PostCard
 									post={i}
 									key={i.id}
-									update={fetchPosts}
+									update={() => fetchPosts(searchTerm)}
 								/>
 							))}
 						</div>
