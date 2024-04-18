@@ -174,7 +174,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 
 	if (error.show) {
 		return (
-			<div className="flex w-full h-full items-center justify-center">
+			<div className="flex w-full h-dvh items-center justify-center">
 				<div className="flex items-center gap-x-4">
 					<div>
 						<ExclamationTriangleIcon className="h-20 w-20 text-danger" />

@@ -100,7 +100,7 @@ export default function PostView({ params }: { params: { id: string } }) {
 			</div>
 			{post?.id ? (
 				<div
-					className={`flex w-full h-full transition-opacity overflow-y-scroll ${
+					className={`flex w-full h-dvh transition-opacity overflow-y-scroll ${
 						loaded ? "opacity-1" : "opacity-0"
 					}`}
 				>

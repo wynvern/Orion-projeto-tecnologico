@@ -118,7 +118,7 @@ export default function SignUp() {
 	}
 
 	return (
-		<div className="flex w-full h-full items-center justify-center">
+		<div className="flex w-full h-dvh items-center justify-center">
 			<div className="flex flex-col gap-y-6 w-full max-w-[400px] px-4">
 				<div className="flex w-full justify-center items-center gap-x-4 mb-6">
 					<Image

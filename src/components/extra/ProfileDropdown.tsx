@@ -62,6 +62,7 @@ export default function ProfileDropdown() {
 				placement="right"
 				className="text-foreground"
 				aria-label="Profile Dropdown"
+				style={{ zIndex: 9999999999 }}
 			>
 				<DropdownTrigger>
 					<Button
