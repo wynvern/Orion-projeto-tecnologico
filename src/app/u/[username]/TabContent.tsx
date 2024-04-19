@@ -19,7 +19,7 @@ const TabContent: FC<TabContentProps> = ({
 	return (
 		<div>
 			<div
-				className={`flex flex-col gap-y-12 px-4 sm:px-10 w-full ${
+				className={`flex flex-col gap-y-12 px-4 sm:px-10 w-full max-w-[1000px] ${
 					loading ? "opacity-0" : "opacity-1"
 				} transition-opacity duration-200`}
 			>
