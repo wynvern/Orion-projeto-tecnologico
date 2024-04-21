@@ -14,7 +14,7 @@ export const POST = async (
 
 		if (!session) {
 			return NextResponse.json(
-				{ message: "Not authorized", type: "Missing authorization" },
+				{ message: "Not authorized", type: "Missing-authorization" },
 				{ status: 401 }
 			);
 		}
