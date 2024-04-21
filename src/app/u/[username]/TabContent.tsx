@@ -17,15 +17,15 @@ const TabContent: FC<TabContentProps> = ({
 	loadedAll,
 }) => {
 	return (
-		<div>
+		<>
 			<div
-				className={`flex flex-col gap-y-12 px-4 sm:px-10 w-full max-w-[1000px] ${
+				className={`flex flex-col gap-y-12 px-4 sm:px-10 w-full max-w-[1000px] w-full ${
 					loading ? "opacity-0" : "opacity-1"
 				} transition-opacity duration-200`}
 			>
 				{children}
 			</div>
-			{noData ? (
+			{!noData ? (
 				<h2
 					className={`text-center ${
 						loading ? "opacity-[30%]" : "opacity-0"
@@ -50,7 +50,7 @@ const TabContent: FC<TabContentProps> = ({
 			>
 				<CircularProgress size="lg" />
 			</div>
-		</div>
+		</>
 	);
 };
 

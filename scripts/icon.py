@@ -13,7 +13,7 @@ def resize_image(input_image_path, output_image_path, size):
     resized_image.save(output_image_path)
 
 # Define the source icon and its directory
-src_dir = "/home/wynvern/Documents/code/proj-tec/orion/scripts"
+src_dir = "/home/wynvern/Documents/code/orion/scripts"
 src_icon = "original.png"
 
 # Define the target sizes

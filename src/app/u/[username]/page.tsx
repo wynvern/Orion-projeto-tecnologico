@@ -240,6 +240,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 								</h3>
 							}
 							aria-label="Posts"
+							className="w-full flex items-center justify-center flex-col"
 						>
 							<TabContent
 								loadedAll={posts.loadedAll}
@@ -263,6 +264,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 									{user?._count.bookmarks}
 								</h3>
 							}
+							className="w-full flex items-center justify-center flex-col"
 							aria-label="Salvos"
 						>
 							<TabContent
@@ -287,6 +289,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 									{user?._count.groups}
 								</h3>
 							}
+							className="w-full flex items-center justify-center flex-col"
 							aria-label="Grupos"
 						>
 							<TabContent
